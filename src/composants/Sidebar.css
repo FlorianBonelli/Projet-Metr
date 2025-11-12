@@ -1,18 +1,18 @@
 /* Définition des variables de couleur pour un thème sombre */
 :root {
-    --sidebar-bg: #1f274a; /* Fond bleu foncé principal */
+    --sidebar-bg: #1E3A8A; /* Fond bleu foncé principal */
     --link-hover-bg: #2a335a; /* Fond au survol */
     --text-color: #ffffff;
-    --cta-bg: #f47f20; /* Bouton CTA orange */
+    --cta-bg: #F97316; /* Bouton CTA orange */
     --text-light: #a9b5d2; /* Texte secondaire, ex: RÉCENT */
 }
 
 .sidebar-container {
-    width: 250px; /* Largeur de la sidebar */
+    width: 200px; /* Largeur de la sidebar */
     background-color: var(--sidebar-bg);
     color: var(--text-color);
     padding: 20px 15px;
-    border-radius: 20px; /* Coins arrondis comme sur la photo */
+    border-radius: 50px; /* Coins arrondis comme sur la photo */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     position: relative; /* Pour positionner le bouton de bascule */
     height: 90vh; /* Ajuster la hauteur selon votre besoin */

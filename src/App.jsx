@@ -1,3 +1,5 @@
+import Dashbord from './pages/Dashbord'
+
 function App() {
   return (
     <div>

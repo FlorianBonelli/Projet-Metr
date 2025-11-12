@@ -1,11 +1,11 @@
-import Dashbord from './pages/Dashbord'
+import React from 'react';
+import Dashbord from './pages/Dashbord';
 
+  
 function App() {
   return (
-    <div>
-      
-    </div>
-  )
+    <Dashbord />
+  );
 }
 
-export default App
+export default App;

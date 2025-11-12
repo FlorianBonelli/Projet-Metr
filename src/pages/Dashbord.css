@@ -1,0 +1,27 @@
+.dashbord {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #333;
+}
+
+.dashbord {
+  display: flex;
+  height: 100vh;
+}
+
+.dashbord-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 220px; /* correspond à la largeur de la sidebar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

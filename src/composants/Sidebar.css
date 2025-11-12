@@ -1,40 +1,184 @@
-.sidebar {
-  width: 220px;
-  height: 100vh;
-  background-color: #1e1e2f;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
-  position: fixed;
-  left: 0;
-  top: 0;
+/* Définition des variables de couleur pour un thème sombre */
+:root {
+    --sidebar-bg: #1f274a; /* Fond bleu foncé principal */
+    --link-hover-bg: #2a335a; /* Fond au survol */
+    --text-color: #ffffff;
+    --cta-bg: #f47f20; /* Bouton CTA orange */
+    --text-light: #a9b5d2; /* Texte secondaire, ex: RÉCENT */
 }
 
-.sidebar-title {
-  font-size: 1.5rem;
-  margin-bottom: 30px;
+.sidebar-container {
+    width: 250px; /* Largeur de la sidebar */
+    background-color: var(--sidebar-bg);
+    color: var(--text-color);
+    padding: 20px 15px;
+    border-radius: 20px; /* Coins arrondis comme sur la photo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    position: relative; /* Pour positionner le bouton de bascule */
+    height: 90vh; /* Ajuster la hauteur selon votre besoin */
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif; /* Police à adapter */
 }
 
-.sidebar-list {
-  list-style: none;
-  padding: 0;
-  width: 100%;
+/* --- 1. Section Profil --- */
+.profile-section {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a335a; /* Séparateur */
+    position: relative;
 }
 
-.sidebar-list li {
-  width: 100%;
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    background-color: #7b83a0;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    /* Simulate l'image de profil */
+    background-image: url('URL_DE_VOTRE_IMAGE_PROFIL_ICI'); 
+    background-size: cover;
+    border: 3px solid #ffffff;
 }
 
-.sidebar-list a {
-  display: block;
-  padding: 15px 20px;
-  color: #fff;
-  text-decoration: none;
-  transition: background 0.3s;
+.username {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
 }
 
-.sidebar-list a:hover {
-  background-color: #333355;
+/* --- 2. Section Liens de Navigation Principaux --- */
+.nav-links {
+    margin: 20px 0;
+    flex-grow: 1; /* Permet à cette section de prendre l'espace restant */
 }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: var(--link-hover-bg);
+}
+
+.nav-item .icon {
+    margin-right: 15px;
+    font-size: 20px;
+}
+
+/* --- 3. Section Récent --- */
+.recent-section {
+    padding-top: 10px;
+    border-top: 1px solid #2a335a; /* Séparateur */
+    margin-top: auto; /* Pousse la section vers le bas s'il y a de l'espace */
+}
+
+.recent-header {
+    color: var(--text-light);
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+.recent-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.recent-item:hover {
+    color: var(--text-color);
+}
+
+.recent-item .icon {
+    margin-right: 15px;
+    font-size: 16px;
+}
+
+/* --- 4. Section Call-to-Action (CTA) --- */
+.cta-section {
+    background-color: #2a335a; /* Fond légèrement plus clair pour le CTA */
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.cta-text {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.cta-subtext {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.cta-button {
+    background-color: var(--cta-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-button:hover {
+    background-color: #e0741c; /* Orange légèrement plus foncé au survol */
+}
+
+.cta-button .icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* --- Bouton de Bascule (Flèche Orange) --- */
+.toggle-button {
+    position: absolute;
+    top: 25px; /* Position verticale */
+    right: -15px; /* Déborde du côté droit */
+    width: 30px;
+    height: 30px;
+    background-color: var(--cta-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-button .arrow {
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 16px;
+    /* Rotation de la flèche si vous voulez qu'elle pointe vers la gauche */
+    transform: rotate(180deg);
+}
+
+/* Ajout d'une ombre et d'un décalage pour simuler le style "pop-up" */
+.sidebar-container {
+    /* Ceci est optionnel si la sidebar est statique, mais permet de simuler l'effet de la photo */
+    transform: translateX(10px); 
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
+}
+

@@ -1,0 +1,241 @@
+.connexion-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, 
+    #e8b4d4 0%, 
+    #c8a2d4 25%, 
+    #9b8bc4 50%, 
+    #7679b4 75%, 
+    #5567a4 100%
+  );
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* Logo en haut à gauche */
+.logo-container {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  z-index: 10;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+}
+
+.logo-text {
+  font-size: 48px;
+  font-weight: 800;
+  color: #2c3e8a;
+  letter-spacing: -2px;
+}
+
+.logo-dot {
+  font-size: 48px;
+  font-weight: 800;
+  color: #ff6b35;
+  margin-left: -4px;
+}
+
+/* Décorations avec plans architecturaux */
+.decoration-left,
+.decoration-right {
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.decoration-left {
+  top: 50px;
+  left: -50px;
+  animation: floatLeft 8s ease-in-out infinite;
+}
+
+.decoration-right {
+  bottom: 50px;
+  right: -50px;
+  animation: floatRight 8s ease-in-out infinite;
+}
+
+@keyframes floatLeft {
+  0%, 100% {
+    transform: translateY(0) rotate(-15deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(-12deg);
+  }
+}
+
+@keyframes floatRight {
+  0%, 100% {
+    transform: translateY(0) rotate(15deg);
+  }
+  50% {
+    transform: translateY(20px) rotate(18deg);
+  }
+}
+
+.plan-image {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.plan-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Si pas d'image, afficher un placeholder */
+.plan-image:empty::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      #ff6b35,
+      #ff6b35 2px,
+      transparent 2px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      #2c3e8a,
+      #2c3e8a 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  opacity: 0.3;
+}
+
+/* Wrapper du formulaire */
+.formulaire-wrapper {
+  z-index: 5;
+  position: relative;
+}
+
+/* Formes animées en arrière-plan */
+.background-shapes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  animation: float 15s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #ff6b35, #ff8c42);
+  top: 10%;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #2c3e8a, #4a5fc1);
+  bottom: 10%;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+.shape-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, #e8b4d4, #c8a2d4);
+  top: 50%;
+  left: 50%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .decoration-left,
+  .decoration-right {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-container {
+    top: 20px;
+    left: 20px;
+  }
+
+  .logo-text,
+  .logo-dot {
+    font-size: 36px;
+  }
+
+  .decoration-left,
+  .decoration-right {
+    display: none;
+  }
+
+  .background-shapes .shape {
+    filter: blur(40px);
+  }
+}
+
+@media (max-width: 480px) {
+  .connexion-page {
+    padding: 10px;
+  }
+
+  .logo-text,
+  .logo-dot {
+    font-size: 28px;
+  }
+}

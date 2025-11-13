@@ -1,0 +1,215 @@
+.inscription-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, 
+    #e8b4d4 0%, 
+    #c8a2d4 25%, 
+    #9b8bc4 50%, 
+    #7679b4 75%, 
+    #5567a4 100%
+  );
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Logo en bas à gauche */
+.logo-container {
+  position: absolute;
+  bottom: 60px;
+  left: 60px;
+  z-index: 10;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-image {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Décorations avec plans architecturaux */
+.decoration-left,
+.decoration-right {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  z-index: 1;
+}
+
+.decoration-left {
+  top: 50%;
+  left: -100px;
+  transform: translateY(-50%);
+  animation: floatLeft 8s ease-in-out infinite;
+}
+
+.decoration-right {
+  bottom: -50px;
+  right: -50px;
+  animation: floatRight 8s ease-in-out infinite;
+}
+
+@keyframes floatLeft {
+  0%, 100% {
+    transform: translateY(-50%) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-60%) rotate(-8deg);
+  }
+}
+
+@keyframes floatRight {
+  0%, 100% {
+    transform: translateY(0) rotate(10deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(12deg);
+  }
+}
+
+.plan-image {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 40px;
+  box-sizing: border-box;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.plan-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+/* Wrapper du formulaire - centré à gauche */
+.formulaire-wrapper {
+  z-index: 5;
+  position: relative;
+  margin-right: 300px;
+  margin-left: -340px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .formulaire-wrapper {
+    margin-right: 200px;
+    margin-left: -200px;
+  }
+  
+  .decoration-left,
+  .decoration-right {
+    width: 350px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .formulaire-wrapper {
+    margin-right: 50px;
+    margin-left: -50px;
+  }
+  
+  .decoration-left,
+  .decoration-right {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .logo-image {
+    height: 50px;
+  }
+  
+  .logo-container {
+    bottom: 40px;
+    left: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .inscription-page {
+    padding: 15px;
+  }
+  
+  .logo-container {
+    bottom: 30px;
+    left: 30px;
+  }
+
+  .logo-image {
+    height: 45px;
+  }
+
+  .decoration-left,
+  .decoration-right {
+    display: none;
+  }
+
+  .formulaire-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .inscription-page {
+    padding: 10px;
+  }
+
+  .logo-container {
+    bottom: 20px;
+    left: 20px;
+  }
+  
+  .logo-image {
+    height: 35px;
+  }
+
+  .formulaire-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .inscription-page {
+    padding: 5px;
+  }
+  
+  .logo-container {
+    bottom: 15px;
+    left: 15px;
+  }
+  
+  .logo-image {
+    height: 30px;
+  }
+}

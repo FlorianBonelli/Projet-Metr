@@ -1,6 +1,9 @@
 import React from 'react';
 import FormulaireConnexion from '../composants/FormulaireConnexion';
 import './Connexion.css';
+import logoMetr from '../assets/images/Logo_Metr.png';
+import imageFond1 from '../assets/images/Image_fond_1.jpg';
+import imageFond2 from '../assets/images/Image_fond_2.jpg';
 
 function Connexion() {
   return (
@@ -8,24 +11,21 @@ function Connexion() {
       {/* Logo */}
       <div className="logo-container">
         <div className="logo">
-          <span className="logo-text">Metr</span>
-          <span className="logo-dot">.</span>
+          <img src={logoMetr} alt="Logo Metr" className="logo-image" />
         </div>
       </div>
 
       {/* Image décorative gauche */}
       <div className="decoration-left">
         <div className="plan-image">
-          {/* Vous pouvez remplacer par une vraie image */}
-          <img src="/images/plan-left.png" alt="Plan architectural" />
+          <img src={imageFond1} alt="Image de fond décorative" />
         </div>
       </div>
 
       {/* Image décorative droite */}
       <div className="decoration-right">
         <div className="plan-image">
-          {/* Vous pouvez remplacer par une vraie image */}
-          <img src="/images/plan-right.png" alt="Plan architectural" />
+          <img src={imageFond2} alt="Image de fond décorative" />
         </div>
       </div>
 

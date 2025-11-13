@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './FormulaireConnexion.css';
+import './FormulaireInscription.css';
 
-function FormulaireConnexion() {
+function FormulaireInscription() {
+  const [prenom, setPrenom] = useState('');
+  const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [profession, setProfession] = useState('');
+  const [entreprise, setEntreprise] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -12,27 +16,50 @@ function FormulaireConnexion() {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulation d'une connexion
     setTimeout(() => {
-      console.log('Email:', email);
-      console.log('Password:', password);
+      console.log('Inscription:', { prenom, nom, email, password, profession, entreprise });
       setIsLoading(false);
       // navigate('/dashboard');
     }, 1500);
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Connexion avec Google');
-    // Logique de connexion Google ici
+  const handleGoogleSignup = () => {
+    console.log('Inscription avec Google');
+  };
+
+  const handleLoginRedirect = () => {
+    navigate('/connexion');
   };
 
   return (
-    <div className="formulaire-connexion">
+    <div className="formulaire-inscription">
       <div className="formulaire-header">
-        <h1>Connexion</h1>
+        <h1>Inscription</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="formulaire-form">
+        <div className="form-field">
+          <label htmlFor="prenom">Prénom</label>
+          <input
+            type="text"
+            id="prenom"
+            value={prenom}
+            onChange={(e) => setPrenom(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="nom">Nom</label>
+          <input
+            type="text"
+            id="nom"
+            value={nom}
+            onChange={(e) => setNom(e.target.value)}
+            required
+          />
+        </div>
+
         <div className="form-field">
           <label htmlFor="email">Adresse mail</label>
           <input
@@ -40,7 +67,6 @@ function FormulaireConnexion() {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder=""
             required
           />
         </div>
@@ -52,7 +78,28 @@ function FormulaireConnexion() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder=""
+            required
+          />
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="profession">Profession</label>
+          <input
+            type="text"
+            id="profession"
+            value={profession}
+            onChange={(e) => setProfession(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="entreprise">Entreprise</label>
+          <input
+            type="text"
+            id="entreprise"
+            value={entreprise}
+            onChange={(e) => setEntreprise(e.target.value)}
             required
           />
         </div>
@@ -65,14 +112,14 @@ function FormulaireConnexion() {
           {isLoading ? (
             <span className="loader"></span>
           ) : (
-            'Se Connecter'
+            "S'inscrire"
           )}
         </button>
 
         <button 
           type="button" 
           className="btn-google"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignup}
         >
           <svg className="google-icon" viewBox="0 0 24 24" width="20" height="20">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -84,11 +131,11 @@ function FormulaireConnexion() {
         </button>
 
         <div className="formulaire-footer">
-          <p>Vous n'avez pas de compte ? <button type="button" className="link-button" onClick={() => navigate('/inscription')}>Inscrivez-vous !</button></p>
+          <p>Vous avez déjà un compte ? <button type="button" className="link-button" onClick={() => navigate('/profil')}>Connectez-vous !</button></p>
         </div>
       </form>
     </div>
   );
 }
 
-export default FormulaireConnexion;
+export default FormulaireInscription;

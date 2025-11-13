@@ -1,11 +1,11 @@
-.formulaire-connexion {
+.formulaire-inscription {
   background: rgba(44, 62, 138, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 24px;
-  padding: 48px 60px;
+  border-radius: 20px;
+  padding: 24px 32px;
   width: 450px;
   min-width: 450px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
   animation: formSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -22,11 +22,11 @@
 
 .formulaire-header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 16px;
 }
 
 .formulaire-header h1 {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
   color: white;
   margin: 0;
@@ -36,27 +36,27 @@
 .formulaire-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 10px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .form-field label {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 600;
   color: white;
   margin-left: 4px;
 }
 
 .form-field input {
-  padding: 16px 20px;
+  padding: 8px 12px;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 13px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   transition: all 0.3s ease;
@@ -82,13 +82,13 @@
   background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 17px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 8px;
+  margin-top: 4px;
   box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
   position: relative;
   overflow: hidden;
@@ -143,17 +143,18 @@
   background: white;
   color: #5f6368;
   border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
 }
 
 .btn-google:hover {
@@ -173,24 +174,32 @@
 .formulaire-footer {
   text-align: center;
   margin-top: 8px;
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.8);
 }
 
-.formulaire-footer a {
+.formulaire-footer p {
+  margin: 0;
+}
+
+.link-button {
+  background: none;
+  border: none;
   color: white;
-  text-decoration: none;
+  text-decoration: underline;
+  cursor: pointer;
   font-weight: 600;
+  font-size: 11px;
   transition: opacity 0.2s;
 }
 
-.formulaire-footer a:hover {
+.link-button:hover {
   opacity: 0.8;
-  text-decoration: underline;
 }
 
+/* Media queries pour la responsivité */
 @media (max-width: 1024px) {
-  .formulaire-connexion {
+  .formulaire-inscription {
     width: 400px;
     min-width: 400px;
     padding: 40px 45px;
@@ -198,7 +207,7 @@
 }
 
 @media (max-width: 768px) {
-  .formulaire-connexion {
+  .formulaire-inscription {
     width: 90%;
     min-width: auto;
     max-width: 450px;
@@ -210,7 +219,7 @@
   }
   
   .form-field input {
-    padding: 14px 18px;
+    padding: 12px 16px;
     font-size: 14px;
   }
   
@@ -226,7 +235,7 @@
 }
 
 @media (max-width: 480px) {
-  .formulaire-connexion {
+  .formulaire-inscription {
     width: 95%;
     min-width: auto;
     max-width: 380px;
@@ -239,7 +248,7 @@
   }
   
   .form-field {
-    gap: 8px;
+    gap: 6px;
   }
   
   .form-field label {
@@ -247,7 +256,7 @@
   }
   
   .form-field input {
-    padding: 12px 16px;
+    padding: 10px 14px;
     font-size: 14px;
   }
   
@@ -267,7 +276,7 @@
 }
 
 @media (max-width: 360px) {
-  .formulaire-connexion {
+  .formulaire-inscription {
     width: 98%;
     max-width: 320px;
     padding: 24px 20px;
@@ -278,7 +287,7 @@
   }
   
   .form-field input {
-    padding: 10px 14px;
+    padding: 8px 12px;
     font-size: 13px;
   }
   

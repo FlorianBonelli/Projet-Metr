@@ -182,3 +182,144 @@
     box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
 }
 
+/* Media queries pour la responsivité de la sidebar */
+@media (max-width: 1024px) {
+    .sidebar-container {
+        width: 160px;
+        padding: 15px 10px;
+    }
+    
+    .username {
+        font-size: 12px;
+    }
+    
+    .nav-item {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .nav-item .icon {
+        margin-right: 10px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-container {
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+        position: relative;
+        transform: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
+    
+    .profile-section {
+        border-bottom: none;
+        border-right: 1px solid #2a335a;
+        padding-right: 20px;
+        padding-bottom: 0;
+        flex-shrink: 0;
+    }
+    
+    .avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 5px;
+    }
+    
+    .username {
+        font-size: 10px;
+    }
+    
+    .nav-links {
+        flex-direction: row;
+        margin: 0 20px;
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .nav-item {
+        margin-bottom: 0;
+        padding: 8px;
+        flex-direction: column;
+        text-align: center;
+        font-size: 10px;
+        min-width: 60px;
+    }
+    
+    .nav-item .icon {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+    
+    .recent-section {
+        border-top: none;
+        border-left: 1px solid #2a335a;
+        padding-left: 20px;
+        margin-top: 0;
+        flex-shrink: 0;
+    }
+    
+    .cta-section {
+        display: none;
+    }
+    
+    .toggle-button {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-container {
+        padding: 8px 15px;
+    }
+    
+    .profile-section {
+        padding-right: 15px;
+    }
+    
+    .avatar-placeholder {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .username {
+        font-size: 9px;
+    }
+    
+    .nav-links {
+        margin: 0 10px;
+        gap: 5px;
+    }
+    
+    .nav-item {
+        padding: 6px;
+        font-size: 9px;
+        min-width: 50px;
+    }
+    
+    .nav-item .icon {
+        font-size: 14px;
+    }
+    
+    .recent-section {
+        padding-left: 15px;
+    }
+    
+    .recent-header {
+        font-size: 10px;
+    }
+    
+    .recent-item {
+        font-size: 10px;
+    }
+}
+

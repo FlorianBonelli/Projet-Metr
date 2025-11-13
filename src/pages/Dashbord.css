@@ -1,22 +1,68 @@
 .dashbord {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
   height: 100vh;
   background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 h1 {
   font-size: 3rem;
   color: #333;
+  text-align: center;
 }
 
 .dashbord-content {
   flex: 1;
   padding: 20px;
-  margin-left: 220px; /* correspond à la largeur de la sidebar */
+  margin-left: 220px;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Media queries pour la responsivité */
+@media (max-width: 1024px) {
+  .dashbord-content {
+    margin-left: 180px;
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashbord {
+    flex-direction: column;
+  }
+  
+  .dashbord-content {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 15px;
+    width: 100%;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashbord-content {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
 }
 

@@ -1,0 +1,137 @@
+.carte-projet {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(40,40,40,0.13);
+  padding: 24px 24px 0 24px;    /* Padding dedans, pas en bas */
+  /* Espace entre la carte et la sidebar (horizontal) et espacement vertical identique */
+  margin-left: 32px;
+  margin-top: 32px;
+  /* Empêche la carte de s'étirer en hauteur dans le conteneur flex parent
+    : la carte prendra la hauteur de son contenu (s'arrêtera aux boutons) */
+  align-self: flex-start;
+  width: 350px;
+  box-sizing: border-box;
+  font-family: 'Montserrat', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.carte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 7px;
+}
+
+.carte-title {
+  font-size: 1.10rem;
+  font-weight: 700;
+  color: #183278;
+}
+.carte-title {
+  margin-bottom: 8px; /* espace entre le titre et le sous-titre */
+  line-height: 1.2;
+}
+
+.carte-menu .icon-3points {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.carte-subtitle,
+.carte-date,
+.carte-status {
+  text-align: left;
+  padding-left: 0; /* aligné pile à gauche */
+}
+
+.carte-subtitle {
+  color: #7a7a7c;
+  font-size: 1rem;
+  margin-bottom: 8px; /* plus d'espace entre subtitle et date */
+  line-height: 1.3;
+}
+
+.carte-date {
+  color: #aaa;
+  font-size: 0.95rem;
+  margin-bottom: 8px; /* plus d'espace entre date et badge */
+  line-height: 1.25;
+}
+
+.carte-status {
+  margin-bottom: 16px; /* espace avant les boutons */
+}
+
+/* Style commun pour les badges de statut */
+.status {
+  padding: 3px 14px;
+  border-radius: 12px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-active {
+  background: #e7f9ef;
+  color: #37c776;
+}
+
+.status-brouillon {
+  background: #fff4e6;
+  color: #d97706; /* orange */
+}
+
+.status-termine,
+.status-termine {
+  background: #eef6ff;
+  color: #21409A;
+}
+
+.carte-actions {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 24px; /* padding uniquement ici = la carte s'arrête pile après les boutons */
+}
+
+.btn-primary,
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  gap: 8px;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: #21409A;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #f4f6fa;
+  color: #21409A;
+  padding: 10px 22px;
+}
+
+.icon-action {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+/* Retirer le margin-left sur petits écrans où la sidebar devient horizontale */
+@media (max-width: 768px) {
+  .carte-projet {
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+    border-radius: 12px;
+  }
+}

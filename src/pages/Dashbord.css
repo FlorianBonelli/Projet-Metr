@@ -19,12 +19,34 @@ h1 {
 .dashbord-content {
   flex: 1;
   padding: 20px;
-  margin-left: 220px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   min-height: 100vh;
   box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #183278;
+  font-weight: 800;
+  font-family: 'Montserrat', Arial, sans-serif;
+  margin: 8px 0 20px 0;
+  /* Aligne le titre avec le début des cartes (même offset que .carte-projet) */
+  padding-left: 32px;
+}
+
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.dashbord-content-extra {
+  width: 100%;
 }
 
 /* Media queries pour la responsivité */

@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from '../composants/Sidebar';
 import ProfilComponent from '../composants/Profil';
 import Statistique from '../composants/Statistique';
-import GestionDesTaches from '../composants/GestionDesTaches';
+import Taches from '../composants/Taches';
 import Historique from '../composants/Historique';
 import logoMetr from '../assets/images/Logo_Metr.png';
 import './Profil.css';
@@ -29,7 +29,7 @@ function Profil() {
             </div>
             
             <div className="section-wrapper">
-              <GestionDesTaches />
+              <Taches />
             </div>
             
             <div className="section-wrapper">

@@ -13,12 +13,15 @@
     color: var(--text-color);
     padding: 20px 15px;
     border-radius: 50px; /* Coins arrondis comme sur la photo */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5); /* Ombre plus prononcée */
     position: relative; /* Pour positionner le bouton de bascule */
     height: 90vh; /* Ajuster la hauteur selon votre besoin */
     display: flex;
     flex-direction: column;
     font-family: Arial, sans-serif; /* Police à adapter */
+    z-index: 10; /* Pour que la sidebar soit au-dessus du contenu */
+    flex-shrink: 0; /* Empêche la sidebar de rétrécir */
+    margin-left: 20px; /* Marge à gauche pour éviter le chevauchement */
 }
 
 /* --- 1. Section Profil --- */
@@ -175,12 +178,6 @@
     transform: rotate(180deg);
 }
 
-/* Ajout d'une ombre et d'un décalage pour simuler le style "pop-up" */
-.sidebar-container {
-    /* Ceci est optionnel si la sidebar est statique, mais permet de simuler l'effet de la photo */
-    transform: translateX(10px); 
-    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
-}
 
 /* Media queries pour la responsivité de la sidebar */
 @media (max-width: 1024px) {

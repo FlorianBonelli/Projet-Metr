@@ -3,6 +3,9 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f7f9fc 0%, #eef3ff 100%);
   color: #1a2142;
+  gap: 20px; /* Espace entre la sidebar et le contenu */
+  padding: 20px;
+  padding-left: 0; /* Pas de padding à gauche pour laisser la sidebar visible */
 }
 
 .bibliotheques-content {
@@ -16,6 +19,7 @@
     linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(244, 248, 255, 0.85) 100%),
     url('data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"200\" viewBox=\"0 0 200 200\"%3E%3Cg fill=\"none\" stroke=\"%23dbe3ff\" stroke-width=\"0.8\" opacity=\"0.5\"%3E%3Cpath d=\"M0 25h200M0 75h200M0 125h200M0 175h200M25 0v200M75 0v200M125 0v200M175 0v200\"/%3E%3C/g%3E%3C/svg%3E');
   background-size: cover, 200px 200px;
+  margin-left: 0; /* Pas de marge à gauche pour éviter le chevauchement */
 }
 
 .bibliotheques-content::before {
@@ -26,11 +30,12 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   pointer-events: none;
+  z-index: 0; /* Assure que le fond est derrière le contenu */
 }
 
 .bibliotheques-content > * {
   position: relative;
-  z-index: 1;
+  z-index: 1; /* Assure que le contenu est au-dessus du fond */
 }
 
 .bibliotheques-header {

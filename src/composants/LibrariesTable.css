@@ -1,0 +1,231 @@
+.libraries-table {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 22px 50px rgba(34, 52, 99, 0.08);
+  padding: 12px;
+}
+
+.table-container {
+  width: 100%;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 0fr 3fr 2fr 1.5fr 0.8fr 1.3fr 1.3fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.selection-mode .table-header,
+.selection-mode .table-row {
+  grid-template-columns: 0.6fr 3fr 2fr 1.5fr 0.8fr 1.3fr 1.3fr;
+}
+
+.table-header {
+  padding: 16px 24px;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #7f88a8;
+}
+
+.column-select {
+  display: flex;
+  justify-content: center;
+}
+
+.table-body {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-row {
+  padding: 18px 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 28px rgba(34, 52, 99, 0.06);
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(34, 52, 99, 0.12);
+}
+
+.table-row.selected {
+  border: 1px solid rgba(255, 92, 53, 0.25);
+  box-shadow: 0 16px 32px rgba(255, 92, 53, 0.16);
+}
+
+.select-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.selection-mode .select-cell {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.select-cell input {
+  width: 18px;
+  height: 18px;
+  accent-color: #ff6b35;
+  cursor: pointer;
+}
+
+.designation-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.star-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(34, 52, 99, 0.12);
+  color: #9aa3c5;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.star-button.active {
+  background: rgba(255, 212, 67, 0.3);
+  color: #f6b900;
+}
+
+.star-button:hover,
+.star-button:focus {
+  transform: scale(1.05);
+}
+
+.designation-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.designation-info .label {
+  font-weight: 600;
+  color: #223463;
+}
+
+.tag {
+  background: rgba(64, 203, 119, 0.16);
+  color: #2a9862;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lot-cell {
+  color: #2f3f68;
+  font-weight: 600;
+}
+
+.table-row span {
+  color: #5c6893;
+  font-size: 14px;
+}
+
+@media (max-width: 1280px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 0fr 2.6fr 1.6fr 1.2fr 0.9fr 1.2fr 1.2fr;
+  }
+
+  .selection-mode .table-header,
+  .selection-mode .table-row {
+    grid-template-columns: 0.5fr 2.6fr 1.6fr 1.2fr 0.9fr 1.2fr 1.2fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .table-header {
+    display: none;
+  }
+
+  .table-body {
+    gap: 16px;
+  }
+
+  .table-row {
+    grid-template-columns: 0fr 1fr;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+
+  .selection-mode .table-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .select-cell {
+    justify-content: flex-start;
+  }
+
+  .selection-mode .select-cell {
+    align-self: flex-start;
+  }
+
+  .designation-cell,
+  .table-row span {
+    grid-column: 2 / -1;
+  }
+
+  .table-row span {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .table-row span::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #2f3f68;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .designation-cell {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .libraries-table {
+    padding: 10px;
+  }
+
+  .table-row {
+    padding: 18px 18px;
+  }
+
+  .designation-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .table-row span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+

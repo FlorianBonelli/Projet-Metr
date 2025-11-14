@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import FormulaireInscription from '../composants/FormulaireInscription';
 import './Inscription.css';
 import logoMetr from '../assets/images/Logo_Metr.png';
@@ -9,7 +10,9 @@ function Inscription() {
   return (
     <div className="inscription-page">
       <div className="logo-container">
-        <img src={logoMetr} alt="Logo Metr" className="logo-image" />
+        <Link to="/dashboard" className="logo-link" aria-label="Aller au tableau de bord">
+          <img src={logoMetr} alt="Logo Metr" className="logo-image" />
+        </Link>
       </div>
 
       <div className="decoration-left">

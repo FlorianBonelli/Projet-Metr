@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import FormulaireConnexion from '../composants/FormulaireConnexion';
 import './Connexion.css';
 import logoMetr from '../assets/images/Logo_Metr.png';
@@ -10,9 +11,11 @@ function Connexion() {
     <div className="connexion-page">
       {/* Logo */}
       <div className="logo-container">
-        <div className="logo">
-          <img src={logoMetr} alt="Logo Metr" className="logo-image" />
-        </div>
+        <Link to="/dashboard" className="logo-link" aria-label="Aller au tableau de bord">
+          <div className="logo">
+            <img src={logoMetr} alt="Logo Metr" className="logo-image" />
+          </div>
+        </Link>
       </div>
 
       {/* Image décorative gauche */}

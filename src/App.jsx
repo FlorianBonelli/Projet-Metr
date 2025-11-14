@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashbord from './pages/Dashbord';
 import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
+import Bibliotheques from './pages/Bibliotheques';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashbord />} />
         <Route path="/dashboard" element={<Dashbord />} />
+        <Route path="/bibliotheques" element={<Bibliotheques />} />
         <Route path="/profil" element={<Connexion />} />
         <Route path="/inscription" element={<Inscription />} />
         {/* Ajoutez d'autres routes ici si nécessaire */}

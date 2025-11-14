@@ -6,7 +6,7 @@ const Sidebar = () => {
     const navLinks = [
         { icon: '::', label: 'Tableau de bord', link: '/dashboard' },
         { icon: '📦', label: 'Projet', link: '/projet' },
-        { icon: '📚', label: 'Bibliothèque', link: '/bibliotheque' },
+        { icon: '📚', label: 'Bibliothèques', link: '/bibliotheques' },
         { icon: '🔔', label: 'Notification', link: '/notifications' },
         { icon: '👤', label: 'Profil', link: '/profil' },
     ];

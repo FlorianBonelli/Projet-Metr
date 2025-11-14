@@ -28,6 +28,17 @@
   animation: fadeInUp 0.8s ease-out;
 }
 
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-link:hover,
+.logo-link:focus {
+  outline: none;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

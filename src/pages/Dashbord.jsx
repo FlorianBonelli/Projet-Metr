@@ -2,6 +2,9 @@ import React from 'react';
 import './Dashbord.css';
 import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
+import { Link } from 'react-router-dom';
+import Taches from '../composants/Taches';
+import Stat from '../composants/Stat';
 
 
 function Dashbord() {
@@ -43,11 +46,14 @@ function Dashbord() {
               statusText="Terminé"
               statusType="termine"
             />
+            {/* Bouton "Voir plus" placé juste après la 4ème carte */}
+            <div className="cards-grid-more">
+              <Link to="/projet" className="projects-voir-more-grid">+ Voir plus</Link>
+            </div>
           </div>
 
-          <div className="dashbord-content-extra">
-            <h1>Hello</h1>
-          </div>
+          <Taches />
+          <Stat />
       </div>
     </div>
   );

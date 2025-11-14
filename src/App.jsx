@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashbord from './pages/Dashbord';
+import Projet from './pages/Projet';
 import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
 import Bibliotheques from './pages/Bibliotheques';
@@ -15,6 +16,7 @@ function App() {
         <Route path="/bibliotheques" element={<Bibliotheques />} />
         <Route path="/profil" element={<Connexion />} />
         <Route path="/inscription" element={<Inscription />} />
+        <Route path="/projet" element={<Projet />} />
         {/* Ajoutez d'autres routes ici si nécessaire */}
       </Routes>
     </Router>

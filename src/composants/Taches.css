@@ -1,0 +1,110 @@
+.taches-section {
+  width: 100%;
+  margin-top: 40px;
+  box-sizing: border-box;
+}
+
+.taches-section-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: #183278;
+  font-weight: 800;
+  font-size: 1.9rem;
+  margin: 0 0 18px var(--content-offset); /* offset to align with cards */
+}
+
+.taches-card {
+  background: rgba(255,255,255,0.6);
+  border-radius: 30px;
+  padding: 18px;
+  width: calc(100% - (var(--content-offset) * 2));
+  margin-left: var(--content-offset);
+  box-sizing: border-box;
+  box-shadow: 0 10px 40px rgba(16,24,40,0.06);
+}
+
+.taches-card-inner {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 6px 24px rgba(40,40,40,0.04);
+}
+
+.taches-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.taches-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.taches-voir-plus {
+  background: #fff;
+  border: 1px solid #e6e6e9;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.taches-table-wrap {
+  overflow: auto;
+  background: #fff;
+  border: 1px solid rgba(15,23,42,0.06);
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.taches-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.taches-table thead th {
+  text-align: left;
+  padding: 18px 20px;
+  color: #6b6b78;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+.taches-table tbody td {
+  padding: 20px 20px;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #333;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+
+.taches-table tbody tr:last-child td { border-bottom: none }
+
+.pill-caret { margin-left:8px; opacity:0.6; font-size:0.8rem }
+.date-late { color: #e11d48; font-weight:700 }
+
+.proj-pill { display:inline-block; background:#eef3ff; color:#21409A; padding:6px 10px; border-radius:12px; font-weight:600; font-size:0.85rem; }
+.prio { display:inline-block; padding:6px 10px; border-radius:12px; font-weight:700; font-size:0.85rem; }
+.prio-high { background:#ffe9e9; color:#e11d48 }
+.prio-medium { background:#fff4e6; color:#d97706 }
+.prio-low { background:#eef9f1; color:#16a34a }
+.etat { display:inline-block; padding:6px 10px; border-radius:12px; font-weight:700; font-size:0.85rem; }
+.etat-en-cours { background:#e7f9ef; color:#37c776 }
+.etat-a-faire { background:#fff7e6; color:#f59e0b }
+.etat-termine { background:#eef6ff; color:#21409A }
+
+@media (max-width:1024px) {
+  .taches-card { width: calc(100% - 40px); margin-left:20px }
+  .taches-section-title { margin-left:20px }
+}
+
+@media (max-width:768px) {
+  .taches-card, .taches-section-title { margin-left:0; width:100%; }
+  .taches-section-title { padding-left:16px }
+  .taches-table-wrap { overflow-x: auto }
+}

@@ -1,7 +1,13 @@
+:root{
+  --sidebar-width: 200px;
+  --content-offset: 32px;
+  --gutter-small: 16px;
+}
+
 .dashbord {
   display: flex;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   background-color: #f5f5f5;
   margin: 0;
   padding: 0;
@@ -18,7 +24,7 @@ h1 {
 
 .dashbord-content {
   flex: 1;
-  padding: 20px;
+  padding: 20px var(--content-offset);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -32,17 +38,56 @@ h1 {
   font-weight: 800;
   font-family: 'Montserrat', Arial, sans-serif;
   margin: 8px 0 20px 0;
-  /* Aligne le titre avec le début des cartes (même offset que .carte-projet) */
-  padding-left: 32px;
+  padding-left: var(--content-offset);
 }
 
 .cards-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr)); /* 3 cartes par ligne */
   gap: 24px;
-  align-items: flex-start;
+  align-items: start;
   width: 100%;
   margin-bottom: 32px;
+  box-sizing: border-box;
+  padding-left: var(--content-offset);
+  padding-right: var(--content-offset); /* padding à droite de la page */
+}
+
+.projects-controls {
+  width: 100%;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  padding-left: var(--content-offset); /* align with cards */
+}
+
+.projects-voir-plus {
+  background: #fff;
+  border: 1px solid #e6e6e9;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Bouton placé dans la grille après la 4ème carte */
+.cards-grid-more { display:flex; align-items:center; justify-content:center; align-self:center }
+.projects-voir-more-grid {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border:1px solid #e6e6e9;
+  padding:10px 18px;
+  border-radius:10px;
+  font-weight:700;
+  text-decoration:none;
+  color:#21409A;
+  transform: translateY(8px); /* descend légèrement pour être centré visuellement */
+}
+
+@media (max-width:768px) {
+  .cards-grid-more { justify-content:flex-start }
+  .projects-voir-more-grid { margin-left:16px; transform:none }
 }
 
 .dashbord-content-extra {
@@ -52,7 +97,7 @@ h1 {
 /* Media queries pour la responsivité */
 @media (max-width: 1024px) {
   .dashbord-content {
-    margin-left: 180px;
+    margin-left: 160px;
     padding: 15px;
   }
   
@@ -72,6 +117,11 @@ h1 {
     padding: 15px;
     width: 100%;
   }
+
+  /* On small screens remove grid left padding so content is full width */
+  .cards-grid { padding-left: 0; padding-right: var(--gutter-small); grid-template-columns: repeat(2, 1fr) }
+  .projects-controls { padding-left: 0 }
+  .page-title { padding-left: 16px }
   
   h1 {
     font-size: 2rem;

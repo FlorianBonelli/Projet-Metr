@@ -44,10 +44,6 @@ function Dashbord() {
               statusType="termine"
             />
           </div>
-
-          <div className="dashbord-content-extra">
-            <h1>Hello</h1>
-          </div>
       </div>
     </div>
   );

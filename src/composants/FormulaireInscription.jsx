@@ -19,7 +19,7 @@ function FormulaireInscription() {
     setTimeout(() => {
       console.log('Inscription:', { prenom, nom, email, password, profession, entreprise });
       setIsLoading(false);
-      // navigate('/dashboard');
+      navigate('/dashboard');
     }, 1500);
   };
 
@@ -131,7 +131,7 @@ function FormulaireInscription() {
         </button>
 
         <div className="formulaire-footer">
-          <p>Vous avez déjà un compte ? <button type="button" className="link-button" onClick={() => navigate('/profil')}>Connectez-vous !</button></p>
+          <p>Vous avez déjà un compte ? <button type="button" className="link-button" onClick={() => navigate('/connexion')}>Connectez-vous !</button></p>
         </div>
       </form>
     </div>

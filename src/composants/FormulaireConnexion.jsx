@@ -17,7 +17,7 @@ function FormulaireConnexion() {
       console.log('Email:', email);
       console.log('Password:', password);
       setIsLoading(false);
-      // navigate('/dashboard');
+      navigate('/dashboard');
     }, 1500);
   };
 

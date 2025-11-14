@@ -1,0 +1,156 @@
+.profil-page {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.profil-content {
+  flex: 1;
+  margin-left: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.profil-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo .logo-image {
+  height: 50px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+  opacity: 0.9;
+}
+
+.header-logo .logo-image:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.profil-main {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+  width: 100%;
+}
+
+.profil-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-wrapper {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.6s ease-out;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.section-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+.section-wrapper:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.section-wrapper:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.section-wrapper:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.section-wrapper:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .profil-content {
+    margin-left: 0;
+  }
+  
+  .profil-main {
+    padding: 20px;
+  }
+  
+  .profil-sections {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profil-header {
+    padding: 15px 20px;
+  }
+  
+  .header-logo .logo-image {
+    height: 35px;
+  }
+  
+  .profil-main {
+    padding: 15px;
+  }
+  
+  .profil-sections {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profil-header {
+    padding: 12px 15px;
+  }
+  
+  .header-logo .logo-image {
+    height: 30px;
+  }
+  
+  .profil-sections {
+    padding: 0 5px;
+  }
+}

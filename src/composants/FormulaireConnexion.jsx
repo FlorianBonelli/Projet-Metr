@@ -1,24 +1,38 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userService } from '../db/database';
 import './FormulaireConnexion.css';
 
 function FormulaireConnexion() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulation d'une connexion
-    setTimeout(() => {
-      console.log('Email:', email);
-      console.log('Password:', password);
+    try {
+      // Authentifier l'utilisateur avec le service Dexie
+      const user = await userService.authenticateUser(email, password);
+      
+      if (user) {
+        // Connexion réussie
+        console.log('Utilisateur connecté:', user);
+        navigate('/dashboard');
+      } else {
+        // Identifiants incorrects
+        setError('Email ou mot de passe incorrect. Veuillez vérifier vos identifiants ou vous inscrire.');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la connexion:', err);
+      setError('Une erreur est survenue lors de la connexion. Veuillez réessayer.');
+    } finally {
       setIsLoading(false);
-      navigate('/dashboard');
-    }, 1500);
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -68,6 +82,12 @@ function FormulaireConnexion() {
             'Se Connecter'
           )}
         </button>
+
+        {error && (
+          <div className="message error-message">
+            {error}
+          </div>
+        )}
 
         <button 
           type="button" 

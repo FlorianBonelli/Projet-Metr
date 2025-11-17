@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userService } from '../db/database';
 import './FormulaireInscription.css';
 
 function FormulaireInscription() {
@@ -10,17 +11,38 @@ function FormulaireInscription() {
   const [profession, setProfession] = useState('');
   const [entreprise, setEntreprise] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
+    setSuccess('');
     
-    setTimeout(() => {
-      console.log('Inscription:', { prenom, nom, email, password, profession, entreprise });
+    try {
+      // Créer l'utilisateur avec le service Dexie
+      await userService.createUser({
+        nom,
+        prenom,
+        email,
+        mot_de_passe: password,
+        role: profession || 'utilisateur'
+      });
+      
+      setSuccess('Compte créé avec succès ! Redirection...');
+      
+      // Redirection vers le dashboard après 1 seconde
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
+      
+    } catch (err) {
+      setError(err.message || 'Une erreur est survenue lors de l\'inscription');
+    } finally {
       setIsLoading(false);
-      navigate('/dashboard');
-    }, 1500);
+    }
   };
 
   const handleGoogleSignup = () => {
@@ -115,6 +137,18 @@ function FormulaireInscription() {
             "S'inscrire"
           )}
         </button>
+
+        {error && (
+          <div className="message error-message">
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className="message success-message">
+            {success}
+          </div>
+        )}
 
         <button 
           type="button" 

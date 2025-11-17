@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Dashbord />} />
+        <Route path="/" element={<Connexion />} />
         <Route path="/dashboard" element={<Dashbord />} />
         <Route path="/bibliotheques" element={<Bibliotheques />} />
         <Route path="/connexion" element={<Connexion />} />

@@ -1,21 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = () => {
-    const navLinks = [
-        { icon: '::', label: 'Tableau de bord', link: '/dashboard' },
-        { icon: '📦', label: 'Projet', link: '/projet' },
-        { icon: '📚', label: 'Bibliothèques', link: '/bibliotheques' },
-        { icon: '🔔', label: 'Notification', link: '/notifications' },
-        { icon: '👤', label: 'Profil', link: '/profil' },
-    ];
+// Import des icônes SVG
+import AccueilIcon from '../assets/images/accueil.svg';
+import ProjetIcon from '../assets/images/projet.svg';
+import BibliothequeIcon from '../assets/images/bibliothèque.svg';
+import NotificationIcon from '../assets/images/notification.svg';
+import ProfilIcon from '../assets/images/profil.svg';
 
-    const recentProjects = [
-        { icon: '📑', label: 'Rénovation Paris' },
-        { icon: '📑', label: 'Costa Architectes' },
-        { icon: '📑', label: 'Groupe Carrefour' },
-    ];
+const navLinks = [
+    { icon: AccueilIcon, label: 'Tableau de bord', link: '/dashboard' },
+    { icon: ProjetIcon, label: 'Projet', link: '/projet' },
+    { icon: BibliothequeIcon, label: 'Bibliothèque', link: '/bibliotheques' },
+    { icon: NotificationIcon, label: 'Notification', link: '/notifications' },
+    { icon: ProfilIcon, label: 'Profil', link: '/profil' },
+];
+
+const recentProjects = [
+    { icon: ProjetIcon, label: 'Rénovation Paris' },
+    { icon: ProjetIcon, label: 'Costa Architectes' },
+    { icon: ProjetIcon, label: 'Groupe Carrefour' },
+];
+
+const Sidebar = () => {
+    const location = useLocation();
 
     return (
         <div className="sidebar-container">
@@ -26,8 +35,14 @@ const Sidebar = () => {
 
             <nav className="nav-links">
                 {navLinks.map((item) => (
-                    <Link key={item.label} to={item.link} className="nav-item">
-                        <span className="icon">{item.icon}</span>
+                    <Link
+                        key={item.label}
+                        to={item.link}
+                        className={`nav-item${location.pathname === item.link ? ' active' : ''}`}
+                    >
+                        <span className="icon">
+                            <img src={item.icon} alt={item.label} />
+                        </span>
                         {item.label}
                     </Link>
                 ))}
@@ -38,7 +53,9 @@ const Sidebar = () => {
                 <div className="recent-list">
                     {recentProjects.map((item) => (
                         <div key={item.label} className="recent-item">
-                            <span className="icon">{item.icon}</span>
+                            <span className="icon">
+                                <img src={item.icon} alt="Projet" />
+                            </span>
                             {item.label}
                         </div>
                     ))}
@@ -52,12 +69,12 @@ const Sidebar = () => {
                     <span className="icon">⏱</span> Créer un projet
                 </button>
             </div>
-            
+
             <div className="toggle-button">
                 <span className="arrow">{'<'}</span>
             </div>
         </div>
     );
 };
- 
+
 export default Sidebar;

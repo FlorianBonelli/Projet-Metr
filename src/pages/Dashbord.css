@@ -39,6 +39,11 @@ h1 {
   font-family: 'Montserrat', Arial, sans-serif;
   margin: 8px 0 20px 0;
   padding-left: var(--content-offset);
+  transition: color 150ms ease;
+}
+
+.page-title:hover {
+  color: #2b63c8; /* légèrement éclairci */
 }
 
 .cards-grid {

@@ -70,3 +70,11 @@ img {
   white-space: nowrap;
   border: 0;
 }
+.page-padding {
+  padding: 48px 0px 0 100px; /* Haut, droite, bas, gauche */
+  /* Ajoute ou ajuste le padding comme sur la capture */
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: inherit; /* Pour respecter le background principal */
+}

@@ -11,6 +11,7 @@ function Dashbord() {
   return (
     <div className="dashbord">
       <Sidebar />
+      <div className="main-content page-padding">
       <div className="dashbord-content">
           <h2 className="page-title">MES PROJETS RÉCENTS</h2>
 
@@ -55,7 +56,7 @@ function Dashbord() {
           <Taches />
           <Stat />
       </div>
-    </div>
+    </div></div>
   );
 }
 

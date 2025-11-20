@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './DocumentProjet.css';
 
-const DocumentProjet = () => {
+const DocumentProjet = ({ onFilesChange }) => {
     const [activeTab, setActiveTab] = useState('plans');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [dragOver, setDragOver] = useState(false);
@@ -38,11 +38,23 @@ const DocumentProjet = () => {
             return validTypes.includes(file.type);
         });
         
-        setUploadedFiles(prev => [...prev, ...validFiles]);
+        const newUploadedFiles = [...uploadedFiles, ...validFiles];
+        setUploadedFiles(newUploadedFiles);
+        
+        // Transmettre les fichiers au composant parent
+        if (onFilesChange) {
+            onFilesChange(newUploadedFiles);
+        }
     };
 
     const removeFile = (index) => {
-        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+        const newUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+        setUploadedFiles(newUploadedFiles);
+        
+        // Transmettre les fichiers mis à jour au composant parent
+        if (onFilesChange) {
+            onFilesChange(newUploadedFiles);
+        }
     };
 
     return (

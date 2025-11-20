@@ -143,3 +143,54 @@ h1 {
   }
 }
 
+/* Messages d'état pour les projets */
+.loading-message,
+.error-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 16px;
+    color: #6b7280;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    border: 2px dashed #d1d5db;
+}
+
+.error-message {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-color: #fecaca;
+}
+
+.no-projects-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #f9fafb;
+    border-radius: 16px;
+    border: 2px dashed #d1d5db;
+}
+
+.no-projects-message p {
+    font-size: 18px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
+}
+
+.create-first-project-btn {
+    display: inline-block;
+    background-color: #f97316;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+}
+
+.create-first-project-btn:hover {
+    background-color: #ea580c;
+    box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+}
+

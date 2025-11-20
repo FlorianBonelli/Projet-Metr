@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './InfoProjet.css';
 
-const InfoProjet = () => {
+const InfoProjet = ({ onDataChange }) => {
     const [formData, setFormData] = useState({
         nomProjet: '',
         client: '',
@@ -13,10 +13,16 @@ const InfoProjet = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
+        const newFormData = {
+            ...formData,
             [name]: value
-        }));
+        };
+        setFormData(newFormData);
+        
+        // Transmettre les données au composant parent
+        if (onDataChange) {
+            onDataChange(newFormData);
+        }
     };
 
     return (

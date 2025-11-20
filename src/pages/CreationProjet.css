@@ -82,6 +82,18 @@
     transform: translateY(1px);
 }
 
+.create-button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.create-button:disabled:hover {
+    background-color: #9ca3af;
+    box-shadow: none;
+    transform: none;
+}
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .creation-projet-content {

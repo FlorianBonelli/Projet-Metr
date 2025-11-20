@@ -6,6 +6,7 @@ export const db = new Dexie('ProjetMetrDatabase');
 // Définir le schéma de la base de données
 db.version(1).stores({
   utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role',
+  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation'
 });
 
 console.log('Database configured successfully!');
@@ -69,6 +70,102 @@ export const userService = {
       return await db.utilisateur.toArray();
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
+      throw error;
+    }
+  }
+};
+
+// Fonctions utilitaires pour la gestion des projets
+export const projectService = {
+  // Créer un nouveau projet
+  async createProject(projectData) {
+    try {
+      const {
+        nom,
+        client,
+        referenceInterne,
+        typologieProjet,
+        adresseProjet,
+        dateLivraison,
+        status = 'En cours',
+        membre = [],
+        fichier = []
+      } = projectData;
+      
+      const projectId = await db.projets.add({
+        nom,
+        client,
+        referenceInterne,
+        typologieProjet,
+        adresseProjet,
+        dateLivraison,
+        status,
+        membre,
+        fichier,
+        date: new Date().toISOString().split('T')[0], // Date au format YYYY-MM-DD
+        dateCreation: new Date().toISOString()
+      });
+      
+      console.log('Projet créé avec l\'ID:', projectId);
+      return projectId;
+    } catch (error) {
+      console.error('Erreur lors de la création du projet:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer tous les projets
+  async getAllProjects() {
+    try {
+      return await db.projets.orderBy('dateCreation').reverse().toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer un projet par ID
+  async getProjectById(id) {
+    try {
+      return await db.projets.get(id);
+    } catch (error) {
+      console.error('Erreur lors de la récupération du projet:', error);
+      throw error;
+    }
+  },
+  
+  // Mettre à jour un projet
+  async updateProject(id, updates) {
+    try {
+      await db.projets.update(id, updates);
+      console.log('Projet mis à jour:', id);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du projet:', error);
+      throw error;
+    }
+  },
+  
+  // Supprimer un projet
+  async deleteProject(id) {
+    try {
+      await db.projets.delete(id);
+      console.log('Projet supprimé:', id);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du projet:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer les projets récents (limité à un nombre)
+  async getRecentProjects(limit = 6) {
+    try {
+      return await db.projets
+        .orderBy('dateCreation')
+        .reverse()
+        .limit(limit)
+        .toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets récents:', error);
       throw error;
     }
   }

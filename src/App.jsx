@@ -6,6 +6,7 @@ import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
 import Bibliotheques from './pages/Bibliotheques';
 import Profil from './pages/Profil';
+import CreationProjet from './pages/CreationProjet';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/profil" element={<Profil />} />
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/projet" element={<Projet />} />
+        <Route path="/creation-projet" element={<CreationProjet />} />
         {/* Ajoutez d'autres routes ici si nécessaire */}
       </Routes>
     </Router>

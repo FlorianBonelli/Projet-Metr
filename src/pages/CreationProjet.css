@@ -1,0 +1,148 @@
+.creation-projet-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8fafc;
+}
+
+.creation-projet-content {
+    flex: 1;
+    margin-left: 260px; /* Largeur de la sidebar */
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.creation-projet-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.creation-projet-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 32px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-button {
+    background-color: transparent;
+    color: #6b7280;
+    border: 2px solid #d1d5db;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel-button:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.create-button {
+    background-color: #f97316;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+}
+
+.create-button:hover {
+    background-color: #ea580c;
+    box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+}
+
+.create-button:active {
+    transform: translateY(1px);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .creation-projet-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 28px;
+    }
+    
+    .creation-projet-container {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .creation-projet-content {
+        padding: 16px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .cancel-button,
+    .create-button {
+        width: 100%;
+        padding: 16px;
+    }
+}
+
+/* Animation pour l'apparition des composants */
+.creation-projet-container > * {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.creation-projet-container > *:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.creation-projet-container > *:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.creation-projet-container > *:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

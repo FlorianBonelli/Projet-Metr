@@ -32,18 +32,65 @@ h1 {
   box-sizing: border-box;
 }
 
+/* Header avec titre, logo et bouton alignés horizontalement */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 32px;
+  padding-left: var(--content-offset);
+  padding-right: var(--content-offset);
+}
+
 .page-title {
   font-size: 2rem;
   color: #183278;
   font-weight: 800;
   font-family: 'Montserrat', Arial, sans-serif;
-  margin: 8px 0 20px 0;
-  padding-left: var(--content-offset);
+  margin: 0;
   transition: color 150ms ease;
 }
 
 .page-title:hover {
   color: #2b63c8; /* légèrement éclairci */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.create-project-btn {
+  background-color: #f97316;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-project-btn:hover {
+  background-color: #ea580c;
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+  transform: translateY(-1px);
+}
+
+.create-project-btn:active {
+  transform: translateY(0);
 }
 
 .cards-grid {
@@ -123,10 +170,36 @@ h1 {
     width: 100%;
   }
 
+  /* Header responsive */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .header-right {
+    gap: 12px;
+  }
+  
+  .dashboard-logo {
+    height: 32px;
+  }
+  
+  .create-project-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
   /* On small screens remove grid left padding so content is full width */
   .cards-grid { padding-left: 0; padding-right: var(--gutter-small); grid-template-columns: repeat(2, 1fr) }
   .projects-controls { padding-left: 0 }
-  .page-title { padding-left: 16px }
   
   h1 {
     font-size: 2rem;

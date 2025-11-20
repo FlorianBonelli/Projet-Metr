@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import './Dashbord.css';
 import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
+import ModifProjet from '../composants/ModifProjet';
 import { Link } from 'react-router-dom';
 import Taches from '../composants/Taches';
 import Stat from '../composants/Stat';
 import { projectService } from '../db/database';
+import LogoMetr from '../assets/images/Logo_Metr.png';
 
 function Dashbord() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModifModalOpen, setIsModifModalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   // Charger les projets depuis la base de données
   useEffect(() => {
@@ -52,13 +56,50 @@ function Dashbord() {
     }
   };
 
+  // Fonction pour gérer la suppression d'un projet
+  const handleDeleteProject = (projectId) => {
+    setProjects(prevProjects => prevProjects.filter(project => project.id !== projectId));
+  };
+
+  // Fonction pour gérer la modification d'un projet
+  const handleEditProject = (projectId) => {
+    setSelectedProjectId(projectId);
+    setIsModifModalOpen(true);
+  };
+
+  // Fonction pour fermer la modal de modification
+  const handleCloseModifModal = () => {
+    setIsModifModalOpen(false);
+    setSelectedProjectId(null);
+  };
+
+  // Fonction appelée quand un projet est mis à jour
+  const handleProjectUpdated = (projectId, updatedData) => {
+    setProjects(prevProjects => 
+      prevProjects.map(project => 
+        project.id === projectId 
+          ? { ...project, ...updatedData }
+          : project
+      )
+    );
+  };
+
   return (
     <div className="dashbord">
       <Sidebar />
       <div className="main-content page-padding">
       <div className="dashbord-content">
-          <h2 className="page-title">MES PROJETS RÉCENTS</h2>
-
+          {/* Header avec titre, logo et bouton alignés */}
+          <div className="dashboard-header">
+            <h2 className="page-title">MES PROJETS RÉCENTS</h2>
+            <div className="header-right">
+              <img src={LogoMetr} alt="Metr Logo" className="dashboard-logo" />
+              <Link to="/creation-projet" className="create-project-btn">
+                Créer un projet
+              </Link>
+            </div>
+          </div>
+          
           <div className="cards-grid">
             {loading ? (
               <div className="loading-message">Chargement des projets...</div>
@@ -69,11 +110,14 @@ function Dashbord() {
                 {projects.map((project) => (
                   <CarteProjet
                     key={project.id}
+                    id={project.id}
                     title={project.nom}
                     subtitle={project.client}
                     date={formatDate(project.dateCreation)}
                     statusText={project.status}
                     statusType={getStatusType(project.status)}
+                    onDelete={handleDeleteProject}
+                    onEdit={handleEditProject}
                   />
                 ))}
                 {/* Bouton "Voir plus" placé après les cartes */}
@@ -95,6 +139,14 @@ function Dashbord() {
           <Stat />
         </div>
       </div>
+      
+      {/* Modal de modification */}
+      <ModifProjet
+        isOpen={isModifModalOpen}
+        onClose={handleCloseModifModal}
+        projectId={selectedProjectId}
+        onProjectUpdated={handleProjectUpdated}
+      />
     </div>
   );
 }

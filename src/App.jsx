@@ -7,6 +7,7 @@ import Inscription from './pages/Inscription';
 import Bibliotheques from './pages/Bibliotheques';
 import Profil from './pages/Profil';
 import CreationProjet from './pages/CreationProjet';
+import InfoProjet from './pages/InfoProjet';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/projet" element={<Projet />} />
         <Route path="/creation-projet" element={<CreationProjet />} />
+        <Route path="/info-projet/:projectId" element={<InfoProjet />} />
         {/* Ajoutez d'autres routes ici si nécessaire */}
       </Routes>
     </Router>

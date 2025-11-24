@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./CarteProjet.css";
 import Icon3Points from "../assets/images/3points.svg";
 import IconOuvrir from "../assets/images/Ouvrir.svg";
@@ -17,6 +18,7 @@ export default function CarteProjet({
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   // Fermer le menu quand on clique à l'extérieur
   useEffect(() => {
@@ -58,6 +60,10 @@ export default function CarteProjet({
       }
     }
   };
+
+  const handleDossierClick = () => {
+    navigate(`/info-projet/${id}`);
+  };
   return (
     <div className="carte-projet">
       <div className="carte-header">
@@ -93,7 +99,7 @@ export default function CarteProjet({
           <img src={IconOuvrir} alt="Ouvrir" className="icon-action" />
           Ouvrir
         </button>
-        <button className="btn-secondary">
+        <button className="btn-secondary" onClick={handleDossierClick}>
           <img src={IconDossier} alt="Dossier" className="icon-action" />
           Dossier
         </button>

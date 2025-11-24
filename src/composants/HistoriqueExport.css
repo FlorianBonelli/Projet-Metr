@@ -1,0 +1,109 @@
+.historique-export-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    max-width: 350px;
+}
+
+.historique-export-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 16px 0;
+}
+
+.historique-export-table {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 500;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.header-cell {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+}
+
+.header-cell:not(:last-child) {
+    border-right: 1px solid #e5e7eb;
+}
+
+.table-body {
+    background: white;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+    background-color: #f9fafb;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.cell {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #374151;
+}
+
+.cell:not(:last-child) {
+    border-right: 1px solid #f3f4f6;
+}
+
+.cell.nom {
+    gap: 8px;
+}
+
+.export-icon {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.export-name {
+    font-weight: 400;
+    color: #1f2937;
+}
+
+.voir-plus-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.voir-plus-link {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.voir-plus-link:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}

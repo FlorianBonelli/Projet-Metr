@@ -1,0 +1,140 @@
+.historique-plan-container {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 600px;
+    margin: 40px auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.historique-plan-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 24px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.historique-plan-table {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 160px 100px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.header-cell {
+    padding: 12px 16px;
+}
+
+.table-body {
+    background: white;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 160px 100px;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: center;
+    background: white;
+    transition: background-color 0.15s ease;
+}
+
+.table-row:hover {
+    background: #f9fafb;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.cell {
+    padding: 16px;
+    font-size: 14px;
+}
+
+.cell-selection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.star-empty {
+    cursor: pointer;
+}
+
+.cell-nom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plan-name {
+    font-weight: 500;
+    color: #111827;
+}
+
+.default-label {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.cell-date {
+    color: #4b5563;
+}
+
+.cell-action {
+    display: flex;
+    justify-content: center;
+}
+
+.voir-plus-btn {
+    background: #dbeafe;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #1e40af;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.voir-plus-btn:hover {
+    background: #bfdbfe;
+}
+
+.voir-plus-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.voir-plus-link {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    font-weight: 500;
+}
+
+.voir-plus-link:hover {
+    background: #f3f4f6;
+    color: #374151;
+}

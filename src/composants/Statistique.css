@@ -247,6 +247,18 @@
   font-weight: 500;
 }
 
+.profil-stat-section {
+  width: 100%;
+}
+
+.profil-stat-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  color: #183278;
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin: 0 0 18px 0;
+}
+
 /* Cartes statistiques partagées (Profil + Dashboard) */
 
 .stats-cards-grid {
@@ -258,7 +270,7 @@
 .stat-card {
   background: white;
   border-radius: 16px;
-  padding: 20px;
+  padding: 28px 32px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid #e8eef5;

@@ -1,6 +1,7 @@
 .stat-section {
   width: 100%;
   margin-top: 40px;
+  margin-bottom: 40px;
   box-sizing: border-box;
 }
 
@@ -18,6 +19,7 @@
   gap: 24px;
   box-sizing: border-box;
   padding-left: var(--content-offset);
+  padding-right: var(--content-offset);
 }
 
 .stat-card {
@@ -46,9 +48,17 @@
 .stat-icon { font-size:1.8rem }
 
 @media (max-width:1024px) {
-  .stat-grid { gap:16px; padding-left:calc(var(--content-offset) / 2) }
+  .stat-grid {
+    gap: 16px;
+    padding-left: calc(var(--content-offset) / 2);
+    padding-right: calc(var(--content-offset) / 2);
+  }
 }
 @media (max-width:768px) {
-  .stat-grid { padding-left:0; grid-auto-rows: minmax(80px, auto) }
+  .stat-grid {
+    padding-left: 16px;
+    padding-right: 16px;
+    grid-auto-rows: minmax(80px, auto);
+  }
   .stat-section-title { padding-left:16px }
 }

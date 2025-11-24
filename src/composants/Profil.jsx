@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../db/database';
 import './Profil.css';
+import EyeOpen from '../assets/images/EyeOpen.svg';
+import EyeSlash from '../assets/images/EyeSlash.svg';
+import Modif from '../assets/images/Modif.svg';
+import Deconnexion from '../assets/images/deconnexion.svg';
+import Statistique from './Statistique';
 
 function Profil() {
   const [isVisible, setIsVisible] = useState(false);
@@ -130,7 +135,11 @@ function Profil() {
                   type="button"
                   title={passwordVisible ? 'Masquer' : 'Afficher'}
                 >
-                  {passwordVisible ? '👁️' : '�'}
+                  <img
+                    src={passwordVisible ? EyeOpen : EyeSlash}
+                    alt={passwordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    className="icon-eye"
+                  />
                 </button>
               </div>
             </div>
@@ -142,71 +151,21 @@ function Profil() {
               onClick={() => setShowChangePasswordModal(true)}
             >
               <span>Changer le mot de passe</span>
-              <span className="btn-icon">✏️</span>
+              <span className="btn-icon">
+                <img src={Modif} alt="Changer le mot de passe" className="icon-btn" />
+              </span>
             </button>
             <button className="disconnect-btn" onClick={handleDisconnect}>
               <span>Se déconnecter</span>
-              <span className="btn-icon">↗️</span>
+              <span className="btn-icon">
+                <img src={Deconnexion} alt="Se déconnecter" className="icon-btn" />
+              </span>
             </button>
           </div>
         </div>
 
         {/* Statistiques à droite */}
-        <div className="stats-cards-grid">
-          <div className="stat-card projects-card">
-            <div className="stat-icon projects-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                <polyline points="13 2 13 9 20 9"></polyline>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <h4 className="stat-title">Projets actifs</h4>
-              <div className="stat-number">2</div>
-              <p className="stat-subtitle">↑ +1 ce mois-ci</p>
-            </div>
-          </div>
-
-          <div className="stat-card time-card">
-            <div className="stat-icon time-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"></path>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <h4 className="stat-title">m² mesurés ce mois</h4>
-              <div className="stat-number">1254</div>
-              <p className="stat-subtitle">↑ +326 vs mois dernier</p>
-            </div>
-          </div>
-
-          <div className="stat-card library-card">
-            <div className="stat-icon library-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <h4 className="stat-title">Nombre de bibliothèques</h4>
-              <div className="stat-number">5</div>
-              <p className="stat-subtitle">↑ +2 ce mois-ci</p>
-            </div>
-          </div>
-
-          <div className="stat-card total-projects-card">
-            <div className="stat-icon total-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <h4 className="stat-title">Nombre total de projets</h4>
-              <div className="stat-number">6</div>
-              <p className="stat-subtitle">↑ +3 ce mois-ci</p>
-            </div>
-          </div>
-        </div>
+        <Statistique variant="profil" />
       </div>
 
       {showChangePasswordModal && (

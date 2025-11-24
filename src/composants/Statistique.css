@@ -247,6 +247,124 @@
   font-weight: 500;
 }
 
+/* Cartes statistiques partagées (Profil + Dashboard) */
+
+.stats-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e8eef5;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 110px;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover::before,
+.stat-card.active::before {
+  transform: scaleX(1);
+}
+
+.stat-card:hover,
+.stat-card.active {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.projects-icon {
+  background: #e8f0ff; /* bleu */
+  color: #1e40af;
+}
+
+.time-icon {
+  background: #f0fdf4; /* vert */
+  color: #16a34a;
+}
+
+.library-icon {
+  background: #fee2e2; /* rouge clair */
+  color: #dc2626; /* icône rouge */
+}
+
+.total-icon {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.stat-icon-img {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-content {
+  text-align: left;
+  flex: 1;
+}
+
+.stat-title {
+  font-size: 0.8rem;
+  color: #718096;
+  margin: 0 0 6px 0;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+  line-height: 1;
+}
+
+.stat-subtitle {
+  font-size: 0.75rem;
+  color: #48bb78;
+  margin: 0;
+  font-weight: 500;
+}
+
 @media (max-width: 1024px) {
   .stats-grid {
     grid-template-columns: 1fr;

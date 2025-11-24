@@ -175,6 +175,12 @@
   transform: scale(1.1);
 }
 
+.icon-eye {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 .profile-actions {
   display: flex;
   flex-direction: column;
@@ -230,6 +236,12 @@
 
 .disconnect-btn .btn-icon {
   font-size: 1.1rem;
+}
+
+.icon-btn {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .stats-cards-grid {
@@ -290,23 +302,29 @@
 }
 
 .projects-icon {
-  background: #e8f0ff;
+  background: #e8f0ff; /* bleu */
   color: #1e40af;
 }
 
 .time-icon {
-  background: #f0fdf4;
+  background: #f0fdf4; /* vert */
   color: #16a34a;
 }
 
 .library-icon {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #fee2e2; /* rouge clair */
+  color: #dc2626; /* icône rouge */
 }
 
 .total-icon {
   background: #fffbeb;
   color: #b45309;
+}
+
+.stat-icon-img {
+  width: 26px;
+  height: 26px;
+  display: block;
 }
 
 .stat-card:hover .stat-icon {

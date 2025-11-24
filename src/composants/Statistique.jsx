@@ -2,7 +2,7 @@ import React from 'react';
 import './Statistique.css';
 import Cartable from '../assets/images/cartable.svg';
 import Regle from '../assets/images/regle.svg';
-import Bibliotheque from '../assets/images/bibliothèque.svg';
+import Bibliotheque from '../assets/images/bibliothèque.svg';
 
 function Statistique({ variant = 'profil' }) {
   const isDashboard = variant === 'dashboard';

@@ -11,6 +11,32 @@ db.version(1).stores({
 
 console.log('Database configured successfully!');
 
+// Fonction pour initialiser un utilisateur de test
+export const initializeTestUser = async () => {
+  try {
+    const existingUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+    if (!existingUser) {
+      await db.utilisateur.add({
+        nom: 'Brosseau',
+        prenom: 'Antoine',
+        email: 'antoine.brosseau@edu.ece.fr',
+        mot_de_passe: 'password123',
+        profession: 'Économiste',
+        entreprise: 'Bouygues Immobilier',
+        role: 'utilisateur'
+      });
+      console.log('Utilisateur de test créé avec succès');
+    } else {
+      console.log('Utilisateur de test existe déjà');
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation de l\'utilisateur de test:', error);
+  }
+};
+
+// Initialiser l'utilisateur de test au démarrage
+initializeTestUser();
+
 // Fonctions utilitaires pour la gestion des utilisateurs
 export const userService = {
   // Créer un nouvel utilisateur

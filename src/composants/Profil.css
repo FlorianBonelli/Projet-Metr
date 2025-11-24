@@ -1,5 +1,8 @@
 .profil-component {
-  padding: 30px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -10,30 +13,11 @@
   transform: translateY(0);
 }
 
-.profil-header-section {
-  margin-bottom: 30px;
-}
-
-.section-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.025em;
-}
-
-.section-subtitle {
-  font-size: 1rem;
-  color: #718096;
-  margin: 0;
-  font-weight: 500;
-}
-
 .profil-main-grid {
   display: grid;
   grid-template-columns: 380px 1fr;
   gap: 40px;
-  align-items: start;
+  max-width: 1400px;
 }
 
 .profil-info-card {
@@ -41,17 +25,18 @@
   border-radius: 20px;
   padding: 40px 30px;
   color: #2d3748;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8eef5;
 }
 
 .profil-info-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-section {
@@ -137,15 +122,17 @@
   width: 100%;
   border-top: 1px solid #e2e8f0;
   padding-top: 20px;
+  text-align: left;
 }
 
 .detail-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: none;
   font-size: 0.95rem;
+  gap: 15px;
 }
 
 .detail-row:last-child {
@@ -154,12 +141,13 @@
 
 .detail-label {
   font-weight: 600;
-  color: #4a5568;
+  color: #1e40af;
+  min-width: 120px;
 }
 
 .detail-value {
   font-weight: 500;
-  color: #2d3748;
+  color: #718096;
 }
 
 .password-row {
@@ -169,8 +157,8 @@
 }
 
 .eye-btn {
-  background: #f0f4f8;
-  border: 1px solid #e2e8f0;
+  background: transparent;
+  border: none;
   border-radius: 6px;
   padding: 6px 10px;
   cursor: pointer;
@@ -179,11 +167,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #a0aec0;
 }
 
 .eye-btn:hover {
-  background: #e2e8f0;
-  transform: scale(1.05);
+  color: #718096;
+  transform: scale(1.1);
 }
 
 .profile-actions {
@@ -222,6 +211,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.change-password-btn .btn-icon {
+  font-size: 1.1rem;
+}
+
 .disconnect-btn {
   background: #ff6b35;
   color: white;
@@ -235,6 +228,10 @@
   box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
 }
 
+.disconnect-btn .btn-icon {
+  font-size: 1.1rem;
+}
+
 .stats-cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -244,16 +241,17 @@
 .stat-card {
   background: white;
   border-radius: 16px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e8eef5;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   gap: 20px;
+  min-height: 110px;
 }
 
 .stat-card::before {
@@ -262,7 +260,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: linear-gradient(90deg, #667eea, #764ba2);
   transform: scaleX(0);
   transition: transform 0.3s ease;
@@ -275,8 +273,8 @@
 
 .stat-card:hover,
 .stat-card.active {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
@@ -292,19 +290,23 @@
 }
 
 .projects-icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #e8f0ff;
+  color: #1e40af;
 }
 
 .time-icon {
-  background: linear-gradient(135deg, #f093fb, #f5576c);
+  background: #f0fdf4;
+  color: #16a34a;
 }
 
 .library-icon {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .total-icon {
-  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  background: #fffbeb;
+  color: #b45309;
 }
 
 .stat-card:hover .stat-icon {
@@ -317,44 +319,66 @@
 }
 
 .stat-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #718096;
-  margin: 0 0 8px 0;
-  font-weight: 600;
+  margin: 0 0 6px 0;
+  font-weight: 500;
   text-transform: capitalize;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .stat-number {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 700;
   color: #2d3748;
-  margin: 0 0 5px 0;
+  margin: 0 0 4px 0;
   line-height: 1;
 }
 
 .stat-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #48bb78;
   margin: 0;
   font-weight: 500;
 }
 
 @media (max-width: 1200px) {
-  .profil-content-grid {
+  .profil-main-grid {
     grid-template-columns: 350px 1fr;
     gap: 30px;
   }
 }
 
 @media (max-width: 1024px) {
-  .profil-content-grid {
+  .profil-main-grid {
     grid-template-columns: 1fr;
     gap: 25px;
   }
   
   .stats-cards-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .profil-component {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .profil-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profil-info-card {
+    padding: 30px 20px;
   }
 }
 

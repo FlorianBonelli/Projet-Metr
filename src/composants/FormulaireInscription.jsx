@@ -28,13 +28,16 @@ function FormulaireInscription() {
         prenom,
         email,
         mot_de_passe: password,
-        role: profession || 'utilisateur'
+        profession,
+        entreprise,
+        role: 'utilisateur'
       });
       
       setSuccess('Compte créé avec succès ! Redirection...');
       
       // Redirection vers le dashboard après 1 seconde
       setTimeout(() => {
+        localStorage.setItem('userEmail', email);
         navigate('/dashboard');
       }, 1000);
       

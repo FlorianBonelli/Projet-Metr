@@ -11,7 +11,7 @@ function Profil() {
   return (
     <div className="profil-page">
       <Sidebar />
-      <div className="profil-content">
+      <div className="profil-content page-padding">
         <div className="profil-header" style={{ display: 'flex', justifyContent: 'center' }}>
           <div className="header-logo">
             <img src={logoMetr} alt="Logo Metr" className="logo-image" />
@@ -20,18 +20,22 @@ function Profil() {
         
         <div className="profil-main">
           <div className="profil-sections">
-            <div className="section-wrapper">
-              <ProfilComponent />
+            {/* Première ligne: Profil et Statistiques côte à côte */}
+            <div className="profil-stats-row">
+              <div className="profil-wrapper">
+                <ProfilComponent />
+              </div>
+              <div className="stats-wrapper">
+                <Statistique />
+              </div>
             </div>
             
-            <div className="section-wrapper">
-              <Statistique />
-            </div>
-            
+            {/* Deuxième ligne: Tâches */}
             <div className="section-wrapper">
               <Taches />
             </div>
             
+            {/* Troisième ligne: Historique */}
             <div className="section-wrapper">
               <Historique />
             </div>

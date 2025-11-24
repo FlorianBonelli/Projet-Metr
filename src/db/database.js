@@ -5,7 +5,7 @@ export const db = new Dexie('ProjetMetrDatabase');
 
 // Définir le schéma de la base de données
 db.version(1).stores({
-  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role',
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation'
 });
 
@@ -16,7 +16,7 @@ export const userService = {
   // Créer un nouvel utilisateur
   async createUser(userData) {
     try {
-      const { nom, prenom, email, mot_de_passe, role = 'utilisateur' } = userData;
+      const { nom, prenom, email, mot_de_passe, role = 'utilisateur', profession = '', entreprise = '' } = userData;
       
       // Vérifier si l'email existe déjà
       const existingUser = await db.utilisateur.where('email').equals(email).first();
@@ -30,7 +30,9 @@ export const userService = {
         prenom,
         email,
         mot_de_passe,
-        role
+        role,
+        profession,
+        entreprise
       });
       
       return userId;
@@ -70,6 +72,30 @@ export const userService = {
       return await db.utilisateur.toArray();
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour le mot de passe d'un utilisateur
+  async updateUserPassword(userId, newPassword) {
+    try {
+      await db.utilisateur.update(userId, { mot_de_passe: newPassword });
+      console.log('Mot de passe mis à jour pour l\'utilisateur:', userId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du mot de passe:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour les données d'un utilisateur
+  async updateUser(userId, updates) {
+    try {
+      await db.utilisateur.update(userId, updates);
+      console.log('Utilisateur mis à jour:', userId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       throw error;
     }
   }

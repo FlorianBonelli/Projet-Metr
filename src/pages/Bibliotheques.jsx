@@ -97,7 +97,7 @@ function Bibliotheques() {
     <div className="bibliotheques-page">
       <Sidebar />
 
-      <main className="bibliotheques-content">
+      <main className="bibliotheques-content page-padding">
         <header className="bibliotheques-header">
           <div className="header-title">
             <h1>Mes bibliothèques</h1>

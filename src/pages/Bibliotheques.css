@@ -22,6 +22,10 @@
   margin-left: 0; /* Pas de marge à gauche pour éviter le chevauchement */
 }
 
+.bibliotheques-content.page-padding {
+  padding: 48px 56px;
+}
+
 .bibliotheques-content::before {
   content: '';
   position: absolute;

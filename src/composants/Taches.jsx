@@ -4,13 +4,11 @@ import './Taches.css';
 export default function Taches() {
   return (
     <section className="taches-section">
-      <h3 className="taches-section-title">TÂCHES PRIORITAIRES</h3>
-
       <div className="taches-card">
         <div className="taches-card-inner">
           <div className="taches-card-header">
             <h4 className="taches-card-title">Gestion des tâches</h4>
-            <button className="taches-voir-plus">+ Voir plus</button>
+            <button className="taches-ajouter-btn">+ Ajouter une tâche</button>
           </div>
 
           <div className="taches-table-wrap">

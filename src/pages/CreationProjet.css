@@ -11,6 +11,11 @@
     overflow-y: auto;
 }
 
+.creation-projet-content.page-padding {
+    margin-left: 0;
+    padding: 48px 40px 40px 200px;
+}
+
 .creation-projet-header {
     margin-bottom: 40px;
     text-align: center;

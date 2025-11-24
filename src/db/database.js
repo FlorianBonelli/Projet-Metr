@@ -6,7 +6,8 @@ export const db = new Dexie('ProjetMetrDatabase');
 // Définir le schéma de la base de données
 db.version(1).stores({
   utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
-  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation'
+  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation',
+  modifications: '++id, projectId, userId, dateModification, changeType'
 });
 
 console.log('Database configured successfully!');
@@ -34,8 +35,55 @@ export const initializeTestUser = async () => {
   }
 };
 
+// Fonction pour initialiser des données de test
+export const initializeTestData = async () => {
+  try {
+    // Vérifier s'il y a déjà des modifications
+    const existingMods = await db.modifications.toArray();
+    if (existingMods.length === 0) {
+      // Ajouter des modifications de test
+      const testUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+      const projects = await db.projets.toArray();
+      
+      if (testUser && projects.length > 0) {
+        // Ajouter des modifications pour le premier projet
+        await db.modifications.add({
+          projectId: projects[0].id,
+          userId: testUser.id_utilisateur,
+          changeType: 'nom',
+          status: 'à voir',
+          dateModification: new Date().toISOString()
+        });
+
+        await db.modifications.add({
+          projectId: projects[0].id,
+          userId: testUser.id_utilisateur,
+          changeType: 'export',
+          status: 'vu',
+          dateModification: new Date(Date.now() - 86400000).toISOString()
+        });
+
+        if (projects.length > 1) {
+          await db.modifications.add({
+            projectId: projects[1].id,
+            userId: testUser.id_utilisateur,
+            changeType: 'client',
+            status: 'vu',
+            dateModification: new Date(Date.now() - 172800000).toISOString()
+          });
+        }
+
+        console.log('Données de test créées avec succès');
+      }
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation des données de test:', error);
+  }
+};
+
 // Initialiser l'utilisateur de test au démarrage
 initializeTestUser();
+initializeTestData();
 
 // Fonctions utilitaires pour la gestion des utilisateurs
 export const userService = {
@@ -218,6 +266,91 @@ export const projectService = {
         .toArray();
     } catch (error) {
       console.error('Erreur lors de la récupération des projets récents:', error);
+      throw error;
+    }
+  }
+};
+
+// Fonctions utilitaires pour la gestion des modifications/notifications
+export const modificationService = {
+  // Ajouter une modification
+  async addModification(modificationData) {
+    try {
+      const {
+        projectId,
+        userId,
+        changeType,
+        status = 'à voir'
+      } = modificationData;
+
+      const modificationId = await db.modifications.add({
+        projectId,
+        userId,
+        changeType,
+        status,
+        dateModification: new Date().toISOString()
+      });
+
+      console.log('Modification ajoutée avec l\'ID:', modificationId);
+      return modificationId;
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la modification:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour le statut d'une modification
+  async updateModificationStatus(modificationId, newStatus) {
+    try {
+      await db.modifications.update(modificationId, { status: newStatus });
+      console.log('Statut de la modification mis à jour:', modificationId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les modifications d'un projet
+  async getModificationsByProject(projectId) {
+    try {
+      return await db.modifications
+        .where('projectId')
+        .equals(projectId)
+        .reverse()
+        .toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des modifications:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer tous les projets avec modifications
+  async getProjectsWithModifications() {
+    try {
+      const allProjects = await db.projets.toArray();
+      const projectsWithMods = await Promise.all(
+        allProjects.map(async (project) => {
+          const modifications = await db.modifications
+            .where('projectId')
+            .equals(project.id)
+            .toArray();
+          return {
+            ...project,
+            modifications: modifications || [],
+            hasModifications: modifications && modifications.length > 0
+          };
+        })
+      );
+      
+      // Trier par date de modification la plus récente
+      return projectsWithMods.sort((a, b) => {
+        const aDate = a.modifications[0]?.dateModification || a.dateCreation || '';
+        const bDate = b.modifications[0]?.dateModification || b.dateCreation || '';
+        return new Date(bDate) - new Date(aDate);
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets avec modifications:', error);
       throw error;
     }
   }

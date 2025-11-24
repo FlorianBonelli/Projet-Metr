@@ -13,7 +13,7 @@ const navLinks = [
     { icon: AccueilIcon, label: 'Tableau de bord', link: '/dashboard' },
     { icon: ProjetIcon, label: 'Projet', link: '/projet' },
     { icon: BibliothequeIcon, label: 'Bibliothèque', link: '/bibliotheques' },
-    { icon: NotificationIcon, label: 'Notification', link: '/notifications' },
+    { icon: NotificationIcon, label: 'Notification', link: '/notif' },
     { icon: ProfilIcon, label: 'Profil', link: '/profil' },
 ];
 

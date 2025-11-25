@@ -9,6 +9,7 @@ db.version(1).stores({
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation',
   libraries: '++id, user_id, nom, created_at',
   articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
+  taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
   modifications: '++id, projectId, userId, dateModification, changeType'
 });
 
@@ -311,11 +312,107 @@ export const libraryService = {
     return db.libraries.get(id);
   },
 
-  async deleteLibrary(id) {
-    await db.libraries.delete(id);
+  async deleteArticle(id) {
+    return db.articles.delete(id);
   }
 };
 
+// Service pour la gestion des tâches
+export const tacheService = {
+  async createTache(tacheData) {
+    try {
+      const now = new Date().toISOString();
+      const {
+        titre,
+        description = '',
+        projet_id,
+        priorite = 'Moyenne',
+        etat = 'À faire',
+        date_echeance = null,
+        user_id
+      } = tacheData;
+
+      if (!titre || !projet_id) {
+        throw new Error('Le titre et le projet sont requis pour créer une tâche');
+      }
+
+      const tacheId = await db.taches.add({
+        titre,
+        description,
+        projet_id,
+        priorite,
+        etat,
+        date_creation: now.split('T')[0],
+        date_echeance,
+        user_id,
+        created_at: now,
+        updated_at: now
+      });
+
+      console.log('Tâche créée avec l\'ID:', tacheId);
+      return tacheId;
+    } catch (error) {
+      console.error('Erreur lors de la création de la tâche:', error);
+      throw error;
+    }
+  },
+
+  async getAllTaches() {
+    try {
+      return await db.taches.orderBy('created_at').reverse().toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des tâches:', error);
+      throw error;
+    }
+  },
+
+  async getTachesByProject(projectId) {
+    try {
+      return await db.taches.where('projet_id').equals(projectId).toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des tâches du projet:', error);
+      throw error;
+    }
+  },
+
+  async getTacheById(id) {
+    try {
+      return await db.taches.get(id);
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la tâche:', error);
+      throw error;
+    }
+  },
+
+  async updateTache(id, updates) {
+    try {
+      await db.taches.update(id, { 
+        ...updates, 
+        updated_at: new Date().toISOString() 
+      });
+      console.log('Tâche mise à jour:', id);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
+      throw error;
+    }
+  },
+
+  async deleteTache(id) {
+    try {
+      await db.taches.delete(id);
+      console.log('Tâche supprimée:', id);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la tâche:', error);
+      throw error;
+    } finally {
+      // Ajouter un finally pour s'assurer que la fonction se termine correctement
+    }
+  }
+};
+
+// Service pour la gestion des articles
 export const articleService = {
   async createArticle(articleData) {
     try {

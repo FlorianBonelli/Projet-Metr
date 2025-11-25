@@ -359,6 +359,10 @@ export const articleService = {
     return db.articles.where('library_id').equals(libraryId).toArray();
   },
 
+  async getAllArticles() {
+    return db.articles.toArray();
+  },
+
   async updateArticle(id, updates) {
     return db.articles.update(id, { ...updates, updated_at: new Date().toISOString() });
   },

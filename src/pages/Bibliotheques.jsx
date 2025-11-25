@@ -9,7 +9,7 @@ const initialLibraries = [
     id: 1,
     designation: 'Béton de fondation',
     tag: 'Nouveau',
-    lot: '2 - GROS ŒUVRE - MAÇ',
+    lot: '2 - GROS ŒUVRE - MAÇONNERIE',
     subCategory: 'Fondation',
     unit: 'M3',
     price: '120.50 €',
@@ -20,7 +20,7 @@ const initialLibraries = [
     id: 2,
     designation: 'Fenêtre PVC double vitrage',
     tag: 'Nouveau',
-    lot: '10 - MENUISERIES EXTÉ',
+    lot: '10 - MENUISERIES EXTÉRIEURES',
     subCategory: 'Fenêtre',
     unit: 'U',
     price: '425.00 €',
@@ -30,7 +30,7 @@ const initialLibraries = [
     id: 3,
     designation: 'Porte intérieure',
     tag: 'Nouveau',
-    lot: '9 - MENUISERIES INTÉ',
+    lot: '9 - MENUISERIES INTÉRIEURES',
     subCategory: 'Porte',
     unit: 'U',
     price: '235.00 €',
@@ -40,7 +40,7 @@ const initialLibraries = [
     id: 4,
     designation: 'Radiateur électrique',
     tag: 'Nouveau',
-    lot: '11 - ÉLECTRICITÉ COUR/',
+    lot: '11 - ÉLECTRICITÉ COURANTS FORTS',
     subCategory: 'Chauffage',
     unit: 'U',
     price: '199.90 €',
@@ -60,10 +60,30 @@ const initialLibraries = [
     id: 6,
     designation: 'Carrelage grès cérame',
     tag: 'Nouveau',
-    lot: '6 - CARRELAGES, REVÊT',
+    lot: '6 - CARRELAGES, REVÊTEMENTS',
     subCategory: 'Carrelage',
     unit: 'M2',
     price: '45.20 €',
+    updatedAt: '27/10/2025',
+  },
+  {
+    id: 7,
+    designation: 'Terrassement général',
+    tag: 'Nouveau',
+    lot: '1 - TERRASSEMENTS GÉNÉRAUX',
+    subCategory: 'Excavation',
+    unit: 'M3',
+    price: '35.00 €',
+    updatedAt: '27/10/2025',
+  },
+  {
+    id: 8,
+    designation: 'Isolation thermique',
+    tag: 'Nouveau',
+    lot: '5 - ISOLATION',
+    subCategory: 'Isolation',
+    unit: 'M2',
+    price: '25.80 €',
     updatedAt: '27/10/2025',
   },
 ];
@@ -111,15 +131,19 @@ function Bibliotheques() {
   }, []);
 
   const loadArticles = useCallback(async (libraryId) => {
-    if (libraryId === 'all') {
-      setLibraryItems(initialLibraries);
-      return;
-    }
-
     setIsArticlesLoading(true);
     try {
-      const data = await articleService.getArticlesByLibrary(Number(libraryId));
-      const mapped = data.map((article) => ({
+      let allArticles = [];
+      
+      if (libraryId === 'all') {
+        // Récupérer tous les articles de toutes les bibliothèques en une seule requête
+        allArticles = await articleService.getAllArticles();
+      } else {
+        // Récupérer les articles d'une bibliothèque spécifique
+        allArticles = await articleService.getArticlesByLibrary(Number(libraryId));
+      }
+
+      const mapped = allArticles.map((article) => ({
         id: article.id,
         designation: article.designation,
         tag: article.statut,
@@ -130,9 +154,14 @@ function Bibliotheques() {
         updatedAt: new Date(article.updated_at || article.created_at).toLocaleDateString('fr-FR'),
         favorite: article.is_favorite,
       }));
+      
       setLibraryItems(mapped);
     } catch (error) {
       console.error('Erreur lors du chargement des articles :', error);
+      // En cas d'erreur, afficher les données par défaut seulement si c'est "all"
+      if (libraryId === 'all') {
+        setLibraryItems(initialLibraries);
+      }
     } finally {
       setIsArticlesLoading(false);
     }
@@ -407,12 +436,22 @@ function Bibliotheques() {
                       <option value="" disabled>
                         Sélectionner un lot
                       </option>
-                      <option value="2 - GROS ŒUVRE - MAÇ">2 - GROS ŒUVRE - MAÇ</option>
-                      <option value="6 - CARRELAGES, REVÊT">6 - CARRELAGES, REVÊT</option>
+                      <option value="1 - TERRASSEMENTS GÉNÉRAUX">1 - TERRASSEMENTS GÉNÉRAUX</option>
+                      <option value="2 - GROS ŒUVRE - MAÇONNERIE">2 - GROS ŒUVRE - MAÇONNERIE</option>
+                      <option value="3 - MÉTALLERIE, FERRONNERIE">3 - MÉTALLERIE, FERRONNERIE</option>
+                      <option value="4 - PLÂTRERIE">4 - PLÂTRERIE</option>
+                      <option value="5 - ISOLATION">5 - ISOLATION</option>
+                      <option value="6 - CARRELAGES, REVÊTEMENTS">6 - CARRELAGES, REVÊTEMENTS</option>
+                      <option value="7 - SOLS SOUPLES">7 - SOLS SOUPLES</option>
                       <option value="8 - PEINTURES">8 - PEINTURES</option>
-                      <option value="9 - MENUISERIES INTÉ">9 - MENUISERIES INTÉ</option>
-                      <option value="10 - MENUISERIES EXTÉ">10 - MENUISERIES EXTÉ</option>
-                      <option value="11 - ÉLECTRICITÉ COUR/">11 - ÉLECTRICITÉ COUR/</option>
+                      <option value="9 - MENUISERIES INTÉRIEURES">9 - MENUISERIES INTÉRIEURES</option>
+                      <option value="10 - MENUISERIES EXTÉRIEURES">10 - MENUISERIES EXTÉRIEURES</option>
+                      <option value="11 - ÉLECTRICITÉ COURANTS FORTS">11 - ÉLECTRICITÉ COURANTS FORTS</option>
+                      <option value="12 - PLOMBERIES SANITAIRES">12 - PLOMBERIES SANITAIRES</option>
+                      <option value="13 - COUVERTURE, ZINGUERIE">13 - COUVERTURE, ZINGUERIE</option>
+                      <option value="14 - ÉTANCHÉITÉ">14 - ÉTANCHÉITÉ</option>
+                      <option value="15 - STORES ET FERMETURES">15 - STORES ET FERMETURES</option>
+                      <option value="16 - VRD, ESPACES EXTÉRIEURS">16 - VRD, ESPACES EXTÉRIEURS</option>
                     </select>
                   </label>
 

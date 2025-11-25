@@ -132,6 +132,12 @@ function Projet() {
     );
   };
 
+  const handleArchive = (projectId, updatedData = { status: 'Archivé' }) => {
+    setProjets(prev =>
+      prev.map(p => (p.id === projectId ? { ...p, ...updatedData } : p))
+    );
+  };
+
   return (
     <div className="projet-page">
       <Sidebar />
@@ -241,6 +247,7 @@ function Projet() {
               statusType={getStatusType(projet.status)}
               onDelete={handleDelete}
               onEdit={handleEdit}
+              onArchive={handleArchive}
             />
           ))}
         </div>

@@ -207,6 +207,10 @@ export const projectService = {
       });
       
       console.log('Projet créé avec l\'ID:', projectId);
+      
+      // Déclencher l'événement de création de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectCreated', { detail: { projectId } }));
+      
       return projectId;
     } catch (error) {
       console.error('Erreur lors de la création du projet:', error);
@@ -239,6 +243,9 @@ export const projectService = {
     try {
       await db.projets.update(id, updates);
       console.log('Projet mis à jour:', id);
+      
+      // Déclencher l'événement de mise à jour de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectUpdated', { detail: { projectId: id, updates } }));
     } catch (error) {
       console.error('Erreur lors de la mise à jour du projet:', error);
       throw error;
@@ -250,6 +257,9 @@ export const projectService = {
     try {
       await db.projets.delete(id);
       console.log('Projet supprimé:', id);
+      
+      // Déclencher l'événement de suppression de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectDeleted', { detail: { projectId: id } }));
     } catch (error) {
       console.error('Erreur lors de la suppression du projet:', error);
       throw error;

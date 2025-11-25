@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { projectService } from '../db/database';
 import './Sidebar.css';
 
 // Import des icônes SVG
@@ -17,20 +18,70 @@ const navLinks = [
     { icon: ProfilIcon, label: 'Profil', link: '/profil' },
 ];
 
-const recentProjects = [
-    { icon: ProjetIcon, label: 'Rénovation Paris' },
-    { icon: ProjetIcon, label: 'Costa Architectes' },
-    { icon: ProjetIcon, label: 'Groupe Carrefour' },
-];
 
 const Sidebar = () => {
     const location = useLocation();
+    const [userFirstName, setUserFirstName] = useState('UTILISATEUR');
+    const [recentProjects, setRecentProjects] = useState([]);
+
+    // Fonction pour tronquer les noms trop longs
+    const truncateProjectName = (name, maxLength = 20) => {
+        if (!name) return '';
+        if (name.length <= maxLength) return name;
+        return name.substring(0, maxLength - 3) + '...';
+    };
+
+    // Fonction pour charger les projets récents
+    const loadRecentProjects = async () => {
+        try {
+            const projects = await projectService.getRecentProjects(3);
+            setRecentProjects(projects);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des projets récents:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Récupérer les informations de l'utilisateur depuis localStorage
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            try {
+                const parsedUserInfo = JSON.parse(userInfo);
+                if (parsedUserInfo.prenom) {
+                    setUserFirstName(parsedUserInfo.prenom.toUpperCase());
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des informations utilisateur:', error);
+            }
+        }
+
+        // Charger les projets récents au montage du composant
+        loadRecentProjects();
+    }, []);
+
+    // Écouter les changements dans les projets pour mise à jour automatique
+    useEffect(() => {
+        const handleProjectUpdate = () => {
+            loadRecentProjects();
+        };
+
+        // Écouter les événements personnalisés de mise à jour de projet
+        window.addEventListener('projectUpdated', handleProjectUpdate);
+        window.addEventListener('projectCreated', handleProjectUpdate);
+        window.addEventListener('projectDeleted', handleProjectUpdate);
+
+        return () => {
+            window.removeEventListener('projectUpdated', handleProjectUpdate);
+            window.removeEventListener('projectCreated', handleProjectUpdate);
+            window.removeEventListener('projectDeleted', handleProjectUpdate);
+        };
+    }, []);
 
     return (
         <div className="sidebar-container">
             <div className="profile-section">
                 <div className="avatar-placeholder"></div>
-                <div className="username">ANTOINE</div>
+                <div className="username">{userFirstName}</div>
             </div>
 
             <nav className="nav-links">
@@ -51,12 +102,12 @@ const Sidebar = () => {
             <div className="recent-section">
                 <div className="recent-header">RÉCENT</div>
                 <div className="recent-list">
-                    {recentProjects.map((item) => (
-                        <div key={item.label} className="recent-item">
+                    {recentProjects.map((project) => (
+                        <div key={project.id} className="recent-item">
                             <span className="icon">
-                                <img src={item.icon} alt="Projet" />
+                                <img src={ProjetIcon} alt="Projet" />
                             </span>
-                            {item.label}
+                            {truncateProjectName(project.nom)}
                         </div>
                     ))}
                 </div>

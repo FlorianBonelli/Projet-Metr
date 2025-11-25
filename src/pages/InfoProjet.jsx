@@ -64,29 +64,31 @@ const InfoProjet = () => {
         <div className="info-projet-page">
             <Sidebar />
             <div className="info-projet-content">
-                <div className="info-projet-background" />
-                <div className="info-projet-inner">
+                <div className="info-projet-container">
                     <header className="info-projet-header">
-                        <div>
-                            <p className="hero-kicker">Projet · Bibliothèque métrés</p>
-                            <h1 className="page-title">{project.nom}</h1>
-                            <p className="hero-caption">Dernière modification le 26 novembre 2025</p>
+                        <div className="header-left">
+                            <h1 className="project-title">{project.nom}</h1>
                         </div>
-                        <div className="header-actions">
-                            <button className="chip-button active">
-                                <span className="chip-icon">👥</span>
-                                Collaborateurs
-                            </button>
-                            <button className="chip-button">
-                                Toutes les bibliothèques (6 articles)
-                            </button>
-                            <button className="chip-button icon-only">+</button>
+                        <div className="header-right">
+                            <div className="metr-logo">Metr.</div>
                         </div>
                     </header>
 
-                    <main className="info-projet-sections">
+                    <div className="collaborateurs-section">
+                        <div className="collaborateurs-dropdown">
+                            <span className="collaborateurs-icon">👥</span>
+                            <span>Collaborateurs</span>
+                        </div>
+                        <div className="bibliotheques-dropdown">
+                            <span>Toutes les bibliothèques (6 articles)</span>
+                            <span className="dropdown-arrow">▼</span>
+                        </div>
+                        <button className="add-button">+</button>
+                    </div>
+
+                    <main className="content-sections">
                         <HistoriquePlan projectId={projectId} />
-                        <div className="secondary-panels">
+                        <div className="bottom-sections">
                             <AutreDoc projectId={projectId} />
                             <HistoriqueExport projectId={projectId} />
                         </div>

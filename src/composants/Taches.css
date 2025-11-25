@@ -86,14 +86,103 @@
 .date-late { color: #e11d48; font-weight:700 }
 
 .proj-pill { display:inline-block; background:#eef3ff; color:#21409A; padding:6px 10px; border-radius:12px; font-weight:600; font-size:0.85rem; }
-.prio { display:inline-block; padding:6px 10px; border-radius:12px; font-weight:700; font-size:0.85rem; }
-.prio-high { background:#ffe9e9; color:#e11d48 }
-.prio-medium { background:#fff4e6; color:#d97706 }
-.prio-low { background:#eef9f1; color:#16a34a }
-.etat { display:inline-block; padding:6px 10px; border-radius:12px; font-weight:700; font-size:0.85rem; }
-.etat-en-cours { background:#e7f9ef; color:#37c776 }
-.etat-a-faire { background:#fff7e6; color:#f59e0b }
-.etat-termine { background:#eef6ff; color:#21409A }
+
+/* Styles pour les selects de priorité */
+.prio { 
+  border: none;
+  padding: 6px 10px; 
+  border-radius: 12px; 
+  font-weight: 700; 
+  font-size: 0.85rem;
+  cursor: pointer;
+  background-size: 16px;
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+.prio-critical { background: #fef2f2; color: #7c2d12; }
+.prio-high { background: #ffe9e9; color: #e11d48; }
+.prio-medium { background: #fff4e6; color: #d97706; }
+.prio-low { background: #eef9f1; color: #16a34a; }
+
+/* Styles pour les selects d'état */
+.etat { 
+  border: none;
+  padding: 6px 10px; 
+  border-radius: 12px; 
+  font-weight: 700; 
+  font-size: 0.85rem;
+  cursor: pointer;
+  background-size: 16px;
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+.etat-en-cours { background: #e7f9ef; color: #37c776; }
+.etat-a-faire { background: #fff7e6; color: #f59e0b; }
+.etat-en-attente { background: #fef3c7; color: #92400e; }
+.etat-termine { background: #eef6ff; color: #21409A; }
+
+/* Styles pour les messages */
+.loading-message, .error-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.no-tasks {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Styles pour les cellules spécifiques */
+.task-title {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.task-description {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Styles pour le bouton de suppression */
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.delete-btn:hover {
+  background: #fef2f2;
+  transform: scale(1.1);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
 
 @media (max-width:1024px) {
   .taches-card { width: calc(100% - 40px); margin-left:20px }

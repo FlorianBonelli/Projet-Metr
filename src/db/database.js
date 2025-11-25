@@ -312,6 +312,10 @@ export const libraryService = {
     return db.libraries.get(id);
   },
 
+  async deleteLibrary(id) {
+    return db.libraries.delete(id);
+  },
+
   async deleteArticle(id) {
     return db.articles.delete(id);
   }

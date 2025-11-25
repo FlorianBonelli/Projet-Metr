@@ -77,7 +77,7 @@ const CreationProjet = () => {
     return (
         <div className="creation-projet-page">
             <Sidebar />
-            <div className="creation-projet-content">
+            <div className="creation-projet-content page-padding">
                 <div className="creation-projet-header">
                     <h1 className="page-title">CRÉER UN NOUVEAU PROJET</h1>
                 </div>

@@ -28,13 +28,28 @@ function FormulaireInscription() {
         prenom,
         email,
         mot_de_passe: password,
-        role: profession || 'utilisateur'
+        profession,
+        entreprise,
+        role: 'utilisateur'
       });
+      
+      // Récupérer l'utilisateur créé pour stocker ses informations
+      const createdUser = await userService.getUserByEmail(email);
       
       setSuccess('Compte créé avec succès ! Redirection...');
       
       // Redirection vers le dashboard après 1 seconde
       setTimeout(() => {
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userInfo', JSON.stringify({
+          id: createdUser.id,
+          nom: createdUser.nom,
+          prenom: createdUser.prenom,
+          email: createdUser.email,
+          role: createdUser.role,
+          profession: createdUser.profession,
+          entreprise: createdUser.entreprise
+        }));
         navigate('/dashboard');
       }, 1000);
       

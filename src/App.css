@@ -71,7 +71,7 @@ img {
   border: 0;
 }
 .page-padding {
-  padding: 48px 0px 0 100px; /* Haut, droite, bas, gauche */
+  padding: 48px 0px 0 200px; /* Haut, droite, bas, gauche */
   /* Ajoute ou ajuste le padding comme sur la capture */
   width: 100%;
   min-height: 100vh;

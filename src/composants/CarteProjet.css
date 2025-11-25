@@ -3,9 +3,6 @@
   border-radius: 18px;
   box-shadow: 0 6px 24px rgba(40,40,40,0.13);
   padding: 24px 24px 0 24px;    /* Padding dedans, pas en bas */
-  /* Espace entre la carte et la sidebar (horizontal) et espacement vertical identique */
-  margin-left: var(--content-offset);
-  margin-top: 32px;
   /* Empêche la carte de s'étirer en hauteur dans le conteneur flex parent
     : la carte prendra la hauteur de son contenu (s'arrêtera aux boutons) */
   align-self: flex-start;

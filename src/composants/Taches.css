@@ -1,26 +1,14 @@
 .taches-section {
   width: 100%;
-  margin-top: 40px;
   box-sizing: border-box;
-}
-
-.taches-section-title {
-  font-family: 'Montserrat', Arial, sans-serif;
-  color: #183278;
-  font-weight: 800;
-  font-size: 1.9rem;
-  margin: 0 0 18px var(--content-offset); /* offset to align with cards */
 }
 
 .taches-card {
-  background: rgba(255,255,255,0.6);
-  border-radius: 30px;
-  padding: 18px;
-  width: calc(100% - (var(--content-offset) * 2));
-  margin-left: var(--content-offset);
+  border-radius: 20px;
+  width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 10px 40px rgba(16,24,40,0.06);
 }
+
 
 .taches-card-inner {
   background: #fff;
@@ -43,13 +31,22 @@
   margin: 0;
 }
 
-.taches-voir-plus {
-  background: #fff;
-  border: 1px solid #e6e6e9;
-  padding: 6px 12px;
+.taches-ajouter-btn {
+  background: #ff6b35;
+  color: white;
+  border: none;
+  padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.taches-ajouter-btn:hover {
+  background: #ff5a1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
 .taches-table-wrap {

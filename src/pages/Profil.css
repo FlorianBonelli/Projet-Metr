@@ -1,7 +1,7 @@
 .profil-page {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8f9fa;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -12,17 +12,38 @@
   overflow-x: hidden;
 }
 
+.profil-content.page-padding {
+  padding: 48px 0px 0 280px;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
 .profil-header {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 20px 40px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  display: none;
+}
+
+.profil-header-top {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  width: 100%;
+  margin-bottom: 32px;
+  padding-left: var(--content-offset, 38px);
+  padding-right: var(--content-offset, 32px);
+}
+
+.profil-header-top .page-title {
+  font-size: 2rem;
+  color: #183278;
+  font-weight: 800;
+  font-family: 'Montserrat', Arial, sans-serif;
+  margin: 0;
+  transition: color 150ms ease;
+}
+
+.profil-header-top .page-title:hover {
+  color: #2b63c8;
 }
 
 .header-logo {
@@ -44,11 +65,10 @@
 }
 
 .profil-main {
-  padding: 40px;
+  padding: 0 32px 40px 48px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 120px);
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -57,11 +77,34 @@
   flex-direction: column;
   gap: 30px;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1400px;
   padding: 0;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.profil-stats-row {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 30px;
+  width: 100%;
+  align-items: start;
+}
+
+.profil-wrapper {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+.stats-wrapper {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideInUp 0.6s ease-out 0.2s both;
 }
 
 .section-wrapper {
@@ -96,6 +139,14 @@
 
 .section-wrapper:nth-child(4) {
   animation-delay: 0.4s;
+}
+
+.section-wrapper.profil-and-stats {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  animation: none;
 }
 
 @keyframes slideInUp {

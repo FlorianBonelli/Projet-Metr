@@ -5,10 +5,11 @@ export const db = new Dexie('ProjetMetrDatabase');
 
 // Définir le schéma de la base de données (version unique)
 db.version(1).stores({
-  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role',
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation',
   libraries: '++id, user_id, nom, created_at',
-  articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at'
+  articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
+  modifications: '++id, projectId, userId, dateModification, changeType'
 });
 
 // Pré-remplir la bibliothèque par défaut lors de la création de la base
@@ -22,12 +23,85 @@ db.on('populate', async () => {
 
 console.log('Database configured successfully!');
 
+// Fonction pour initialiser un utilisateur de test
+export const initializeTestUser = async () => {
+  try {
+    const existingUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+    if (!existingUser) {
+      await db.utilisateur.add({
+        nom: 'Brosseau',
+        prenom: 'Antoine',
+        email: 'antoine.brosseau@edu.ece.fr',
+        mot_de_passe: 'password123',
+        profession: 'Économiste',
+        entreprise: 'Bouygues Immobilier',
+        role: 'utilisateur'
+      });
+      console.log('Utilisateur de test créé avec succès');
+    } else {
+      console.log('Utilisateur de test existe déjà');
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation de l\'utilisateur de test:', error);
+  }
+};
+
+// Fonction pour initialiser des données de test
+export const initializeTestData = async () => {
+  try {
+    // Vérifier s'il y a déjà des modifications
+    const existingMods = await db.modifications.toArray();
+    if (existingMods.length === 0) {
+      // Ajouter des modifications de test
+      const testUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+      const projects = await db.projets.toArray();
+      
+      if (testUser && projects.length > 0) {
+        // Ajouter des modifications pour le premier projet
+        await db.modifications.add({
+          projectId: projects[0].id,
+          userId: testUser.id_utilisateur,
+          changeType: 'nom',
+          status: 'à voir',
+          dateModification: new Date().toISOString()
+        });
+
+        await db.modifications.add({
+          projectId: projects[0].id,
+          userId: testUser.id_utilisateur,
+          changeType: 'export',
+          status: 'vu',
+          dateModification: new Date(Date.now() - 86400000).toISOString()
+        });
+
+        if (projects.length > 1) {
+          await db.modifications.add({
+            projectId: projects[1].id,
+            userId: testUser.id_utilisateur,
+            changeType: 'client',
+            status: 'vu',
+            dateModification: new Date(Date.now() - 172800000).toISOString()
+          });
+        }
+
+        console.log('Données de test créées avec succès');
+      }
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation des données de test:', error);
+  }
+};
+
+// Initialiser l'utilisateur de test au démarrage
+initializeTestUser();
+initializeTestData();
+
 // Fonctions utilitaires pour la gestion des utilisateurs
 export const userService = {
   // Créer un nouvel utilisateur
   async createUser(userData) {
     try {
-      const { nom, prenom, email, mot_de_passe, role = 'utilisateur' } = userData;
+      const { nom, prenom, email, mot_de_passe, role = 'utilisateur', profession = '', entreprise = '' } = userData;
       
       // Vérifier si l'email existe déjà
       const existingUser = await db.utilisateur.where('email').equals(email).first();
@@ -41,7 +115,9 @@ export const userService = {
         prenom,
         email,
         mot_de_passe,
-        role
+        role,
+        profession,
+        entreprise
       });
       
       return userId;
@@ -83,6 +159,30 @@ export const userService = {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
       throw error;
     }
+  },
+
+  // Mettre à jour le mot de passe d'un utilisateur
+  async updateUserPassword(userId, newPassword) {
+    try {
+      await db.utilisateur.update(userId, { mot_de_passe: newPassword });
+      console.log('Mot de passe mis à jour pour l\'utilisateur:', userId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du mot de passe:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour les données d'un utilisateur
+  async updateUser(userId, updates) {
+    try {
+      await db.utilisateur.update(userId, updates);
+      console.log('Utilisateur mis à jour:', userId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      throw error;
+    }
   }
 };
 
@@ -118,6 +218,10 @@ export const projectService = {
       });
       
       console.log('Projet créé avec l\'ID:', projectId);
+      
+      // Déclencher l'événement de création de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectCreated', { detail: { projectId } }));
+      
       return projectId;
     } catch (error) {
       console.error('Erreur lors de la création du projet:', error);
@@ -150,6 +254,9 @@ export const projectService = {
     try {
       await db.projets.update(id, updates);
       console.log('Projet mis à jour:', id);
+      
+      // Déclencher l'événement de mise à jour de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectUpdated', { detail: { projectId: id, updates } }));
     } catch (error) {
       console.error('Erreur lors de la mise à jour du projet:', error);
       throw error;
@@ -161,6 +268,9 @@ export const projectService = {
     try {
       await db.projets.delete(id);
       console.log('Projet supprimé:', id);
+      
+      // Déclencher l'événement de suppression de projet pour mettre à jour la sidebar
+      window.dispatchEvent(new CustomEvent('projectDeleted', { detail: { projectId: id } }));
     } catch (error) {
       console.error('Erreur lors de la suppression du projet:', error);
       throw error;
@@ -255,6 +365,91 @@ export const articleService = {
 
   async deleteArticle(id) {
     return db.articles.delete(id);
+  }
+};
+
+// Fonctions utilitaires pour la gestion des modifications/notifications
+export const modificationService = {
+  // Ajouter une modification
+  async addModification(modificationData) {
+    try {
+      const {
+        projectId,
+        userId,
+        changeType,
+        status = 'à voir'
+      } = modificationData;
+
+      const modificationId = await db.modifications.add({
+        projectId,
+        userId,
+        changeType,
+        status,
+        dateModification: new Date().toISOString()
+      });
+
+      console.log('Modification ajoutée avec l\'ID:', modificationId);
+      return modificationId;
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la modification:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour le statut d'une modification
+  async updateModificationStatus(modificationId, newStatus) {
+    try {
+      await db.modifications.update(modificationId, { status: newStatus });
+      console.log('Statut de la modification mis à jour:', modificationId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les modifications d'un projet
+  async getModificationsByProject(projectId) {
+    try {
+      return await db.modifications
+        .where('projectId')
+        .equals(projectId)
+        .reverse()
+        .toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des modifications:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer tous les projets avec modifications
+  async getProjectsWithModifications() {
+    try {
+      const allProjects = await db.projets.toArray();
+      const projectsWithMods = await Promise.all(
+        allProjects.map(async (project) => {
+          const modifications = await db.modifications
+            .where('projectId')
+            .equals(project.id)
+            .toArray();
+          return {
+            ...project,
+            modifications: modifications || [],
+            hasModifications: modifications && modifications.length > 0
+          };
+        })
+      );
+      
+      // Trier par date de modification la plus récente
+      return projectsWithMods.sort((a, b) => {
+        const aDate = a.modifications[0]?.dateModification || a.dateCreation || '';
+        const bDate = b.modifications[0]?.dateModification || b.dateCreation || '';
+        return new Date(bDate) - new Date(aDate);
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets avec modifications:', error);
+      throw error;
+    }
   }
 };
 

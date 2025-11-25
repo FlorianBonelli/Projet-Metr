@@ -1,0 +1,145 @@
+/* Styles pour la page InfoProjet */
+.info-projet-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f1f5f9;
+}
+
+.info-projet-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 40px;
+}
+
+.info-projet-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.info-projet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.project-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.metr-logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.collaborateurs-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.collaborateurs-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.collaborateurs-icon {
+    font-size: 16px;
+}
+
+.bibliotheques-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.add-button {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-button:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.bottom-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.loading-message, .error-message {
+    text-align: center;
+    padding: 48px;
+    color: #64748b;
+}
+
+.error-card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+}
+
+.back-button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .info-projet-content {
+        margin-left: 0;
+        padding: 24px;
+    }
+    
+    .bottom-sections {
+        grid-template-columns: 1fr;
+    }
+}

@@ -22,6 +22,16 @@ function FormulaireConnexion() {
       if (user) {
         // Connexion réussie
         console.log('Utilisateur connecté:', user);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userInfo', JSON.stringify({
+          id: user.id,
+          nom: user.nom,
+          prenom: user.prenom,
+          email: user.email,
+          role: user.role,
+          profession: user.profession,
+          entreprise: user.entreprise
+        }));
         navigate('/dashboard');
       } else {
         // Identifiants incorrects

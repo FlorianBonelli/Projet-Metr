@@ -115,9 +115,9 @@ const Sidebar = () => {
 
             <div className="cta-section">
                 <div className="cta-text">Let's start!</div>
-                <div className="cta-subtext">Créer un nouveau projet de</div>
+                <div className="cta-subtext">Créer un nouveau projet de manière simple et efficace</div>
                 <Link to="/creation-projet" className="cta-button">
-                    <span className="icon">⏱</span> Créer un projet
+                    <span className="icon">+</span>Créer un projet
                 </Link>
             </div>
 

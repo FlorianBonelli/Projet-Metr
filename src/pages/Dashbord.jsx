@@ -22,7 +22,8 @@ function Dashbord() {
       try {
         setLoading(true);
         const projectsData = await projectService.getRecentProjects(4); // Limiter à 4 projets pour le dashboard
-        setProjects(projectsData);
+        const activeProjects = projectsData.filter(p => !p.status?.toLowerCase().includes('archiv'));
+        setProjects(activeProjects);
       } catch (err) {
         console.error('Erreur lors du chargement des projets:', err);
         setError('Erreur lors du chargement des projets');
@@ -58,6 +59,11 @@ function Dashbord() {
 
   // Fonction pour gérer la suppression d'un projet
   const handleDeleteProject = (projectId) => {
+    setProjects(prevProjects => prevProjects.filter(project => project.id !== projectId));
+  };
+
+  // Fonction pour gérer l'archivage d'un projet
+  const handleArchiveProject = (projectId) => {
     setProjects(prevProjects => prevProjects.filter(project => project.id !== projectId));
   };
 
@@ -118,6 +124,7 @@ function Dashbord() {
                     statusType={getStatusType(project.status)}
                     onDelete={handleDeleteProject}
                     onEdit={handleEditProject}
+                    onArchive={handleArchiveProject}
                   />
                 ))}
                 {/* Bouton "Voir plus" placé après les cartes */}

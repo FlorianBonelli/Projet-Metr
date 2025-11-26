@@ -14,11 +14,13 @@ export default function CarteProjet({
   statusText = "En cours",
   statusType = "active",
   onDelete,
-  onEdit
+  onEdit,
+  onArchive
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const isArchived = statusText?.toLowerCase().includes('archiv');
 
   // Fermer le menu quand on clique à l'extérieur
   useEffect(() => {
@@ -37,6 +39,20 @@ export default function CarteProjet({
   const handleMenuToggle = (e) => {
     e.stopPropagation();
     setShowMenu(!showMenu);
+  };
+
+  const handleArchive = async () => {
+    try {
+      const newStatus = isArchived ? 'En cours' : 'Archivé';
+      await projectService.updateProject(id, { status: newStatus });
+      setShowMenu(false);
+      if (onArchive) {
+        onArchive(id, { status: newStatus });
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'archivage du projet:', error);
+      alert('Erreur lors de l\'archivage du projet');
+    }
   };
 
   const handleEdit = () => {
@@ -77,6 +93,10 @@ export default function CarteProjet({
           />
           {showMenu && (
             <div className="menu-popup">
+              <button className="menu-item" onClick={handleArchive}>
+                <span className="menu-icon">📦</span>
+                {isArchived ? 'Restaurer' : 'Archivé'}
+              </button>
               <button className="menu-item" onClick={handleEdit}>
                 <span className="menu-icon">📝</span>
                 Modifier

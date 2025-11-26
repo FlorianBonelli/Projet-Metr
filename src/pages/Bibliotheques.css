@@ -24,22 +24,6 @@
   padding: 48px 56px;
 }
 
-.bibliotheques-content::before {
-  content: '';
-  position: absolute;
-  inset: 24px;
-  border-radius: 32px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  pointer-events: none;
-  z-index: 0; /* Assure que le fond est derrière le contenu */
-}
-
-.bibliotheques-content > * {
-  position: relative;
-  z-index: 1; /* Assure que le contenu est au-dessus du fond */
-}
-
 .bibliotheques-header {
   display: flex;
   justify-content: space-between;
@@ -297,6 +281,7 @@
   justify-content: center;
   padding: 24px;
   z-index: 20;
+  overflow-y: auto;
 }
 
 .add-article-modal {
@@ -386,6 +371,24 @@
   color: #1f2a4b;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 4px 12px rgba(34, 52, 99, 0.04);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+  border-color: rgba(34, 52, 99, 0.24);
+  box-shadow: 0 6px 16px rgba(34, 52, 99, 0.08);
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: rgba(255, 92, 53, 0.4);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(255, 92, 53, 0.15);
+  transform: translateY(-2px);
 }
 
 .form-field textarea {
@@ -633,6 +636,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-section {
@@ -651,12 +656,15 @@
   margin: 0;
   font-size: 20px;
   color: #1f2a4b;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 .modal-info {
   margin: 0;
   color: #7a85aa;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .dropzone {
@@ -672,6 +680,19 @@
   background: rgba(255, 255, 255, 0.95);
   cursor: pointer;
   position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dropzone:hover {
+  border-color: rgba(255, 92, 53, 0.3);
+  background: rgba(255, 135, 67, 0.05);
+  box-shadow: 0 8px 24px rgba(255, 92, 53, 0.1);
+}
+
+.dropzone:focus-within {
+  border-color: rgba(255, 92, 53, 0.5);
+  background: rgba(255, 135, 67, 0.08);
+  box-shadow: 0 12px 32px rgba(255, 92, 53, 0.15);
 }
 
 .dropzone input {
@@ -684,10 +705,26 @@
 .dropzone-icon {
   font-size: 32px;
   color: #ff6b35;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+
+.dropzone:hover .dropzone-icon {
+  transform: scale(1.15) translateY(-4px);
+  color: #ff5c35;
+}
+
+.dropzone p {
+  margin: 0;
+  color: #5c6893;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .dropzone small {
   color: #9aa3c6;
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .dropdown-field {
@@ -713,11 +750,38 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+}
+
+.dropdown-trigger:hover {
+  border-color: rgba(34, 52, 99, 0.24);
+  box-shadow: 0 6px 16px rgba(34, 52, 99, 0.08);
+}
+
+.dropdown-trigger:focus {
+  border-color: rgba(255, 92, 53, 0.4);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(255, 92, 53, 0.15);
+  transform: translateY(-2px);
+}
+
+.dropdown-trigger.open {
+  border-color: rgba(255, 92, 53, 0.4);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(255, 92, 53, 0.15);
 }
 
 .dropdown-caret {
   font-size: 14px;
   color: #5c6893;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+
+.dropdown.open .dropdown-caret {
+  transform: rotate(180deg);
+  color: #ff5c35;
 }
 
 .dropdown-menu {
@@ -735,6 +799,18 @@
   padding: 6px;
   list-style: none;
   margin-top: -1px;
+  animation: dropdownSlideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes dropdownSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-option {
@@ -747,12 +823,20 @@
   font-size: 14px;
   color: #1f2a4b;
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 500;
 }
 
-.dropdown-option:hover,
-.dropdown-option.active {
+.dropdown-option:hover {
   background: rgba(255, 135, 67, 0.12);
   color: #ff5c35;
+  transform: translateX(4px);
+}
+
+.dropdown-option.active {
+  background: rgba(255, 135, 67, 0.2);
+  color: #ff5c35;
+  font-weight: 600;
 }
 
 @media (max-width: 720px) {
@@ -762,8 +846,11 @@
   }
 
   .import-library-modal {
-    padding: 28px 24px;
+    padding: 20px 16px;
     border-radius: 24px;
+    gap: 12px;
+    width: 90vw;
+    max-width: 100%;
   }
 
   .form-grid {
@@ -773,15 +860,92 @@
   .modal-actions {
     flex-direction: column-reverse;
   }
+
+  .modal-section {
+    padding: 16px 0;
+    gap: 12px;
+  }
+
+  .modal-section h3 {
+    font-size: 18px;
+  }
+
+  .form-field {
+    gap: 6px;
+  }
+
+  .form-field span {
+    font-size: 12px;
+  }
+
+  .form-field input,
+  .form-field select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 14px;
+  }
+
+  .dropdown-trigger {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 14px;
+  }
+
+  .dropzone {
+    padding: 16px;
+    border-radius: 16px;
+    gap: 6px;
+  }
+
+  .dropzone-icon {
+    font-size: 28px;
+  }
+
+  .dropzone p {
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .dropzone small {
+    font-size: 11px;
+  }
+
+  .modal-info {
+    font-size: 12px;
+  }
+
+  .modal-eyebrow {
+    font-size: 12px;
+  }
+
+  .modal-header h2 {
+    font-size: 24px;
+  }
+
+  .modal-subtitle {
+    font-size: 13px;
+  }
+
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .action-button {
+    padding: 10px 16px;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .modal-actions .action-button {
+    min-width: auto;
+  }
 }
 
 @media (max-width: 1280px) {
   .bibliotheques-content {
     padding: 36px 32px;
-  }
-
-  .bibliotheques-content::before {
-    inset: 16px;
   }
 }
 
@@ -818,6 +982,17 @@
   .search-wrapper {
     width: 100%;
   }
+
+  .import-library-modal {
+    width: min(90vw, 600px);
+    padding: 24px 20px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-section {
+    padding: 16px 0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -827,11 +1002,6 @@
 
   .bibliotheques-content {
     padding: 24px 16px 40px;
-  }
-
-  .bibliotheques-content::before {
-    inset: 12px;
-    border-radius: 24px;
   }
 
   .action-button,
@@ -845,6 +1015,274 @@
   .chip-group,
   .secondary-actions {
     width: 100%;
+  }
+
+  .import-library-modal {
+    width: 95vw;
+    max-width: 100%;
+    padding: 20px 16px;
+    border-radius: 20px;
+    gap: 12px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-close {
+    align-self: flex-end;
+  }
+
+  .modal-section {
+    padding: 12px 0;
+  }
+
+  .modal-section h3 {
+    font-size: 16px;
+  }
+
+  .form-field input,
+  .form-field select {
+    padding: 10px 12px;
+    font-size: 16px; /* Évite le zoom automatique sur iOS */
+    border-radius: 12px;
+  }
+
+  .dropdown-trigger {
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+
+  .dropzone {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .dropzone-icon {
+    font-size: 24px;
+  }
+
+  .dropzone p {
+    font-size: 12px;
+  }
+
+  .dropzone small {
+    font-size: 10px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+  }
+
+  .modal-eyebrow {
+    font-size: 11px;
+  }
+
+  .modal-info {
+    font-size: 11px;
+  }
+
+  .action-button {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .modal-form {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .import-library-modal {
+    width: 98vw;
+    max-width: 100%;
+    padding: 16px 12px;
+    gap: 10px;
+    border-radius: 16px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    gap: 8px;
+  }
+
+  .modal-section {
+    padding: 10px 0;
+    gap: 10px;
+  }
+
+  .modal-section h3 {
+    font-size: 15px;
+    margin: 0;
+  }
+
+  .form-field {
+    gap: 4px;
+  }
+
+  .form-field span {
+    font-size: 11px;
+  }
+
+  .form-field input,
+  .form-field select {
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .dropdown-trigger {
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .dropzone {
+    padding: 10px;
+    gap: 4px;
+  }
+
+  .dropzone-icon {
+    font-size: 20px;
+  }
+
+  .dropzone p {
+    font-size: 11px;
+  }
+
+  .dropzone small {
+    font-size: 9px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+    margin: 4px 0 2px;
+  }
+
+  .modal-eyebrow {
+    font-size: 10px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+  }
+
+  .modal-info {
+    font-size: 10px;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .action-button {
+    padding: 8px 12px;
+    font-size: 11px;
+    border-radius: 8px;
+  }
+
+  .modal-actions {
+    gap: 8px;
+  }
+
+  .modal-form {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .import-library-modal {
+    width: 100%;
+    padding: 14px 10px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+
+  .modal-header {
+    gap: 6px;
+  }
+
+  .modal-section {
+    padding: 8px 0;
+    gap: 8px;
+  }
+
+  .modal-section h3 {
+    font-size: 14px;
+  }
+
+  .form-field input,
+  .form-field select {
+    padding: 8px 8px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .dropdown-trigger {
+    padding: 8px 8px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .dropzone {
+    padding: 8px;
+    gap: 3px;
+  }
+
+  .dropzone-icon {
+    font-size: 18px;
+  }
+
+  .dropzone p {
+    font-size: 10px;
+  }
+
+  .dropzone small {
+    font-size: 8px;
+  }
+
+  .modal-header h2 {
+    font-size: 16px;
+    margin: 2px 0 0;
+  }
+
+  .modal-subtitle {
+    font-size: 10px;
+  }
+
+  .modal-eyebrow {
+    font-size: 9px;
+  }
+
+  .modal-info {
+    font-size: 9px;
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .action-button {
+    padding: 6px 10px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+
+  .modal-form {
+    gap: 10px;
   }
 }
 

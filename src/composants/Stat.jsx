@@ -22,8 +22,6 @@ function StatCard({ title, value, sub, icon, iconClass }) {
 export default function Stat() {
   return (
     <section className="stat-section">
-      <h3 className="stat-section-title">MES STATISTIQUES</h3>
-
       <div className="stat-grid">
         <StatCard title="Projets actifs" value="2" sub="↑ +1 ce mois-ci" icon={<img src={Cartable} alt="Projets actifs" />} iconClass="icon-blue" />
         <StatCard title="m² mesurés ce mois" value="1254" sub="↑ +326 vs mois dernier" icon={<img src={Regle} alt="m² mesurés" />} iconClass="icon-green" />

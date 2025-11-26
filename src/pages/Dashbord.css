@@ -105,6 +105,23 @@ h1 {
   padding-right: var(--content-offset); /* padding à droite de la page */
 }
 
+/* Titres de section (Mes projets récents, Tâches prioritaires, Mes statistiques) */
+.section-title-row {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: var(--content-offset);
+  padding-right: var(--content-offset);
+  /* espace au-dessus et en dessous du titre, proche de la maquette */
+  margin-top: 48px;
+  margin-bottom: 24px;
+}
+
+/* Variante pour le titre MES STATISTIQUES : un peu plus proche des cartes */
+.section-title-row-stats {
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
 .projects-controls {
   width: 100%;
   margin-bottom: 12px;
@@ -178,6 +195,14 @@ h1 {
     padding-left: 16px;
     padding-right: 16px;
     margin-bottom: 24px;
+  }
+
+  /* Titres de section alignés avec le header sur mobile */
+  .section-title-row {
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 32px;
+    margin-bottom: 16px;
   }
   
   .page-title {

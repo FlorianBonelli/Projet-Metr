@@ -20,6 +20,10 @@
   max-width: 1400px;
 }
 
+.profil-taches-section {
+  margin-top: 48px;
+}
+
 .profil-info-card {
   background: white;
   border-radius: 20px;

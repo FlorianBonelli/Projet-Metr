@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from '../composants/Sidebar';
 import ProfilComponent from '../composants/Profil';
+import Taches from '../composants/Taches';
 import './Profil.css';
 
 function Profil() {
@@ -15,6 +16,10 @@ function Profil() {
           <div className="profil-sections">
             <ProfilComponent />
           </div>
+        </div>
+
+        <div className="profil-taches-section">
+          <Taches />
         </div>
       </div>
     </div>

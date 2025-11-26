@@ -146,7 +146,7 @@ function Dashbord() {
             <h2 className="page-title">TÂCHES PRIORITAIRES</h2>
           </div>
 
-          <Taches />
+          <Taches variant="dashboard" />
 
           <div className="section-title-row section-title-row-stats">
             <h2 className="page-title">MES STATISTIQUES</h2>

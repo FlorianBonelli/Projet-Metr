@@ -87,6 +87,7 @@
 
 .pill-caret { margin-left:8px; opacity:0.6; font-size:0.8rem }
 .date-late { color: #e11d48; font-weight:700 }
+.date-soon { color: #e11d48; font-weight:700 }
 
 .proj-pill { display:inline-block; background:#eef3ff; color:#21409A; padding:6px 10px; border-radius:12px; font-weight:600; font-size:0.85rem; }
 

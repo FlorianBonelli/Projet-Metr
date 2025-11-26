@@ -3,7 +3,7 @@ import { tacheService, projectService } from '../db/database';
 import AjoutTache from './AjoutTache';
 import './Taches.css';
 
-export default function Taches() {
+export default function Taches({ variant = 'default' }) {
   const [taches, setTaches] = useState([]);
   const [projets, setProjets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +76,41 @@ export default function Taches() {
     return date.toLocaleDateString('fr-FR');
   };
 
+  // Fonction pour savoir si une tâche est prioritaire (pour le dashboard)
+  const isPriorityTask = (tache) => {
+    if (!tache) return false;
+
+    const highPriority = tache.priorite === 'Élevée' || tache.priorite === 'Critique';
+
+    let dueSoon = false;
+    if (tache.date_echeance) {
+      const now = new Date();
+      const threeDaysFromNow = new Date();
+      threeDaysFromNow.setDate(now.getDate() + 3);
+
+      const dueDate = new Date(tache.date_echeance);
+      // tâche avec échéance aujourd'hui ou dans les 3 jours
+      dueSoon = dueDate >= now && dueDate <= threeDaysFromNow;
+    }
+
+    return highPriority || dueSoon;
+  };
+
+  // Classe CSS de la date (en retard ou bientôt échue)
+  const getDateClass = (dateString) => {
+    if (!dateString) return '';
+
+    const now = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(now.getDate() + 3);
+
+    const date = new Date(dateString);
+
+    if (date < now) return 'date-late';
+    if (date >= now && date <= threeDaysFromNow) return 'date-soon';
+    return '';
+  };
+
   // Fonction pour ouvrir la modal d'ajout de tâche
   const handleAjouterTache = () => {
     setIsModalOpen(true);
@@ -135,6 +170,11 @@ export default function Taches() {
     }
   };
 
+  const isDashboard = variant === 'dashboard';
+
+  // Tâches affichées : toutes (mode normal) ou seulement les prioritaires (dashboard)
+  const displayedTaches = isDashboard ? taches.filter(isPriorityTask) : taches;
+
   if (loading) {
     return (
       <section className="taches-section">
@@ -183,14 +223,14 @@ export default function Taches() {
                 </tr>
               </thead>
               <tbody>
-                {taches.length === 0 ? (
+                {displayedTaches.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="no-tasks">
                       Aucune tâche trouvée. Cliquez sur "Ajouter une tâche" pour commencer.
                     </td>
                   </tr>
                 ) : (
-                  taches.map((tache) => (
+                  displayedTaches.map((tache) => (
                     <tr key={tache.id}>
                       <td className="task-title">{tache.titre}</td>
                       <td>
@@ -213,7 +253,7 @@ export default function Taches() {
                           <option value="Critique">Critique</option>
                         </select>
                       </td>
-                      <td className={tache.date_echeance && new Date(tache.date_echeance) < new Date() ? 'date-late' : ''}>
+                      <td className={getDateClass(tache.date_echeance)}>
                         {formatDate(tache.date_echeance)}
                       </td>
                       <td>

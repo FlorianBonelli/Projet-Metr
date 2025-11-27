@@ -122,10 +122,17 @@
   background-repeat: no-repeat;
   appearance: none;
 }
-.etat-en-cours { background: #e7f9ef; color: #37c776; }
-.etat-a-faire { background: #fff7e6; color: #f59e0b; }
-.etat-en-attente { background: #fef3c7; color: #92400e; }
-.etat-termine { background: #eef6ff; color: #21409A; }
+/* À faire = gris neutre */
+.etat-a-faire { background: #f3f4f6; color: #4b5563; }
+
+/* En cours = même orange que la priorité Moyenne (.prio-medium) */
+.etat-en-cours { background: #fff4e6; color: #d97706; }
+
+/* En attente = garde un style d'avertissement brun/orange */
+.etat-en-attente { background: #fff7ed; color: #9a3412; }
+
+/* Terminé = même vert que la priorité Faible (.prio-low) */
+.etat-termine { background: #eef9f1; color: #16a34a; }
 
 /* Styles pour les messages */
 .loading-message, .error-message {

@@ -71,7 +71,8 @@ function Projet() {
     const statusLower = status.toLowerCase();
     if (statusLower.includes('cours')) return 'active';
     if (statusLower.includes('brouillon')) return 'brouillon';
-    if (statusLower.includes('termin') || statusLower.includes('archiv')) return 'termine';
+    if (statusLower.includes('termin')) return 'termine';
+    if (statusLower.includes('archiv')) return 'archive';
     return 'active';
   };
 
@@ -155,6 +156,10 @@ function Projet() {
     setProjets(prev =>
       prev.map(p => (p.id === projectId ? { ...p, ...updatedData } : p))
     );
+  };
+
+  const handleStatusChange = (projectId, newStatus) => {
+    handleProjectUpdated(projectId, { status: newStatus });
   };
 
   return (
@@ -267,6 +272,7 @@ function Projet() {
               onDelete={handleDelete}
               onEdit={handleEdit}
               onArchive={handleArchive}
+              onStatusChange={handleStatusChange}
             />
           ))}
         </div>

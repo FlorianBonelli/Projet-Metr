@@ -15,9 +15,11 @@ export default function CarteProjet({
   statusType = "active",
   onDelete,
   onEdit,
-  onArchive
+  onArchive,
+  onStatusChange
 }) {
   const [showMenu, setShowMenu] = useState(false);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const isArchived = statusText?.toLowerCase().includes('archiv');
@@ -89,6 +91,41 @@ export default function CarteProjet({
   const handleDossierClick = () => {
     navigate(`/info-projet/${id}`);
   };
+
+  const toggleStatusMenu = (e) => {
+    e.stopPropagation();
+    setShowStatusMenu((prev) => !prev);
+  };
+
+  // Changement d'état via menu personnalisé
+  const handleStatusChange = async (newStatus) => {
+    try {
+      // Récupérer l'ID utilisateur pour les notifications
+      const userInfo = localStorage.getItem('userInfo');
+      let userId = null;
+      if (userInfo) {
+        const userData = JSON.parse(userInfo);
+        userId = userData.id_utilisateur || userData.id;
+      }
+
+      await projectService.updateProject(id, { status: newStatus }, userId);
+
+      // Prévenir le parent pour mettre à jour la liste locale
+      if (onStatusChange) {
+        onStatusChange(id, newStatus);
+      }
+
+      // Si on vient de passer en archivé, on peut aussi utiliser le callback d'archivage existant
+      if (newStatus.toLowerCase().includes('archiv') && onArchive) {
+        onArchive(id, { status: newStatus });
+      }
+
+      setShowStatusMenu(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'état du projet:", error);
+      alert("Erreur lors de la mise à jour de l'état du projet");
+    }
+  };
   return (
     <div className="carte-projet">
       <div className="carte-header">
@@ -121,7 +158,38 @@ export default function CarteProjet({
       <div className="carte-subtitle">{subtitle}</div>
       <div className="carte-date">{date}</div>
       <div className="carte-status">
-        <span className={`status status-${statusType}`}>{statusText}</span>
+        <button
+          type="button"
+          className={`status status-${statusType} status-toggle`}
+          onClick={toggleStatusMenu}
+        >
+          {statusText || 'En cours'}
+        </button>
+        {showStatusMenu && (
+          <div className="status-menu">
+            <button
+              type="button"
+              className="status-option status-option-en-cours"
+              onClick={() => handleStatusChange('En cours')}
+            >
+              En cours
+            </button>
+            <button
+              type="button"
+              className="status-option status-option-termine"
+              onClick={() => handleStatusChange('Terminé')}
+            >
+              Terminé
+            </button>
+            <button
+              type="button"
+              className="status-option status-option-archive"
+              onClick={() => handleStatusChange('Archivé')}
+            >
+              Archivé
+            </button>
+          </div>
+        )}
       </div>
       <div className="carte-actions">
         <button className="btn-primary">

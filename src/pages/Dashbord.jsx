@@ -110,6 +110,11 @@ function Dashbord() {
     );
   };
 
+  // Mise à jour spécifique de l'état depuis la carte projet
+  const handleStatusChange = (projectId, newStatus) => {
+    handleProjectUpdated(projectId, { status: newStatus });
+  };
+
   return (
     <div className="dashbord">
       <Sidebar />
@@ -145,6 +150,7 @@ function Dashbord() {
                     onDelete={handleDeleteProject}
                     onEdit={handleEditProject}
                     onArchive={handleArchiveProject}
+                    onStatusChange={handleStatusChange}
                   />
                 ))}
                 {/* Bouton "Voir plus" placé après les cartes */}

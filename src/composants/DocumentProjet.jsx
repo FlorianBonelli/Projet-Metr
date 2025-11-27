@@ -104,7 +104,7 @@ const DocumentProjet = ({ onFilesChange }) => {
                         type="file" 
                         id="file-input" 
                         multiple 
-                        accept=".pdf,.dwg,.jpg,.jpeg,.png,.xlsx,.xls"
+                        accept=".pdf,.dwg,.dxf,.jpg,.jpeg,.png,.xlsx,.xls,.docx,.doc"
                         onChange={handleFileInput}
                         style={{ display: 'none' }}
                     />

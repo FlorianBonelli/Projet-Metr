@@ -41,7 +41,7 @@ function Dashbord() {
         }
         
         // Récupérer uniquement les projets récents de l'utilisateur connecté
-        const projectsData = await projectService.getRecentProjects(4, userId); // Limiter à 4 projets pour le dashboard
+        const projectsData = await projectService.getRecentProjects(5, userId); // Limiter à 4 projets pour le dashboard
         const activeProjects = projectsData.filter(p => !p.status?.toLowerCase().includes('archiv'));
         setProjects(activeProjects);
       } catch (err) {

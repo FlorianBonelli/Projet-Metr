@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './notif.css';
 import Sidebar from '../composants/Sidebar';
 import { modificationService, userService } from '../db/database';
+import { useNavigate } from 'react-router-dom';
 
 function Notif() {
   const [projectsWithMods, setProjectsWithMods] = useState([]);
@@ -9,6 +10,7 @@ function Notif() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userCache, setUserCache] = useState({});
+  const navigate = useNavigate();
 
   // Charger les projets avec modifications au démarrage
   useEffect(() => {
@@ -18,17 +20,29 @@ function Notif() {
   const loadProjectsWithModifications = async () => {
     try {
       setLoading(true);
-      const projects = await modificationService.getProjectsWithModifications();
+
+      // Récupérer l'utilisateur connecté depuis localStorage
+      const userInfo = localStorage.getItem('userInfo');
+      if (!userInfo) {
+        console.error('Aucune information utilisateur trouvée');
+        navigate('/connexion');
+        return;
+      }
+
+      const userData = JSON.parse(userInfo);
+      const userId = userData.id_utilisateur || userData.id;
+
+      if (!userId) {
+        console.error('ID utilisateur manquant');
+        navigate('/connexion');
+        return;
+      }
+
+      // Ne charger que les projets (et notifications) appartenant à cet utilisateur
+      const projects = await modificationService.getProjectsWithModificationsByUser(userId);
       setProjectsWithMods(projects);
       
       // Pré-charger les utilisateurs pour les modifications
-      const userIds = new Set();
-      projects.forEach(project => {
-        project.modifications?.forEach(mod => {
-          userIds.add(mod.userId);
-        });
-      });
-      
       const users = await userService.getAllUsers();
       const cache = {};
       users.forEach(user => {

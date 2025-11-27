@@ -44,7 +44,16 @@ export default function CarteProjet({
   const handleArchive = async () => {
     try {
       const newStatus = isArchived ? 'En cours' : 'Archivé';
-      await projectService.updateProject(id, { status: newStatus });
+      
+      // Récupérer l'ID utilisateur pour les notifications
+      const userInfo = localStorage.getItem('userInfo');
+      let userId = null;
+      if (userInfo) {
+        const userData = JSON.parse(userInfo);
+        userId = userData.id_utilisateur || userData.id;
+      }
+      
+      await projectService.updateProject(id, { status: newStatus }, userId);
       setShowMenu(false);
       if (onArchive) {
         onArchive(id, { status: newStatus });

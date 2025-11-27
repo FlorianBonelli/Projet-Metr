@@ -82,7 +82,15 @@ const ModifProjet = ({ isOpen, onClose, projectId, onProjectUpdated }) => {
                 fichier: uploadedFiles
             };
 
-            await projectService.updateProject(projectId, updatedProject);
+            // Récupérer l'ID utilisateur pour les notifications
+            const userInfo = localStorage.getItem('userInfo');
+            let userId = null;
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                userId = userData.id_utilisateur || userData.id;
+            }
+
+            await projectService.updateProject(projectId, updatedProject, userId);
             
             if (onProjectUpdated) {
                 onProjectUpdated(projectId, updatedProject);

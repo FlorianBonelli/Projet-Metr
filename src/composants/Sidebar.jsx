@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { projectService } from '../db/database';
+import { projectService, modificationService } from '../db/database';
 import './Sidebar.css';
 
 // Import des icônes SVG
@@ -23,6 +23,7 @@ const Sidebar = () => {
     const location = useLocation();
     const [userFirstName, setUserFirstName] = useState('UTILISATEUR');
     const [recentProjects, setRecentProjects] = useState([]);
+    const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(0);
 
     // Fonction pour tronquer les noms trop longs
     const truncateProjectName = (name, maxLength = 20) => {
@@ -58,6 +59,29 @@ const Sidebar = () => {
         }
     };
 
+    // Fonction pour charger le nombre de notifications non vues
+    const loadUnseenNotificationsCount = async () => {
+        try {
+            const userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                const userId = userData.id_utilisateur || userData.id;
+                
+                if (userId) {
+                    const count = await modificationService.getUnseenNotificationsCount(userId);
+                    setUnseenNotificationsCount(count);
+                } else {
+                    setUnseenNotificationsCount(0);
+                }
+            } else {
+                setUnseenNotificationsCount(0);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération du nombre de notifications:', error);
+            setUnseenNotificationsCount(0);
+        }
+    };
+
     useEffect(() => {
         // Récupérer les informations de l'utilisateur depuis localStorage
         const userInfo = localStorage.getItem('userInfo');
@@ -72,8 +96,9 @@ const Sidebar = () => {
             }
         }
 
-        // Charger les projets récents au montage du composant
+        // Charger les projets récents et les notifications au montage du composant
         loadRecentProjects();
+        loadUnseenNotificationsCount();
     }, []);
 
     // Écouter les changements dans les projets pour mise à jour automatique
@@ -110,6 +135,9 @@ const Sidebar = () => {
                     >
                         <span className="icon">
                             <img src={item.icon} alt={item.label} />
+                            {item.label === 'Notification' && unseenNotificationsCount > 0 && (
+                                <span className="notification-badge">{unseenNotificationsCount}</span>
+                            )}
                         </span>
                         {item.label}
                     </Link>

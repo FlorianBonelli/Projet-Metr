@@ -342,10 +342,48 @@ export const projectService = {
   },
   
   // Mettre à jour un projet
-  async updateProject(id, updates) {
+  async updateProject(id, updates, userId = null) {
     try {
+      // Récupérer l'état actuel du projet pour détecter les changements
+      const currentProject = await db.projets.get(id);
+      if (!currentProject) {
+        throw new Error('Projet non trouvé');
+      }
+
+      // Détecter les champs modifiés
+      const changedFields = [];
+      const fieldMapping = {
+        nom: 'nom',
+        client: 'client', 
+        referenceInterne: 'referenceInterne',
+        typologieProjet: 'typologieProjet',
+        adresseProjet: 'adresseProjet',
+        dateLivraison: 'dateLivraison',
+        status: 'status'
+      };
+
+      for (const [field, changeType] of Object.entries(fieldMapping)) {
+        if (updates.hasOwnProperty(field) && updates[field] !== currentProject[field]) {
+          changedFields.push(changeType);
+        }
+      }
+
+      // Mettre à jour le projet
       await db.projets.update(id, updates);
       console.log('Projet mis à jour:', id);
+
+      // Créer des notifications pour chaque champ modifié
+      if (changedFields.length > 0 && userId) {
+        for (const changeType of changedFields) {
+          await modificationService.addModification({
+            projectId: id,
+            userId: userId,
+            changeType: changeType,
+            status: 'à voir'
+          });
+        }
+        console.log(`${changedFields.length} notification(s) créée(s) pour les modifications:`, changedFields);
+      }
       
       // Déclencher l'événement de mise à jour de projet pour mettre à jour la sidebar
       window.dispatchEvent(new CustomEvent('projectUpdated', { detail: { projectId: id, updates } }));
@@ -681,6 +719,72 @@ export const modificationService = {
     } catch (error) {
       console.error('Erreur lors de la récupération des projets avec modifications:', error);
       throw error;
+    }
+  },
+
+  // Récupérer les projets (avec notifications) appartenant à un utilisateur donné
+  async getProjectsWithModificationsByUser(userId) {
+    try {
+      const userProjects = await db.projets
+        .where('user_id')
+        .equals(userId)
+        .toArray();
+
+      const projectsWithMods = await Promise.all(
+        userProjects.map(async (project) => {
+          const modifications = await db.modifications
+            .where('projectId')
+            .equals(project.id)
+            .toArray();
+          return {
+            ...project,
+            modifications: modifications || [],
+            hasModifications: modifications && modifications.length > 0
+          };
+        })
+      );
+
+      return projectsWithMods.sort((a, b) => {
+        const aDate = a.modifications[0]?.dateModification || a.dateCreation || '';
+        const bDate = b.modifications[0]?.dateModification || b.dateCreation || '';
+        return new Date(bDate) - new Date(aDate);
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets avec modifications pour l\'utilisateur:', error);
+      throw error;
+    }
+  },
+
+  // Compter les notifications non vues pour un utilisateur
+  async getUnseenNotificationsCount(userId) {
+    try {
+      // Récupérer les projets de l'utilisateur
+      const userProjects = await db.projets
+        .where('user_id')
+        .equals(userId)
+        .toArray();
+
+      if (userProjects.length === 0) {
+        return 0;
+      }
+
+      // Récupérer toutes les modifications non vues pour ces projets
+      const projectIds = userProjects.map(p => p.id);
+      let unseenCount = 0;
+
+      for (const projectId of projectIds) {
+        const unseenMods = await db.modifications
+          .where('projectId')
+          .equals(projectId)
+          .and(mod => mod.status === 'à voir')
+          .toArray();
+        unseenCount += unseenMods.length;
+      }
+
+      return unseenCount;
+    } catch (error) {
+      console.error('Erreur lors du comptage des notifications non vues:', error);
+      return 0;
     }
   }
 };

@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { projectService } from '../db/database';
 import './HistoriquePlan.css';
-
-const mockPlans = [
-    { id: 1, nom: 'BatiMat 2023', dateModification: '03/11/2025', isDefault: false },
-    { id: 2, nom: 'BatiMat 2025', dateModification: '26/11/2025', isDefault: true },
-    { id: 3, nom: 'BatiMat 2023', dateModification: '01/11/2025', isDefault: false },
-    { id: 4, nom: 'Plan test', dateModification: '03/07/2024', isDefault: false },
-    { id: 5, nom: 'BatiMat 2022', dateModification: '03/11/2022', isDefault: false }
-];
 
 const reorderPlans = (list, defaultId) => {
     const selected = list.find((plan) => plan.id === defaultId) ?? list[0];
@@ -44,11 +37,66 @@ const NoteIcon = () => (
     </svg>
 );
 
-const HistoriquePlan = () => {
-    const [defaultPlanId, setDefaultPlanId] = useState(
-        () => mockPlans.find((plan) => plan.isDefault)?.id ?? mockPlans[0]?.id
-    );
-    const [plans, setPlans] = useState(() => reorderPlans(mockPlans, defaultPlanId));
+const HistoriquePlan = ({ projectId }) => {
+    const [defaultPlanId, setDefaultPlanId] = useState(null);
+    const [plans, setPlans] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Fonction pour filtrer les fichiers de type plan
+    const isPlanFile = (file) => {
+        const fileName = file.name.toLowerCase();
+        
+        // Extensions typiques des plans
+        const planExtensions = ['.dwg', '.dxf', '.pdf', '.csv', 'dwg'];
+        
+        // Mots-clés indiquant un plan
+        const planKeywords = ['plan', 'schema', 'blueprint', 'drawing', 'architecture'];
+        
+        // Vérifier l'extension
+        const hasPlanExtension = planExtensions.some(ext => fileName.endsWith(ext));
+        
+        // Vérifier les mots-clés dans le nom
+        const hasPlanKeyword = planKeywords.some(keyword => fileName.includes(keyword));
+        
+        return hasPlanExtension || hasPlanKeyword;
+    };
+
+    // Charger les plans du projet
+    useEffect(() => {
+        const loadPlans = async () => {
+            if (!projectId) return;
+            
+            try {
+                setLoading(true);
+                const project = await projectService.getProjectById(parseInt(projectId, 10));
+                
+                if (project && project.fichier) {
+                    // Filtrer les fichiers pour ne garder que les plans
+                    const projectPlans = project.fichier
+                        .filter(isPlanFile)
+                        .map((file, index) => ({
+                            id: index + 1,
+                            nom: file.name,
+                            dateModification: new Date().toLocaleDateString('fr-FR'),
+                            isDefault: index === 0, // Le premier plan est par défaut
+                            size: file.size,
+                            type: file.type
+                        }));
+                    
+                    setPlans(projectPlans);
+                    if (projectPlans.length > 0) {
+                        setDefaultPlanId(projectPlans[0].id);
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des plans:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPlans();
+    }, [projectId]);
 
     const handleSelectDefault = (planId) => {
         setDefaultPlanId(planId);
@@ -76,41 +124,55 @@ const HistoriquePlan = () => {
                     <span className="plan-cell plan-cell-action" />
                 </div>
 
-                {plans.map((plan) => {
-                    const isDefault = plan.id === defaultPlanId;
-                    return (
-                        <div
-                            key={plan.id}
-                            className={`plan-row ${isDefault ? 'plan-row-default' : ''}`}
-                        >
-                            <span className="plan-cell plan-cell-selection">
-                                <button
-                                    type="button"
-                                    className="plan-star-button"
-                                    aria-label={
-                                        isDefault
-                                            ? `${plan.nom} est déjà le plan par défaut`
-                                            : `Définir ${plan.nom} comme plan par défaut`
-                                    }
-                                    onClick={() => handleSelectDefault(plan.id)}
-                                >
-                                    <StarIcon filled={isDefault} />
-                                </button>
-                            </span>
-                            <span className="plan-cell plan-name-cell">
-                                <span className="plan-name">{plan.nom}</span>
-                                {isDefault && <span className="plan-badge">Par défaut</span>}
-                            </span>
-                            <span className="plan-cell plan-cell-date">{plan.dateModification}</span>
-                            <span className="plan-cell plan-cell-action">
-                                <button className="plan-row-btn">
-                                    Voir plus
-                                    <NoteIcon />
-                                </button>
-                            </span>
-                        </div>
-                    );
-                })}
+                {loading ? (
+                    <div className="plan-row">
+                        <span className="plan-cell" style={{ textAlign: 'center', padding: '20px', gridColumn: '1 / -1' }}>
+                            Chargement des plans...
+                        </span>
+                    </div>
+                ) : plans.length === 0 ? (
+                    <div className="plan-row">
+                        <span className="plan-cell" style={{ textAlign: 'center', padding: '20px', gridColumn: '1 / -1', color: '#666' }}>
+                            Aucun plan trouvé pour ce projet
+                        </span>
+                    </div>
+                ) : (
+                    plans.map((plan) => {
+                        const isDefault = plan.id === defaultPlanId;
+                        return (
+                            <div
+                                key={plan.id}
+                                className={`plan-row ${isDefault ? 'plan-row-default' : ''}`}
+                            >
+                                <span className="plan-cell plan-cell-selection">
+                                    <button
+                                        type="button"
+                                        className="plan-star-button"
+                                        aria-label={
+                                            isDefault
+                                                ? `${plan.nom} est déjà le plan par défaut`
+                                                : `Définir ${plan.nom} comme plan par défaut`
+                                        }
+                                        onClick={() => handleSelectDefault(plan.id)}
+                                    >
+                                        <StarIcon filled={isDefault} />
+                                    </button>
+                                </span>
+                                <span className="plan-cell plan-name-cell">
+                                    <span className="plan-name">{plan.nom}</span>
+                                    {isDefault && <span className="plan-badge">Par défaut</span>}
+                                </span>
+                                <span className="plan-cell plan-cell-date">{plan.dateModification}</span>
+                                <span className="plan-cell plan-cell-action">
+                                    <button className="plan-row-btn">
+                                        Voir plus
+                                        <NoteIcon />
+                                    </button>
+                                </span>
+                            </div>
+                        );
+                    })
+                )}
             </div>
 
             <button className="plan-more-btn">+ Voir plus</button>

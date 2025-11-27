@@ -15,13 +15,29 @@ const AjoutTache = ({ isOpen, onClose, onTacheAdded }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Charger la liste des projets
+    // Charger la liste des projets de l'utilisateur connecté
     useEffect(() => {
         if (isOpen) {
             const loadProjets = async () => {
                 try {
-                    const allProjets = await projectService.getAllProjects();
-                    setProjets(allProjets);
+                    // Récupérer l'ID de l'utilisateur connecté
+                    const userInfo = localStorage.getItem('userInfo');
+                    if (userInfo) {
+                        const userData = JSON.parse(userInfo);
+                        const userId = userData.id_utilisateur || userData.id;
+                        
+                        if (userId) {
+                            // Récupérer uniquement les projets de l'utilisateur connecté
+                            const userProjets = await projectService.getProjectsByUser(userId);
+                            setProjets(userProjets);
+                        } else {
+                            setProjets([]);
+                            setError('Utilisateur non connecté');
+                        }
+                    } else {
+                        setProjets([]);
+                        setError('Utilisateur non connecté');
+                    }
                 } catch (error) {
                     console.error('Erreur lors du chargement des projets:', error);
                     setError('Erreur lors du chargement des projets');

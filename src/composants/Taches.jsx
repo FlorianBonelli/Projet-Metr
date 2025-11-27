@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tacheService, projectService } from '../db/database';
+import { useNavigate } from 'react-router-dom';
 import AjoutTache from './AjoutTache';
 import './Taches.css';
 
@@ -9,19 +10,39 @@ export default function Taches({ variant = 'default' }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Charger les tâches et projets
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [allTaches, allProjets] = await Promise.all([
-          tacheService.getAllTaches(),
-          projectService.getAllProjects()
+        
+        // Récupérer l'ID de l'utilisateur connecté depuis localStorage
+        const userInfo = localStorage.getItem('userInfo');
+        if (!userInfo) {
+          console.error('Aucune information utilisateur trouvée');
+          navigate('/connexion');
+          return;
+        }
+        
+        const userData = JSON.parse(userInfo);
+        const userId = userData.id_utilisateur || userData.id;
+        
+        if (!userId) {
+          console.error('ID utilisateur manquant');
+          navigate('/connexion');
+          return;
+        }
+        
+        // Récupérer uniquement les tâches et projets de l'utilisateur connecté
+        const [userTaches, userProjets] = await Promise.all([
+          tacheService.getTachesByUser(userId),
+          projectService.getProjectsByUser(userId)
         ]);
         
-        setTaches(allTaches);
-        setProjets(allProjets);
+        setTaches(userTaches);
+        setProjets(userProjets);
       } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
         setError('Erreur lors du chargement des tâches');
@@ -31,19 +52,13 @@ export default function Taches({ variant = 'default' }) {
     };
 
     loadData();
-  }, []);
+  }, [navigate]);
 
   // Fonction pour obtenir le nom du projet
   const getProjectName = (projetId) => {
     if (!projetId) return 'Aucun projet';
     
-    // Debug: afficher les informations pour diagnostiquer
-    console.log('Recherche projet avec ID:', projetId, 'Type:', typeof projetId);
-    console.log('Projets disponibles:', projets.map(p => ({ id: p.id, nom: p.nom, type: typeof p.id })));
-    
     const projet = projets.find(p => p.id == projetId); // Utiliser == pour comparer différents types
-    console.log('Projet trouvé:', projet);
-    
     return projet ? projet.nom : `Projet #${projetId}`;
   };
 
@@ -121,24 +136,34 @@ export default function Taches({ variant = 'default' }) {
     setIsModalOpen(false);
   };
 
-  // Fonction appelée quand une tâche est ajoutée
-  const handleTacheAdded = async () => {
+  // Fonction helper pour recharger les tâches de l'utilisateur connecté
+  const reloadUserTaches = async () => {
     try {
-      // Recharger les tâches
-      const updatedTaches = await tacheService.getAllTaches();
-      setTaches(updatedTaches);
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        const userData = JSON.parse(userInfo);
+        const userId = userData.id_utilisateur || userData.id;
+        if (userId) {
+          const updatedTaches = await tacheService.getTachesByUser(userId);
+          setTaches(updatedTaches);
+        }
+      }
     } catch (error) {
       console.error('Erreur lors du rechargement des tâches:', error);
     }
+  };
+
+  // Fonction pour recharger les tâches après ajout
+  const handleTacheAdded = async () => {
+    await reloadUserTaches();
   };
 
   // Fonction pour mettre à jour l'état d'une tâche
   const handleUpdateEtat = async (tacheId, nouvelEtat) => {
     try {
       await tacheService.updateTache(tacheId, { etat: nouvelEtat });
-      // Recharger les tâches
-      const updatedTaches = await tacheService.getAllTaches();
-      setTaches(updatedTaches);
+      // Recharger les tâches de l'utilisateur
+      await reloadUserTaches();
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche:', error);
     }
@@ -148,9 +173,8 @@ export default function Taches({ variant = 'default' }) {
   const handleUpdatePriorite = async (tacheId, nouvellePriorite) => {
     try {
       await tacheService.updateTache(tacheId, { priorite: nouvellePriorite });
-      // Recharger les tâches
-      const updatedTaches = await tacheService.getAllTaches();
-      setTaches(updatedTaches);
+      // Recharger les tâches de l'utilisateur
+      await reloadUserTaches();
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche:', error);
     }
@@ -161,9 +185,8 @@ export default function Taches({ variant = 'default' }) {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
       try {
         await tacheService.deleteTache(tacheId);
-        // Recharger les tâches
-        const updatedTaches = await tacheService.getAllTaches();
-        setTaches(updatedTaches);
+        // Recharger les tâches de l'utilisateur
+        await reloadUserTaches();
       } catch (error) {
         console.error('Erreur lors de la suppression de la tâche:', error);
       }

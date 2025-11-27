@@ -101,27 +101,25 @@ export const initializeTestData = async () => {
   }
 };
 
-// Fonction pour migrer les projets existants sans user_id
-export const migrateExistingProjects = async () => {
+// Fonction pour migrer les projets et tâches existants sans user_id
+export const migrateExistingData = async () => {
   try {
-    console.log('Vérification de la migration des projets...');
+    console.log('Vérification de la migration des données...');
     
-    // Récupérer tous les projets
+    // Récupérer l'utilisateur de test
+    const testUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+    const defaultUserId = testUser ? testUser.id_utilisateur : 1;
+    
+    // Migration des projets
     const allProjects = await db.projets.toArray();
     console.log('Projets trouvés:', allProjects.length);
     
-    // Trouver les projets sans user_id
     const projectsWithoutUserId = allProjects.filter(p => !p.user_id);
     console.log('Projets sans user_id:', projectsWithoutUserId.length);
     
     if (projectsWithoutUserId.length > 0) {
-      // Récupérer l'utilisateur de test
-      const testUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
-      const defaultUserId = testUser ? testUser.id_utilisateur : 1;
-      
       console.log('Attribution des projets à l\'utilisateur ID:', defaultUserId);
       
-      // Mettre à jour chaque projet sans user_id
       for (const project of projectsWithoutUserId) {
         await db.projets.update(project.id, { user_id: defaultUserId });
         console.log(`Projet ${project.id} (${project.nom}) assigné à l'utilisateur ${defaultUserId}`);
@@ -131,15 +129,35 @@ export const migrateExistingProjects = async () => {
     } else {
       console.log('Tous les projets ont déjà un user_id');
     }
+    
+    // Migration des tâches
+    const allTaches = await db.taches.toArray();
+    console.log('Tâches trouvées:', allTaches.length);
+    
+    const tachesWithoutUserId = allTaches.filter(t => !t.user_id);
+    console.log('Tâches sans user_id:', tachesWithoutUserId.length);
+    
+    if (tachesWithoutUserId.length > 0) {
+      console.log('Attribution des tâches à l\'utilisateur ID:', defaultUserId);
+      
+      for (const tache of tachesWithoutUserId) {
+        await db.taches.update(tache.id, { user_id: defaultUserId });
+        console.log(`Tâche ${tache.id} (${tache.titre}) assignée à l'utilisateur ${defaultUserId}`);
+      }
+      
+      console.log('Migration des tâches terminée');
+    } else {
+      console.log('Toutes les tâches ont déjà un user_id');
+    }
   } catch (error) {
-    console.error('Erreur lors de la migration des projets:', error);
+    console.error('Erreur lors de la migration des données:', error);
   }
 };
 
 // Initialiser l'utilisateur de test au démarrage
 initializeTestUser().then(() => {
-  // Migrer les projets existants après l'initialisation de l'utilisateur
-  migrateExistingProjects();
+  // Migrer les données existantes après l'initialisation de l'utilisateur
+  migrateExistingData();
 });
 initializeTestData();
 
@@ -459,6 +477,26 @@ export const tacheService = {
     }
   },
 
+  // Récupérer les tâches d'un utilisateur spécifique
+  async getTachesByUser(userId) {
+    try {
+      const userTaches = await db.taches
+        .where('user_id')
+        .equals(userId)
+        .toArray();
+      
+      // Trier manuellement par date de création (plus récent en premier)
+      return userTaches.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA;
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des tâches de l\'utilisateur:', error);
+      throw error;
+    }
+  },
+
   async getTachesByProject(projectId) {
     try {
       return await db.taches.where('projet_id').equals(projectId).toArray();
@@ -669,18 +707,32 @@ export const debugDatabase = async () => {
     const projectsWithoutUserId = projects.filter(p => !p.user_id);
     console.log('Projets sans user_id:', projectsWithoutUserId.length);
     
-    // Vérifier les projets par utilisateur
+    // Vérifier les tâches
+    const tasks = await db.taches.toArray();
+    console.log('Tâches:', tasks.map(t => ({ 
+      id: t.id, 
+      titre: t.titre, 
+      user_id: t.user_id,
+      projet_id: t.projet_id 
+    })));
+    
+    // Vérifier les tâches sans user_id
+    const tasksWithoutUserId = tasks.filter(t => !t.user_id);
+    console.log('Tâches sans user_id:', tasksWithoutUserId.length);
+    
+    // Vérifier les projets et tâches par utilisateur
     for (const user of users) {
       const userProjects = await projectService.getProjectsByUser(user.id_utilisateur);
-      console.log(`Projets de ${user.prenom} ${user.nom} (ID: ${user.id_utilisateur}):`, userProjects.length);
+      const userTasks = await tacheService.getTachesByUser(user.id_utilisateur);
+      console.log(`${user.prenom} ${user.nom} (ID: ${user.id_utilisateur}): ${userProjects.length} projets, ${userTasks.length} tâches`);
     }
     
     console.log('=== FIN DÉBOGAGE ===');
     
-    // Si des projets n'ont pas de user_id, les migrer maintenant
-    if (projectsWithoutUserId.length > 0) {
-      console.log('🔧 Migration forcée des projets sans user_id...');
-      await migrateExistingProjects();
+    // Si des données n'ont pas de user_id, les migrer maintenant
+    if (projectsWithoutUserId.length > 0 || tasksWithoutUserId.length > 0) {
+      console.log('🔧 Migration forcée des données sans user_id...');
+      await migrateExistingData();
     }
   } catch (error) {
     console.error('Erreur lors du débogage:', error);

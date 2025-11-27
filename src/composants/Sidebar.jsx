@@ -43,7 +43,7 @@ const Sidebar = () => {
                 
                 if (userId) {
                     // Récupérer uniquement les projets récents de l'utilisateur connecté
-                    const projects = await projectService.getRecentProjects(3, userId);
+                    const projects = await projectService.getRecentProjects(2, userId);
                     setRecentProjects(projects);
                 } else {
                     console.warn('ID utilisateur non trouvé');

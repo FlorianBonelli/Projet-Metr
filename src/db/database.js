@@ -344,8 +344,14 @@ export const projectService = {
   // Mettre à jour un projet
   async updateProject(id, updates, userId = null) {
     try {
+      // S'assurer que l'ID est un nombre
+      const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+      if (isNaN(numericId)) {
+        throw new Error('ID de projet invalide');
+      }
+
       // Récupérer l'état actuel du projet pour détecter les changements
-      const currentProject = await db.projets.get(id);
+      const currentProject = await db.projets.get(numericId);
       if (!currentProject) {
         throw new Error('Projet non trouvé');
       }
@@ -369,14 +375,14 @@ export const projectService = {
       }
 
       // Mettre à jour le projet
-      await db.projets.update(id, updates);
-      console.log('Projet mis à jour:', id);
+      await db.projets.update(numericId, updates);
+      console.log('Projet mis à jour:', numericId);
 
       // Créer des notifications pour chaque champ modifié
       if (changedFields.length > 0 && userId) {
         for (const changeType of changedFields) {
           await modificationService.addModification({
-            projectId: id,
+            projectId: numericId,
             userId: userId,
             changeType: changeType,
             status: 'à voir'
@@ -386,7 +392,7 @@ export const projectService = {
       }
       
       // Déclencher l'événement de mise à jour de projet pour mettre à jour la sidebar
-      window.dispatchEvent(new CustomEvent('projectUpdated', { detail: { projectId: id, updates } }));
+      window.dispatchEvent(new CustomEvent('projectUpdated', { detail: { projectId: numericId, updates } }));
     } catch (error) {
       console.error('Erreur lors de la mise à jour du projet:', error);
       throw error;

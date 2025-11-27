@@ -10,27 +10,41 @@ const ExternalLinkIcon = () => (
     </svg>
 );
 
+const TrashIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#ef4444" strokeWidth="1.6">
+        <path d="M3 6h14" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 6V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 6l1 10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 10v4" strokeLinecap="round" />
+        <path d="M12 10v4" strokeLinecap="round" />
+    </svg>
+);
+
 const AutreDoc = ({ projectId }) => {
     const [documents, setDocuments] = useState([]);
+    const [allDocuments, setAllDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showUpload, setShowUpload] = useState(false);
+    const [showAllDocuments, setShowAllDocuments] = useState(false);
 
     // Fonction pour filtrer les fichiers de type document (non-plans)
     const isDocumentFile = (file) => {
         const fileName = file.name.toLowerCase();
         
-        // Extensions typiques des plans
+        // Extensions typiques des plans (incluant PDF maintenant)
         const planExtensions = ['.dwg', '.dxf', '.pdf'];
         
         // Mots-clés indiquant un plan
         const planKeywords = ['plan', 'schema', 'blueprint', 'drawing', 'architecture'];
         
-        // Vérifier l'extension
+        // Vérifier l'extension des plans
         const hasPlanExtension = planExtensions.some(ext => fileName.endsWith(ext));
         
         // Vérifier les mots-clés dans le nom
         const hasPlanKeyword = planKeywords.some(keyword => fileName.includes(keyword));
         
         // Retourner true si ce n'est PAS un plan
+        // Maintenant les PDF vont dans HistoriquePlan, donc on les exclut d'AutreDoc
         return !(hasPlanExtension || hasPlanKeyword);
     };
 
@@ -55,7 +69,9 @@ const AutreDoc = ({ projectId }) => {
                             type: file.type
                         }));
                     
-                    setDocuments(projectDocuments);
+                    setAllDocuments(projectDocuments);
+                    // Afficher seulement les 4 premiers documents par défaut
+                    setDocuments(showAllDocuments ? projectDocuments : projectDocuments.slice(0, 4));
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des documents:', error);
@@ -67,17 +83,155 @@ const AutreDoc = ({ projectId }) => {
         loadDocuments();
     }, [projectId]);
 
+    // Fonction pour supprimer un document
+    const handleDeleteDocument = async (documentToDelete) => {
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer le document "${documentToDelete.nom}" ?`)) {
+            return;
+        }
+
+        try {
+            console.log('Début suppression document:', documentToDelete.nom);
+            
+            // Convertir projectId en nombre
+            const numericProjectId = parseInt(projectId, 10);
+            if (isNaN(numericProjectId)) {
+                throw new Error('ID de projet invalide');
+            }
+
+            // Récupérer le projet actuel
+            const project = await projectService.getProjectById(numericProjectId);
+            if (!project) {
+                throw new Error('Projet non trouvé');
+            }
+
+            // Filtrer les fichiers pour supprimer le document sélectionné
+            const updatedFiles = (project.fichier || []).filter(file => file.name !== documentToDelete.nom);
+
+            // Récupérer l'ID utilisateur pour les notifications
+            const userInfo = localStorage.getItem('userInfo');
+            let userId = null;
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                userId = userData.id_utilisateur || userData.id;
+            }
+
+            // Mettre à jour le projet sans le fichier supprimé
+            await projectService.updateProject(numericProjectId, { fichier: updatedFiles }, userId);
+
+            console.log('Document supprimé avec succès');
+
+            // Recharger les documents
+            const projectDocuments = updatedFiles
+                .filter(isDocumentFile)
+                .map((file, index) => ({
+                    id: index + 1,
+                    nom: file.name,
+                    date: new Date().toLocaleDateString('fr-FR'),
+                    size: file.size,
+                    type: file.type
+                }));
+            
+            setAllDocuments(projectDocuments);
+            setDocuments(showAllDocuments ? projectDocuments : projectDocuments.slice(0, 4));
+            
+        } catch (error) {
+            console.error('Erreur lors de la suppression du document:', error);
+            alert(`Erreur lors de la suppression du document: ${error.message}`);
+        }
+    };
+
+    // Fonction pour gérer l'upload de nouveaux documents
+    const handleFileUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        try {
+            console.log('Début upload documents, projectId:', projectId);
+            
+            // Convertir projectId en nombre
+            const numericProjectId = parseInt(projectId, 10);
+            if (isNaN(numericProjectId)) {
+                throw new Error('ID de projet invalide');
+            }
+
+            // Récupérer le projet actuel
+            const project = await projectService.getProjectById(numericProjectId);
+            if (!project) {
+                throw new Error('Projet non trouvé');
+            }
+
+            console.log('Projet trouvé:', project.nom);
+
+            // Ajouter les nouveaux fichiers aux fichiers existants
+            const newFiles = files.map(file => ({
+                name: file.name,
+                size: file.size,
+                type: file.type
+            }));
+
+            console.log('Nouveaux fichiers:', newFiles);
+
+            const updatedFiles = [...(project.fichier || []), ...newFiles];
+
+            // Récupérer l'ID utilisateur pour les notifications
+            const userInfo = localStorage.getItem('userInfo');
+            let userId = null;
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                userId = userData.id_utilisateur || userData.id;
+            }
+
+            console.log('Mise à jour du projet avec', updatedFiles.length, 'fichiers');
+
+            // Mettre à jour le projet avec les nouveaux fichiers
+            await projectService.updateProject(numericProjectId, { fichier: updatedFiles }, userId);
+
+            console.log('Projet mis à jour avec succès');
+
+            // Recharger les documents directement depuis les fichiers mis à jour
+            const projectDocuments = updatedFiles
+                .filter(isDocumentFile)
+                .map((file, index) => ({
+                    id: index + 1,
+                    nom: file.name,
+                    date: new Date().toLocaleDateString('fr-FR'),
+                    size: file.size,
+                    type: file.type
+                }));
+            
+            setAllDocuments(projectDocuments);
+            setDocuments(showAllDocuments ? projectDocuments : projectDocuments.slice(0, 4));
+
+            // Fermer l'interface d'upload
+            setShowUpload(false);
+            
+            console.log('Upload terminé avec succès');
+        } catch (error) {
+            console.error('Erreur détaillée lors de l\'ajout des documents:', error);
+            alert(`Erreur lors de l'ajout des documents: ${error.message}`);
+        }
+    };
+
     return (
         <section className="autre-doc-card">
             <div className="doc-card-header">
-                <p className="doc-label">Documents</p>
-                <h2 className="doc-title">Autres Documents</h2>
+                <div>
+                    <p className="doc-label">Documents</p>
+                    <h2 className="doc-title">Autres Documents</h2>
+                </div>
+                <button 
+                    className="doc-header-btn"
+                    onClick={() => setShowUpload(!showUpload)}
+                >
+                    + Ajouter
+                </button>
             </div>
 
             <div className="doc-table">
                 <div className="doc-row doc-row-head">
                     <span className="doc-cell">Nom</span>
                     <span className="doc-cell doc-cell-date">Date</span>
+                    <span className="doc-cell doc-cell-action">Actions</span>
                 </div>
                 
                 {loading ? (
@@ -103,12 +257,74 @@ const AutreDoc = ({ projectId }) => {
                                 </button>
                             </span>
                             <span className="doc-cell doc-cell-date">{doc.date}</span>
+                            <span className="doc-cell doc-cell-action">
+                                <button 
+                                    className="doc-delete-btn"
+                                    onClick={() => handleDeleteDocument(doc)}
+                                    aria-label={`Supprimer ${doc.nom}`}
+                                >
+                                    <TrashIcon />
+                                </button>
+                            </span>
                         </div>
                     ))
                 )}
             </div>
 
-            <button className="doc-more-btn">+ Voir plus</button>
+            {showUpload && (
+                <div className="upload-section" style={{ padding: '20px', border: '2px dashed #ccc', margin: '10px 0', borderRadius: '8px' }}>
+                    <input
+                        type="file"
+                        id="doc-upload"
+                        multiple
+                        accept=".docx,.doc,.xlsx,.xls,.jpg,.jpeg,.png,.txt"
+                        onChange={handleFileUpload}
+                        style={{ display: 'none' }}
+                    />
+                    <div style={{ textAlign: 'center' }}>
+                        <p style={{ margin: '10px 0', color: '#666' }}>Sélectionnez les documents à ajouter (Word, Excel, Images, etc.)</p>
+                        <button 
+                            onClick={() => document.getElementById('doc-upload').click()}
+                            style={{ 
+                                padding: '10px 20px', 
+                                backgroundColor: '#3B82F6', 
+                                color: 'white', 
+                                border: 'none', 
+                                borderRadius: '5px', 
+                                cursor: 'pointer',
+                                marginRight: '10px'
+                            }}
+                        >
+                            📁 Parcourir les fichiers
+                        </button>
+                        <button 
+                            onClick={() => setShowUpload(false)}
+                            style={{ 
+                                padding: '10px 20px', 
+                                backgroundColor: '#6B7280', 
+                                color: 'white', 
+                                border: 'none', 
+                                borderRadius: '5px', 
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Annuler
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {allDocuments.length > 4 && (
+                <button 
+                    className="doc-more-btn"
+                    onClick={() => {
+                        setShowAllDocuments(!showAllDocuments);
+                        setDocuments(showAllDocuments ? allDocuments.slice(0, 4) : allDocuments);
+                    }}
+                >
+                    {showAllDocuments ? 'Voir moins' : '+ Voir plus'}
+                </button>
+            )}
         </section>
     );
 };

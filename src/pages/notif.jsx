@@ -116,9 +116,9 @@ function Notif() {
       // Changement d'état d'avancement d'un projet
       'status': 'A modifié l\'état',
       // Modification d\'une priorité de tâche
-      'tache_priorite': 'A modifié la priorité',
+      'tache_priorite': 'A modifié la priorité de la tâche',
       // Modification de l\'état d\'une tâche
-      'tache_etat': 'A modifié l\'état',
+      'tache_etat': 'A modifié l\'état de la tâche',
       // Création d'une nouvelle tâche liée au projet
       'tache_creation': 'A ajouté une tâche'
     };

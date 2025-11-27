@@ -74,7 +74,10 @@ function Profil() {
   };
 
   const handleDisconnect = () => {
+    // Nettoyer complètement le localStorage pour éviter les fuites de session
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userInfo');
+    localStorage.clear(); // Nettoie tout le localStorage pour une déconnexion complète
     navigate('/connexion');
   };
 

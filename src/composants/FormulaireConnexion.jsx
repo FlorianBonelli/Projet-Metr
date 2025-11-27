@@ -24,7 +24,8 @@ function FormulaireConnexion() {
         console.log('Utilisateur connecté:', user);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userInfo', JSON.stringify({
-          id: user.id,
+          id_utilisateur: user.id_utilisateur,
+          id: user.id_utilisateur, // Pour compatibilité
           nom: user.nom,
           prenom: user.prenom,
           email: user.email,

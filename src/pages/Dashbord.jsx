@@ -3,7 +3,7 @@ import './Dashbord.css';
 import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
 import ModifProjet from '../composants/ModifProjet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Taches from '../composants/Taches';
 import Stat from '../composants/Stat';
 import { projectService } from '../db/database';
@@ -15,13 +15,33 @@ function Dashbord() {
   const [error, setError] = useState(null);
   const [isModifModalOpen, setIsModifModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const navigate = useNavigate();
 
   // Charger les projets depuis la base de données
   useEffect(() => {
     const loadProjects = async () => {
       try {
         setLoading(true);
-        const projectsData = await projectService.getRecentProjects(4); // Limiter à 4 projets pour le dashboard
+        
+        // Récupérer l'ID de l'utilisateur connecté depuis localStorage
+        const userInfo = localStorage.getItem('userInfo');
+        if (!userInfo) {
+          console.error('Aucune information utilisateur trouvée');
+          navigate('/connexion');
+          return;
+        }
+        
+        const userData = JSON.parse(userInfo);
+        const userId = userData.id_utilisateur || userData.id;
+        
+        if (!userId) {
+          console.error('ID utilisateur manquant');
+          navigate('/connexion');
+          return;
+        }
+        
+        // Récupérer uniquement les projets récents de l'utilisateur connecté
+        const projectsData = await projectService.getRecentProjects(4, userId); // Limiter à 4 projets pour le dashboard
         const activeProjects = projectsData.filter(p => !p.status?.toLowerCase().includes('archiv'));
         setProjects(activeProjects);
       } catch (err) {
@@ -33,7 +53,7 @@ function Dashbord() {
     };
 
     loadProjects();
-  }, []);
+  }, [navigate]);
 
   // Fonction pour formater la date
   const formatDate = (dateString) => {

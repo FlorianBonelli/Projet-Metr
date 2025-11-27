@@ -37,6 +37,23 @@ const CreationProjet = () => {
             return;
         }
 
+        // Récupérer l'ID de l'utilisateur connecté
+        const userInfo = localStorage.getItem('userInfo');
+        if (!userInfo) {
+            alert('Session expirée. Veuillez vous reconnecter.');
+            navigate('/connexion');
+            return;
+        }
+
+        const userData = JSON.parse(userInfo);
+        const userId = userData.id_utilisateur || userData.id;
+
+        if (!userId) {
+            alert('Erreur d\'authentification. Veuillez vous reconnecter.');
+            navigate('/connexion');
+            return;
+        }
+
         setIsCreating(true);
         
         try {
@@ -54,7 +71,8 @@ const CreationProjet = () => {
                     name: file.name,
                     size: file.size,
                     type: file.type
-                }))
+                })),
+                user_id: userId // Associer le projet à l'utilisateur connecté
             };
 
             // Sauvegarder le projet en base de données

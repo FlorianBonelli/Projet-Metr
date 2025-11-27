@@ -34,10 +34,27 @@ const Sidebar = () => {
     // Fonction pour charger les projets récents
     const loadRecentProjects = async () => {
         try {
-            const projects = await projectService.getRecentProjects(3);
-            setRecentProjects(projects);
+            // Récupérer l'ID de l'utilisateur connecté
+            const userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                const userId = userData.id_utilisateur || userData.id;
+                
+                if (userId) {
+                    // Récupérer uniquement les projets récents de l'utilisateur connecté
+                    const projects = await projectService.getRecentProjects(3, userId);
+                    setRecentProjects(projects);
+                } else {
+                    console.warn('ID utilisateur non trouvé');
+                    setRecentProjects([]);
+                }
+            } else {
+                console.warn('Informations utilisateur non trouvées');
+                setRecentProjects([]);
+            }
         } catch (error) {
             console.error('Erreur lors de la récupération des projets récents:', error);
+            setRecentProjects([]);
         }
     };
 

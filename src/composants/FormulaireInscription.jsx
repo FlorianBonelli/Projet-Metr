@@ -42,7 +42,8 @@ function FormulaireInscription() {
       setTimeout(() => {
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userInfo', JSON.stringify({
-          id: createdUser.id,
+          id_utilisateur: createdUser.id_utilisateur,
+          id: createdUser.id_utilisateur, // Pour compatibilité
           nom: createdUser.nom,
           prenom: createdUser.prenom,
           email: createdUser.email,

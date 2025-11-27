@@ -30,8 +30,27 @@ function Projet() {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const allProjects = await projectService.getAllProjects();
-      setProjets(allProjects);
+      
+      // Récupérer l'ID de l'utilisateur connecté depuis localStorage
+      const userInfo = localStorage.getItem('userInfo');
+      if (!userInfo) {
+        console.error('Aucune information utilisateur trouvée');
+        navigate('/connexion');
+        return;
+      }
+      
+      const userData = JSON.parse(userInfo);
+      const userId = userData.id_utilisateur || userData.id;
+      
+      if (!userId) {
+        console.error('ID utilisateur manquant');
+        navigate('/connexion');
+        return;
+      }
+      
+      // Récupérer uniquement les projets de l'utilisateur connecté
+      const userProjects = await projectService.getProjectsByUser(userId);
+      setProjets(userProjects);
     } catch (error) {
       console.error('Erreur lors du chargement des projets:', error);
     } finally {
@@ -218,7 +237,7 @@ function Projet() {
                 className="toggle-checkbox"
               />
               <span className="toggle-slider"></span>
-              <span className="toggle-text">Afficher aussi les projets archivés</span>
+              <span className="toggle-text">Afficher les projets archivés</span>
             </label>
           </div>
         </div>

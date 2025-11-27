@@ -3,14 +3,22 @@ import Dexie from 'dexie';
 // Créer une instance de la base de données
 export const db = new Dexie('ProjetMetrDatabase');
 
-// Définir le schéma de la base de données (version unique)
-db.version(1).stores({
+// Définir le schéma de la base de données (version mise à jour)
+db.version(2).stores({
   utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
-  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation',
+  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
   libraries: '++id, user_id, nom, created_at',
   articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
   taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
   modifications: '++id, projectId, userId, dateModification, changeType'
+}).upgrade(trans => {
+  // Migration pour ajouter user_id aux projets existants
+  return trans.projets.toCollection().modify(projet => {
+    if (!projet.user_id) {
+      // Assigner les projets existants à l'utilisateur de test par défaut
+      projet.user_id = 1; // ID de l'utilisateur de test
+    }
+  });
 });
 
 // Pré-remplir la bibliothèque par défaut lors de la création de la base
@@ -93,8 +101,46 @@ export const initializeTestData = async () => {
   }
 };
 
+// Fonction pour migrer les projets existants sans user_id
+export const migrateExistingProjects = async () => {
+  try {
+    console.log('Vérification de la migration des projets...');
+    
+    // Récupérer tous les projets
+    const allProjects = await db.projets.toArray();
+    console.log('Projets trouvés:', allProjects.length);
+    
+    // Trouver les projets sans user_id
+    const projectsWithoutUserId = allProjects.filter(p => !p.user_id);
+    console.log('Projets sans user_id:', projectsWithoutUserId.length);
+    
+    if (projectsWithoutUserId.length > 0) {
+      // Récupérer l'utilisateur de test
+      const testUser = await db.utilisateur.where('email').equals('antoine.brosseau@edu.ece.fr').first();
+      const defaultUserId = testUser ? testUser.id_utilisateur : 1;
+      
+      console.log('Attribution des projets à l\'utilisateur ID:', defaultUserId);
+      
+      // Mettre à jour chaque projet sans user_id
+      for (const project of projectsWithoutUserId) {
+        await db.projets.update(project.id, { user_id: defaultUserId });
+        console.log(`Projet ${project.id} (${project.nom}) assigné à l'utilisateur ${defaultUserId}`);
+      }
+      
+      console.log('Migration des projets terminée');
+    } else {
+      console.log('Tous les projets ont déjà un user_id');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la migration des projets:', error);
+  }
+};
+
 // Initialiser l'utilisateur de test au démarrage
-initializeTestUser();
+initializeTestUser().then(() => {
+  // Migrer les projets existants après l'initialisation de l'utilisateur
+  migrateExistingProjects();
+});
 initializeTestData();
 
 // Fonctions utilitaires pour la gestion des utilisateurs
@@ -201,8 +247,14 @@ export const projectService = {
         dateLivraison,
         status = 'En cours',
         membre = [],
-        fichier = []
+        fichier = [],
+        user_id
       } = projectData;
+
+      // Vérifier que user_id est fourni
+      if (!user_id) {
+        throw new Error('L\'ID utilisateur est requis pour créer un projet');
+      }
       
       const projectId = await db.projets.add({
         nom,
@@ -214,6 +266,7 @@ export const projectService = {
         status,
         membre,
         fichier,
+        user_id,
         date: new Date().toISOString().split('T')[0], // Date au format YYYY-MM-DD
         dateCreation: new Date().toISOString()
       });
@@ -236,6 +289,26 @@ export const projectService = {
       return await db.projets.orderBy('dateCreation').reverse().toArray();
     } catch (error) {
       console.error('Erreur lors de la récupération des projets:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer les projets d'un utilisateur spécifique
+  async getProjectsByUser(userId) {
+    try {
+      const userProjects = await db.projets
+        .where('user_id')
+        .equals(userId)
+        .toArray();
+      
+      // Trier manuellement par date de création (plus récent en premier)
+      return userProjects.sort((a, b) => {
+        const dateA = new Date(a.dateCreation || 0);
+        const dateB = new Date(b.dateCreation || 0);
+        return dateB - dateA;
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets de l\'utilisateur:', error);
       throw error;
     }
   },
@@ -279,13 +352,29 @@ export const projectService = {
   },
   
   // Récupérer les projets récents (limité à un nombre)
-  async getRecentProjects(limit = 6) {
+  async getRecentProjects(limit = 6, userId = null) {
     try {
-      return await db.projets
-        .orderBy('dateCreation')
-        .reverse()
-        .limit(limit)
-        .toArray();
+      if (userId) {
+        const userProjects = await db.projets
+          .where('user_id')
+          .equals(userId)
+          .toArray();
+        
+        // Trier manuellement par date de création et limiter
+        return userProjects
+          .sort((a, b) => {
+            const dateA = new Date(a.dateCreation || 0);
+            const dateB = new Date(b.dateCreation || 0);
+            return dateB - dateA;
+          })
+          .slice(0, limit);
+      } else {
+        return await db.projets
+          .orderBy('dateCreation')
+          .reverse()
+          .limit(limit)
+          .toArray();
+      }
     } catch (error) {
       console.error('Erreur lors de la récupération des projets récents:', error);
       throw error;
@@ -555,6 +644,62 @@ export const modificationService = {
       console.error('Erreur lors de la récupération des projets avec modifications:', error);
       throw error;
     }
+  }
+};
+
+// Fonction de débogage pour vérifier l'état de la base de données
+export const debugDatabase = async () => {
+  try {
+    console.log('=== DÉBOGAGE BASE DE DONNÉES ===');
+    
+    // Vérifier les utilisateurs
+    const users = await db.utilisateur.toArray();
+    console.log('Utilisateurs:', users.map(u => ({ id: u.id_utilisateur, email: u.email, nom: u.nom, prenom: u.prenom })));
+    
+    // Vérifier les projets
+    const projects = await db.projets.toArray();
+    console.log('Projets:', projects.map(p => ({ 
+      id: p.id, 
+      nom: p.nom, 
+      user_id: p.user_id,
+      client: p.client 
+    })));
+    
+    // Vérifier les projets sans user_id
+    const projectsWithoutUserId = projects.filter(p => !p.user_id);
+    console.log('Projets sans user_id:', projectsWithoutUserId.length);
+    
+    // Vérifier les projets par utilisateur
+    for (const user of users) {
+      const userProjects = await projectService.getProjectsByUser(user.id_utilisateur);
+      console.log(`Projets de ${user.prenom} ${user.nom} (ID: ${user.id_utilisateur}):`, userProjects.length);
+    }
+    
+    console.log('=== FIN DÉBOGAGE ===');
+    
+    // Si des projets n'ont pas de user_id, les migrer maintenant
+    if (projectsWithoutUserId.length > 0) {
+      console.log('🔧 Migration forcée des projets sans user_id...');
+      await migrateExistingProjects();
+    }
+  } catch (error) {
+    console.error('Erreur lors du débogage:', error);
+  }
+};
+
+// Fonction pour forcer la réinitialisation de la base de données (ATTENTION: supprime tout!)
+export const resetDatabase = async () => {
+  try {
+    console.log('🚨 RÉINITIALISATION DE LA BASE DE DONNÉES...');
+    await db.delete();
+    await db.open();
+    console.log('✅ Base de données réinitialisée');
+    
+    // Réinitialiser les données
+    await initializeTestUser();
+    await initializeTestData();
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation:', error);
   }
 };
 

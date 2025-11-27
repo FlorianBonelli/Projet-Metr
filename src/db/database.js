@@ -505,6 +505,34 @@ export const tacheService = {
       });
 
       console.log('Tâche créée avec l\'ID:', tacheId);
+
+      // Créer une notification liée au projet associé
+      if (projet_id) {
+        const numericProjectId = Number(projet_id);
+        let notificationUserId = user_id || null;
+
+        // Si aucun user_id n'est passé, essayer de récupérer l'utilisateur connecté
+        if (!notificationUserId) {
+          try {
+            const userInfo = window.localStorage.getItem('userInfo');
+            if (userInfo) {
+              const userData = JSON.parse(userInfo);
+              notificationUserId = userData.id_utilisateur || userData.id || null;
+            }
+          } catch (e) {
+            console.error('Impossible de récupérer userInfo pour la notification de création de tâche:', e);
+          }
+        }
+
+        if (notificationUserId && !Number.isNaN(numericProjectId)) {
+          await modificationService.addModification({
+            projectId: numericProjectId,
+            userId: notificationUserId,
+            changeType: 'tache_creation',
+            status: 'à voir'
+          });
+        }
+      }
       return tacheId;
     } catch (error) {
       console.error('Erreur lors de la création de la tâche:', error);
@@ -561,11 +589,53 @@ export const tacheService = {
 
   async updateTache(id, updates) {
     try {
+      // Récupérer la tâche actuelle pour détecter les changements
+      const currentTache = await db.taches.get(id);
+
       await db.taches.update(id, { 
         ...updates, 
         updated_at: new Date().toISOString() 
       });
       console.log('Tâche mise à jour:', id);
+
+      // Détecter les changements sur priorite et etat pour créer des notifications
+      if (currentTache) {
+        const changedTypes = [];
+
+        if (updates.hasOwnProperty('priorite') && updates.priorite !== currentTache.priorite) {
+          changedTypes.push('tache_priorite');
+        }
+        if (updates.hasOwnProperty('etat') && updates.etat !== currentTache.etat) {
+          changedTypes.push('tache_etat');
+        }
+
+        if (changedTypes.length > 0 && currentTache.projet_id) {
+          const numericProjectId = Number(currentTache.projet_id);
+          // Récupérer l'utilisateur connecté pour l'assigner à la notification
+          let userId = null;
+          try {
+            const userInfo = window.localStorage.getItem('userInfo');
+            if (userInfo) {
+              const userData = JSON.parse(userInfo);
+              userId = userData.id_utilisateur || userData.id || null;
+            }
+          } catch (e) {
+            console.error('Impossible de récupérer userInfo pour les notifications de tâches:', e);
+          }
+
+          if (userId && !Number.isNaN(numericProjectId)) {
+            for (const changeType of changedTypes) {
+              await modificationService.addModification({
+                projectId: numericProjectId,
+                userId,
+                changeType,
+                status: 'à voir'
+              });
+            }
+          }
+        }
+      }
+
       return true;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche:', error);

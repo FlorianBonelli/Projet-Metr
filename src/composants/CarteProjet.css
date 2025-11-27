@@ -151,14 +151,14 @@
 }
 
 .carte-projet .status-active {
-  /* En cours = fond orange très clair + texte orange (comme la maquette) */
-  background-color: #fff4e6;
-  color: #d97706;
+  /* En cours = vert (état actif) */
+  background-color: #dcfce7; /* vert très clair */
+  color: #16a34a;           /* vert */
 }
 
-/* Flèche orange pour l'état EN COURS */
+/* Flèche verte pour l'état EN COURS */
 .carte-projet .status-active.status-toggle {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23d97706' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2316a34a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 .status-brouillon {
@@ -168,9 +168,9 @@
 
 .status-termine,
 .status-termine {
-  /* Terminé = vert (aligné sur priorite Faible) */
-  background: #eef9f1;
-  color: #16a34a;
+  /* Terminé = bleu */
+  background: #e0ebff; /* bleu clair */
+  color: #1d4ed8;      /* bleu */
 }
 
 /* Archivé = gris neutre */
@@ -179,9 +179,9 @@
   color: #4b5563;
 }
 
-/* Flèche verte pour l'état TERMINÉ */
+/* Flèche bleue pour l'état TERMINÉ */
 .carte-projet .status-termine.status-toggle {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2316a34a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231d4ed8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 10px 6px;
@@ -227,13 +227,15 @@
 }
 
 .status-option-en-cours {
-  background-color: #fff4e6;
-  color: #d97706;
+  /* En cours = vert */
+  background-color: #dcfce7;
+  color: #16a34a;
 }
 
 .status-option-termine {
-  background-color: #eef9f1;
-  color: #16a34a;
+  /* Terminé = bleu */
+  background-color: #e0ebff;
+  color: #1d4ed8;
 }
 
 .status-option-archive {

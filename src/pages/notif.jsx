@@ -112,7 +112,15 @@ function Notif() {
       'adresseProjet': 'A changé l\'adresse',
       'dateLivraison': 'A changé la date prévisionnelle',
       'plan': 'A ajouté un nouveau plan',
-      'export': 'A exporté le projet'
+      'export': 'A exporté le projet',
+      // Changement d'état d'avancement d'un projet
+      'status': 'A modifié l\'état',
+      // Modification d\'une priorité de tâche
+      'tache_priorite': 'A modifié la priorité',
+      // Modification de l\'état d\'une tâche
+      'tache_etat': 'A modifié l\'état',
+      // Création d'une nouvelle tâche liée au projet
+      'tache_creation': 'A ajouté une tâche'
     };
     return descriptions[changeType] || 'Modification effectuée';
   };
@@ -191,7 +199,9 @@ function Notif() {
                           <div className="header-cell status">État</div>
                         </div>
 
-                        {project.modifications.map((mod) => {
+                        {[...(project.modifications || [])]
+                          .sort((a, b) => new Date(b.dateModification || 0) - new Date(a.dateModification || 0))
+                          .map((mod) => {
                           const user = userCache[mod.userId];
                           const isUnseen = mod.status === 'à voir';
                           

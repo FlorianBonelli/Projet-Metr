@@ -1,11 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Statistique.css';
 import Cartable from '../assets/images/cartable.svg';
 import Regle from '../assets/images/regle.svg';
-import Bibliotheque from '../assets/images/bibliothèque.svg';
+import Bibliotheque from '../assets/images/projetRouge.svg';
+import { projectService, libraryService } from '../db/database';
 
 function Statistique({ variant = 'profil' }) {
   const isDashboard = variant === 'dashboard';
+
+  const [stats, setStats] = useState({
+    activeProjects: 0,
+    totalProjects: 0,
+    totalLibraries: 0
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const userInfo = window.localStorage.getItem('userInfo');
+        let userId = null;
+
+        if (userInfo) {
+          try {
+            const parsed = JSON.parse(userInfo);
+            userId = parsed.id_utilisateur || parsed.id || null;
+          } catch (e) {
+            console.error('Erreur de parsing userInfo pour les stats profil:', e);
+          }
+        }
+
+        let projects = [];
+        if (userId) {
+          projects = await projectService.getProjectsByUser(userId);
+        } else {
+          projects = await projectService.getAllProjects();
+        }
+
+        const libraries = await libraryService.getAllLibraries();
+
+        const activeProjects = projects.filter((p) => (p.status || '').toLowerCase() === 'en cours').length;
+        const totalProjects = projects.length;
+        const totalLibraries = libraries.length;
+
+        setStats({ activeProjects, totalProjects, totalLibraries });
+      } catch (error) {
+        console.error('Erreur lors du chargement des statistiques du profil:', error);
+      }
+    };
+
+    loadStats();
+  }, []);
 
   return (
     <section className="profil-stat-section">
@@ -20,8 +64,8 @@ function Statistique({ variant = 'profil' }) {
           </div>
           <div className="stat-content">
             <h4 className="stat-title">Projets actifs</h4>
-            <div className="stat-number">2</div>
-            <p className="stat-subtitle">↑ +1 ce mois-ci</p>
+            <div className="stat-number">{stats.activeProjects}</div>
+            <p className="stat-subtitle">Projets avec l'état "En cours"</p>
           </div>
         </div>
 
@@ -42,8 +86,8 @@ function Statistique({ variant = 'profil' }) {
           </div>
           <div className="stat-content">
             <h4 className="stat-title">Nombre de bibliothèques</h4>
-            <div className="stat-number">5</div>
-            <p className="stat-subtitle">↑ +2 ce mois-ci</p>
+            <div className="stat-number">{stats.totalLibraries}</div>
+            <p className="stat-subtitle">Bibliothèques dans votre espace</p>
           </div>
         </div>
 
@@ -63,8 +107,8 @@ function Statistique({ variant = 'profil' }) {
             </div>
             <div className="stat-content">
               <h4 className="stat-title">Nombre total de projets</h4>
-              <div className="stat-number">6</div>
-              <p className="stat-subtitle">↑ +3 ce mois-ci</p>
+              <div className="stat-number">{stats.totalProjects}</div>
+              <p className="stat-subtitle">Tous vos projets créés</p>
             </div>
           </div>
         )}

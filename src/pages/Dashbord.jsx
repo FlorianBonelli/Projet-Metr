@@ -126,6 +126,7 @@ function Dashbord() {
             <div className="header-right">
               <img src={LogoMetr} alt="Metr Logo" className="dashboard-logo" />
               <Link to="/creation-projet" className="create-project-btn">
+                <span>+</span>
                 Créer un projet
               </Link>
             </div>

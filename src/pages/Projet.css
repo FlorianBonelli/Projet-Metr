@@ -13,6 +13,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+  padding-left: var(--content-offset);
+  padding-right: var(--content-offset);
 }
 
 .projet-title {
@@ -21,6 +23,32 @@
   color: #183278;
   margin: 0;
   letter-spacing: -0.5px;
+}
+
+/* Bouton "Créer un projet" identique à celui du Dashboard */
+.create-project-btn {
+  background-color: #f97316;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-project-btn:hover {
+  background-color: #ea580c;
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+  transform: translateY(-1px);
+}
+
+.create-project-btn:active {
+  transform: translateY(0);
 }
 
 .btn-create-project {
@@ -58,6 +86,8 @@
   padding: 24px;
   margin-bottom: 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-left: var(--content-offset);
+  margin-right: var(--content-offset);
 }
 
 .search-bar {
@@ -194,6 +224,8 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
   margin-bottom: 48px;
+  padding-left: var(--content-offset);
+  padding-right: var(--content-offset);
 }
 
 /* Messages */

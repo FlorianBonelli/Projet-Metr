@@ -76,6 +76,7 @@ h1 {
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
+  font-family: 'Montserrat', Arial, sans-serif;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
   display: inline-flex;

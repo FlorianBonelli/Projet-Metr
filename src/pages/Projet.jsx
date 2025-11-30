@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Projet.css';
 import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
 import ModifProjet from '../composants/ModifProjet';
 import { projectService } from '../db/database';
-import IconPlus from '../assets/images/plus.svg';
 import IconSearch from '../assets/images/search.svg';
 
 function Projet() {
@@ -169,10 +168,10 @@ function Projet() {
       {/* Header */}
       <div className="projet-header">
         <h1 className="projet-title">MES PROJETS</h1>
-        <button className="btn-create-project" onClick={handleCreateProject}>
-          <img src={IconPlus} alt="Plus" className="icon-plus" />
+        <Link to="/creation-projet" className="create-project-btn">
+          <span>+</span>
           Créer un projet
-        </button>
+        </Link>
       </div>
 
       {/* Barre de recherche et filtres */}

@@ -4,13 +4,14 @@ import Dexie from 'dexie';
 export const db = new Dexie('ProjetMetrDatabase');
 
 // Définir le schéma de la base de données (version mise à jour)
-db.version(2).stores({
+db.version(3).stores({
   utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
   libraries: '++id, user_id, nom, created_at',
   articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
   taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
-  modifications: '++id, projectId, userId, dateModification, changeType'
+  modifications: '++id, projectId, userId, dateModification, changeType',
+  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]'
 }).upgrade(trans => {
   // Migration pour ajouter user_id aux projets existants
   return trans.projets.toCollection().modify(projet => {
@@ -314,19 +315,138 @@ export const projectService = {
   // Récupérer les projets d'un utilisateur spécifique
   async getProjectsByUser(userId) {
     try {
+      // 1. Projets dont l'utilisateur est propriétaire
       const userProjects = await db.projets
         .where('user_id')
         .equals(userId)
         .toArray();
-      
+
+      // 2. Projets partagés via la table collaborateurs
+      let sharedProjectsWithMeta = [];
+      try {
+        const sharedLinks = await db.table('collaborateurs')
+          .where('user_id')
+          .equals(userId)
+          .toArray();
+
+        if (sharedLinks && sharedLinks.length > 0) {
+          const sharedProjects = await Promise.all(
+            sharedLinks.map(async (link) => {
+              const project = await db.projets.get(link.project_id);
+              if (!project) return null;
+              return {
+                ...project,
+                isShared: true,
+                userRole: link.role
+              };
+            })
+          );
+
+          sharedProjectsWithMeta = sharedProjects.filter(p => p !== null);
+        }
+      } catch (e) {
+        console.error('Erreur lors de la récupération des projets partagés:', e);
+      }
+
+      const allProjects = [...userProjects, ...sharedProjectsWithMeta];
+
       // Trier manuellement par date de création (plus récent en premier)
-      return userProjects.sort((a, b) => {
+      return allProjects.sort((a, b) => {
         const dateA = new Date(a.dateCreation || 0);
         const dateB = new Date(b.dateCreation || 0);
         return dateB - dateA;
       });
     } catch (error) {
       console.error('Erreur lors de la récupération des projets de l\'utilisateur:', error);
+      throw error;
+    }
+  },
+
+  // Ajouter ou mettre à jour un collaborateur sur un projet
+  async addCollaborator(projectId, email, role = 'lecture') {
+    try {
+      const user = await db.utilisateur.where('email').equals(email).first();
+      if (!user) {
+        throw new Error('Utilisateur non trouvé avec cet email');
+      }
+
+      const userId = user.id_utilisateur || user.id;
+
+      const collaborateursTable = db.table('collaborateurs');
+
+      const existingLink = await collaborateursTable
+        .where({ project_id: projectId, user_id: userId })
+        .first();
+
+      if (existingLink) {
+        await collaborateursTable.update(existingLink.id, { role });
+        return existingLink.id;
+      }
+
+      const linkId = await collaborateursTable.add({
+        project_id: projectId,
+        user_id: userId,
+        role,
+        date_ajout: new Date().toISOString()
+      });
+
+      await modificationService.addModification({
+        projectId,
+        userId,
+        changeType: 'invitation_projet',
+        status: 'à voir'
+      });
+
+      return linkId;
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout du collaborateur:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les collaborateurs d'un projet
+  async getProjectCollaborators(projectId) {
+    try {
+      const collaborateursTable = db.table('collaborateurs');
+      const links = await collaborateursTable
+        .where('project_id')
+        .equals(projectId)
+        .toArray();
+
+      const collaborators = await Promise.all(
+        links.map(async (link) => {
+          const user = await db.utilisateur.get(link.user_id);
+          if (!user) return null;
+          return {
+            ...user,
+            role: link.role,
+            linkId: link.id
+          };
+        })
+      );
+
+      return collaborators.filter(c => c !== null);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des collaborateurs:', error);
+      throw error;
+    }
+  },
+
+  // Supprimer un collaborateur
+  async removeCollaborator(projectId, userId) {
+    try {
+      const collaborateursTable = db.table('collaborateurs');
+      const link = await collaborateursTable
+        .where({ project_id: projectId, user_id: userId })
+        .first();
+
+      if (link) {
+        await collaborateursTable.delete(link.id);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression du collaborateur:', error);
       throw error;
     }
   },
@@ -378,17 +498,15 @@ export const projectService = {
       await db.projets.update(numericId, updates);
       console.log('Projet mis à jour:', numericId);
 
-      // Créer des notifications pour chaque champ modifié
+      // Créer des notifications pour tous les membres du projet (sauf l'auteur)
       if (changedFields.length > 0 && userId) {
         for (const changeType of changedFields) {
-          await modificationService.addModification({
-            projectId: numericId,
-            userId: userId,
-            changeType: changeType,
-            status: 'à voir'
-          });
+          await modificationService.notifyProjectMembers(
+            numericId,
+            userId,
+            changeType
+          );
         }
-        console.log(`${changedFields.length} notification(s) créée(s) pour les modifications:`, changedFields);
       }
       
       // Déclencher l'événement de mise à jour de projet pour mettre à jour la sidebar
@@ -525,12 +643,11 @@ export const tacheService = {
         }
 
         if (notificationUserId && !Number.isNaN(numericProjectId)) {
-          await modificationService.addModification({
-            projectId: numericProjectId,
-            userId: notificationUserId,
-            changeType: 'tache_creation',
-            status: 'à voir'
-          });
+          await modificationService.notifyProjectMembers(
+            numericProjectId,
+            notificationUserId,
+            'tache_creation'
+          );
         }
       }
       return tacheId;
@@ -625,12 +742,11 @@ export const tacheService = {
 
           if (userId && !Number.isNaN(numericProjectId)) {
             for (const changeType of changedTypes) {
-              await modificationService.addModification({
-                projectId: numericProjectId,
+              await modificationService.notifyProjectMembers(
+                numericProjectId,
                 userId,
-                changeType,
-                status: 'à voir'
-              });
+                changeType
+              );
             }
           }
         }
@@ -716,6 +832,51 @@ export const articleService = {
 
 // Fonctions utilitaires pour la gestion des modifications/notifications
 export const modificationService = {
+  // Notifier tous les membres d'un projet (sauf l'auteur de l'action)
+  async notifyProjectMembers(projectId, authorUserId, changeType, status = 'à voir') {
+    try {
+      const numericProjectId = Number(projectId);
+      if (Number.isNaN(numericProjectId)) return;
+
+      // 1. Récupérer le projet pour trouver le propriétaire
+      const project = await db.projets.get(numericProjectId);
+      if (!project) return;
+
+      // 2. Récupérer les collaborateurs
+      const collaborators = await projectService.getProjectCollaborators(numericProjectId);
+
+      // 3. Construire la liste des destinataires (Propriétaire + Collaborateurs)
+      const recipients = new Set();
+      
+      // Ajouter le propriétaire s'il n'est pas l'auteur
+      if (project.user_id && project.user_id !== authorUserId) {
+        recipients.add(project.user_id);
+      }
+
+      // Ajouter les collaborateurs s'ils ne sont pas l'auteur
+      collaborators.forEach(collab => {
+        const collabId = collab.id_utilisateur || collab.id;
+        if (collabId && collabId !== authorUserId) {
+          recipients.add(collabId);
+        }
+      });
+
+      // 4. Envoyer les notifications
+      for (const recipientId of recipients) {
+        await this.addModification({
+          projectId: numericProjectId,
+          userId: recipientId,
+          changeType,
+          status
+        });
+      }
+      
+      console.log(`Notifications envoyées à ${recipients.size} membres pour le projet ${projectId}`);
+    } catch (error) {
+      console.error('Erreur lors de la notification des membres du projet:', error);
+    }
+  },
+
   // Ajouter une modification
   async addModification(modificationData) {
     try {
@@ -801,16 +962,16 @@ export const modificationService = {
   // Récupérer les projets (avec notifications) appartenant à un utilisateur donné
   async getProjectsWithModificationsByUser(userId) {
     try {
-      const userProjects = await db.projets
-        .where('user_id')
-        .equals(userId)
-        .toArray();
+      // Utiliser getProjectsByUser qui inclut déjà les projets partagés
+      const allUserProjects = await projectService.getProjectsByUser(userId);
 
       const projectsWithMods = await Promise.all(
-        userProjects.map(async (project) => {
+        allUserProjects.map(async (project) => {
+          // Récupérer les modifications destinées à cet utilisateur pour ce projet
           const modifications = await db.modifications
             .where('projectId')
             .equals(project.id)
+            .and(mod => mod.userId === userId)
             .toArray();
           return {
             ...project,
@@ -834,30 +995,14 @@ export const modificationService = {
   // Compter les notifications non vues pour un utilisateur
   async getUnseenNotificationsCount(userId) {
     try {
-      // Récupérer les projets de l'utilisateur
-      const userProjects = await db.projets
-        .where('user_id')
+      // Récupérer les notifications destinées à cet utilisateur
+      const userNotifications = await db.modifications
+        .where('userId')
         .equals(userId)
+        .and(mod => mod.status === 'à voir')
         .toArray();
 
-      if (userProjects.length === 0) {
-        return 0;
-      }
-
-      // Récupérer toutes les modifications non vues pour ces projets
-      const projectIds = userProjects.map(p => p.id);
-      let unseenCount = 0;
-
-      for (const projectId of projectIds) {
-        const unseenMods = await db.modifications
-          .where('projectId')
-          .equals(projectId)
-          .and(mod => mod.status === 'à voir')
-          .toArray();
-        unseenCount += unseenMods.length;
-      }
-
-      return unseenCount;
+      return userNotifications.length;
     } catch (error) {
       console.error('Erreur lors du comptage des notifications non vues:', error);
       return 0;

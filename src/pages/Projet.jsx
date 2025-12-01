@@ -268,10 +268,12 @@ function Projet() {
               date={formatDate(projet.dateCreation)}
               statusText={projet.status || 'En cours'}
               statusType={getStatusType(projet.status)}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-              onArchive={handleArchive}
-              onStatusChange={handleStatusChange}
+              onDelete={projet.isShared ? null : handleDelete}
+              onEdit={projet.userRole === 'lecture' ? null : handleEdit}
+              onArchive={projet.userRole === 'lecture' ? null : handleArchive}
+              onStatusChange={projet.userRole === 'lecture' ? null : handleStatusChange}
+              isShared={projet.isShared}
+              userRole={projet.userRole}
             />
           ))}
         </div>

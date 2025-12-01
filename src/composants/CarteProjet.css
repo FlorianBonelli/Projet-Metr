@@ -25,10 +25,37 @@
   font-size: 1.10rem;
   font-weight: 700;
   color: #183278;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .carte-title {
   margin-bottom: 8px; /* espace entre le titre et le sous-titre */
   line-height: 1.2;
+}
+
+/* Badge pour les projets partagés */
+.shared-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.shared-badge.lecture {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.shared-badge.edition {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.carte-projet-shared {
+  border-left: 4px solid #6366f1;
 }
 
 .carte-menu {

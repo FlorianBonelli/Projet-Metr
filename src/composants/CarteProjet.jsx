@@ -16,8 +16,13 @@ export default function CarteProjet({
   onDelete,
   onEdit,
   onArchive,
-  onStatusChange
+  onStatusChange,
+  isShared = false,
+  userRole = null
 }) {
+  // Déterminer si l'utilisateur peut éditer ce projet
+  const canEdit = !isShared || userRole === 'edition';
+  const canDelete = !isShared; // Seul le propriétaire peut supprimer
   const [showMenu, setShowMenu] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const menuRef = useRef(null);
@@ -127,45 +132,62 @@ export default function CarteProjet({
     }
   };
   return (
-    <div className="carte-projet">
+    <div className={`carte-projet ${isShared ? 'carte-projet-shared' : ''}`}>
       <div className="carte-header">
-        <span className="carte-title">{title}</span>
-        <div className="carte-menu" ref={menuRef}>
-          <img 
-            src={Icon3Points} 
-            alt="Options" 
-            className="icon-3points" 
-            onClick={handleMenuToggle}
-          />
-          {showMenu && (
-            <div className="menu-popup">
-              <button className="menu-item" onClick={handleArchive}>
-                <span className="menu-icon">📦</span>
-                {isArchived ? 'Restaurer' : 'Archivé'}
-              </button>
-              <button className="menu-item" onClick={handleEdit}>
-                <span className="menu-icon">📝</span>
-                Modifier
-              </button>
-              <button className="menu-item menu-item-delete" onClick={handleDelete}>
-                <span className="menu-icon">🗑️</span>
-                Supprimer
-              </button>
-            </div>
+        <span className="carte-title">
+          {title}
+          {isShared && (
+            <span className={`shared-badge ${userRole}`}>
+              {userRole === 'edition' ? '✏️ Éditeur' : '👁️ Lecteur'}
+            </span>
           )}
-        </div>
+        </span>
+        {canEdit && (
+          <div className="carte-menu" ref={menuRef}>
+            <img 
+              src={Icon3Points} 
+              alt="Options" 
+              className="icon-3points" 
+              onClick={handleMenuToggle}
+            />
+            {showMenu && (
+              <div className="menu-popup">
+                <button className="menu-item" onClick={handleArchive}>
+                  <span className="menu-icon">📦</span>
+                  {isArchived ? 'Restaurer' : 'Archivé'}
+                </button>
+                <button className="menu-item" onClick={handleEdit}>
+                  <span className="menu-icon">📝</span>
+                  Modifier
+                </button>
+                {canDelete && (
+                  <button className="menu-item menu-item-delete" onClick={handleDelete}>
+                    <span className="menu-icon">🗑️</span>
+                    Supprimer
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div className="carte-subtitle">{subtitle}</div>
       <div className="carte-date">{date}</div>
       <div className="carte-status">
-        <button
-          type="button"
-          className={`status status-${statusType} status-toggle`}
-          onClick={toggleStatusMenu}
-        >
-          {statusText || 'En cours'}
-        </button>
-        {showStatusMenu && (
+        {canEdit ? (
+          <button
+            type="button"
+            className={`status status-${statusType} status-toggle`}
+            onClick={toggleStatusMenu}
+          >
+            {statusText || 'En cours'}
+          </button>
+        ) : (
+          <span className={`status status-${statusType}`}>
+            {statusText || 'En cours'}
+          </span>
+        )}
+        {showStatusMenu && canEdit && (
           <div className="status-menu">
             <button
               type="button"

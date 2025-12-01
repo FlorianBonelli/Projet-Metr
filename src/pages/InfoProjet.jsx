@@ -4,6 +4,7 @@ import Sidebar from '../composants/Sidebar';
 import HistoriquePlan from '../composants/HistoriquePlan';
 import AutreDoc from '../composants/AutreDoc';
 import HistoriqueExport from '../composants/HistoriqueExport';
+import CollaborateursModal from '../composants/CollaborateursModal';
 import { projectService } from '../db/database';
 import './InfoProjet.css';
 
@@ -13,13 +14,50 @@ const InfoProjet = () => {
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showCollaborateursModal, setShowCollaborateursModal] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(null);
+    const [userRole, setUserRole] = useState(null); // 'owner', 'edition', 'lecture'
+    const [isOwner, setIsOwner] = useState(false);
+
+    useEffect(() => {
+        // Récupérer l'utilisateur connecté
+        try {
+            const userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                setCurrentUserId(userData.id_utilisateur || userData.id);
+            }
+        } catch (e) {
+            console.error('Erreur lors de la récupération de l\'utilisateur:', e);
+        }
+    }, []);
 
     useEffect(() => {
         const loadProject = async () => {
             try {
-                if (projectId) {
+                if (projectId && currentUserId) {
                     const projectData = await projectService.getProjectById(parseInt(projectId, 10));
                     setProject(projectData);
+
+                    // Déterminer le rôle de l'utilisateur sur ce projet
+                    if (projectData.user_id === currentUserId) {
+                        setIsOwner(true);
+                        setUserRole('owner');
+                    } else {
+                        // Vérifier si l'utilisateur est collaborateur
+                        const collaborators = await projectService.getProjectCollaborators(parseInt(projectId, 10));
+                        const userCollab = collaborators.find(c => (c.id_utilisateur || c.id) === currentUserId);
+                        if (userCollab) {
+                            setUserRole(userCollab.role);
+                            setIsOwner(false);
+                        } else {
+                            setUserRole(null);
+                            setIsOwner(false);
+                        }
+                    }
+                } else if (projectId && !currentUserId) {
+                    // Attendre que currentUserId soit chargé
+                    return;
                 } else {
                     setError('ID de projet manquant');
                 }
@@ -32,7 +70,12 @@ const InfoProjet = () => {
         };
 
         loadProject();
-    }, [projectId]);
+    }, [projectId, currentUserId]);
+
+    // Fonction pour vérifier si l'utilisateur peut éditer
+    const canEdit = () => {
+        return userRole === 'owner' || userRole === 'edition';
+    };
 
     const renderState = (content) => (
         <div className="info-projet-page">
@@ -75,26 +118,42 @@ const InfoProjet = () => {
                     </header>
 
                     <div className="collaborateurs-section">
-                        <div className="collaborateurs-dropdown">
+                        <button 
+                            className="collaborateurs-dropdown"
+                            onClick={() => setShowCollaborateursModal(true)}
+                        >
                             <span className="collaborateurs-icon">👥</span>
                             <span>Collaborateurs</span>
-                        </div>
+                        </button>
                         <div className="bibliotheques-dropdown">
                             <span>Toutes les bibliothèques (6 articles)</span>
                             <span className="dropdown-arrow">▼</span>
                         </div>
-                        <button className="add-button">+</button>
+                        {canEdit() && (
+                            <button className="add-button" onClick={() => setShowCollaborateursModal(true)}>+</button>
+                        )}
+                        {userRole === 'lecture' && (
+                            <span className="readonly-badge">Lecture seule</span>
+                        )}
                     </div>
 
                     <main className="content-sections">
-                        <HistoriquePlan projectId={projectId} />
+                        <HistoriquePlan projectId={projectId} canEdit={canEdit()} />
                         <div className="bottom-sections">
-                            <AutreDoc projectId={projectId} />
-                            <HistoriqueExport projectId={projectId} />
+                            <AutreDoc projectId={projectId} canEdit={canEdit()} />
+                            <HistoriqueExport projectId={projectId} canEdit={canEdit()} />
                         </div>
                     </main>
                 </div>
             </div>
+
+            <CollaborateursModal
+                isOpen={showCollaborateursModal}
+                onClose={() => setShowCollaborateursModal(false)}
+                projectId={parseInt(projectId, 10)}
+                currentUserId={currentUserId}
+                isOwner={isOwner}
+            />
         </div>
     );
 };

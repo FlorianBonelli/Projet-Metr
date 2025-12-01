@@ -148,10 +148,12 @@ function Dashbord() {
                     date={formatDate(project.dateCreation)}
                     statusText={project.status}
                     statusType={getStatusType(project.status)}
-                    onDelete={handleDeleteProject}
-                    onEdit={handleEditProject}
-                    onArchive={handleArchiveProject}
-                    onStatusChange={handleStatusChange}
+                    onDelete={project.isShared ? null : handleDeleteProject}
+                    onEdit={project.userRole === 'lecture' ? null : handleEditProject}
+                    onArchive={project.userRole === 'lecture' ? null : handleArchiveProject}
+                    onStatusChange={project.userRole === 'lecture' ? null : handleStatusChange}
+                    isShared={project.isShared}
+                    userRole={project.userRole}
                   />
                 ))}
                 {/* Bouton "Voir plus" placé après les cartes */}

@@ -535,19 +535,11 @@ export const projectService = {
   async getRecentProjects(limit = 6, userId = null) {
     try {
       if (userId) {
-        const userProjects = await db.projets
-          .where('user_id')
-          .equals(userId)
-          .toArray();
+        // Utiliser getProjectsByUser qui inclut les projets partagés
+        const allUserProjects = await this.getProjectsByUser(userId);
         
-        // Trier manuellement par date de création et limiter
-        return userProjects
-          .sort((a, b) => {
-            const dateA = new Date(a.dateCreation || 0);
-            const dateB = new Date(b.dateCreation || 0);
-            return dateB - dateA;
-          })
-          .slice(0, limit);
+        // Limiter le nombre de projets retournés
+        return allUserProjects.slice(0, limit);
       } else {
         return await db.projets
           .orderBy('dateCreation')

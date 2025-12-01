@@ -20,7 +20,7 @@ const TrashIcon = () => (
     </svg>
 );
 
-const AutreDoc = ({ projectId }) => {
+const AutreDoc = ({ projectId, canEdit = true }) => {
     const [documents, setDocuments] = useState([]);
     const [allDocuments, setAllDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -219,12 +219,14 @@ const AutreDoc = ({ projectId }) => {
                     <p className="doc-label">Documents</p>
                     <h2 className="doc-title">Autres Documents</h2>
                 </div>
-                <button 
-                    className="doc-header-btn"
-                    onClick={() => setShowUpload(!showUpload)}
-                >
-                    + Ajouter
-                </button>
+                {canEdit && (
+                    <button 
+                        className="doc-header-btn"
+                        onClick={() => setShowUpload(!showUpload)}
+                    >
+                        + Ajouter
+                    </button>
+                )}
             </div>
 
             <div className="doc-table">
@@ -258,13 +260,15 @@ const AutreDoc = ({ projectId }) => {
                             </span>
                             <span className="doc-cell doc-cell-date">{doc.date}</span>
                             <span className="doc-cell doc-cell-action">
-                                <button 
-                                    className="doc-delete-btn"
-                                    onClick={() => handleDeleteDocument(doc)}
-                                    aria-label={`Supprimer ${doc.nom}`}
-                                >
-                                    <TrashIcon />
-                                </button>
+                                {canEdit && (
+                                    <button 
+                                        className="doc-delete-btn"
+                                        onClick={() => handleDeleteDocument(doc)}
+                                        aria-label={`Supprimer ${doc.nom}`}
+                                    >
+                                        <TrashIcon />
+                                    </button>
+                                )}
                             </span>
                         </div>
                     ))

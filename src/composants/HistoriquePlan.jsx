@@ -47,7 +47,7 @@ const TrashIcon = () => (
     </svg>
 );
 
-const HistoriquePlan = ({ projectId }) => {
+const HistoriquePlan = ({ projectId, canEdit = true }) => {
     const [defaultPlanId, setDefaultPlanId] = useState(null);
     const [plans, setPlans] = useState([]);
     const [allPlans, setAllPlans] = useState([]);
@@ -270,12 +270,14 @@ const HistoriquePlan = ({ projectId }) => {
                     <p className="plan-label">Historique</p>
                     <h2 className="plan-title">Historique des plans</h2>
                 </div>
-                <button 
-                    className="plan-header-btn"
-                    onClick={() => setShowUpload(!showUpload)}
-                >
-                    + Ajouter
-                </button>
+                {canEdit && (
+                    <button 
+                        className="plan-header-btn"
+                        onClick={() => setShowUpload(!showUpload)}
+                    >
+                        + Ajouter
+                    </button>
+                )}
             </div>
 
             <div className="plan-table">
@@ -330,7 +332,7 @@ const HistoriquePlan = ({ projectId }) => {
                                         Voir plus
                                         <NoteIcon />
                                     </button>
-                                    {!isDefault && (
+                                    {canEdit && !isDefault && (
                                         <button 
                                             className="plan-delete-btn"
                                             onClick={() => handleDeletePlan(plan)}

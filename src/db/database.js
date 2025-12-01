@@ -390,11 +390,28 @@ export const projectService = {
         date_ajout: new Date().toISOString()
       });
 
+      // Récupérer l'utilisateur qui fait l'invitation (l'utilisateur connecté)
+      let inviterId = null;
+      let inviterName = 'Un utilisateur';
+      try {
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+          const userData = JSON.parse(userInfo);
+          inviterId = userData.id_utilisateur || userData.id;
+          inviterName = `${userData.prenom || ''} ${userData.nom || ''}`.trim() || 'Un utilisateur';
+        }
+      } catch (e) {
+        console.error('Impossible de récupérer l\'utilisateur connecté:', e);
+      }
+
+      // Créer la notification d'invitation avec les infos de l'inviteur
       await modificationService.addModification({
         projectId,
-        userId,
+        userId, // Le destinataire (celui qui est invité)
         changeType: 'invitation_projet',
-        status: 'à voir'
+        status: 'à voir',
+        authorId: inviterId,
+        authorName: inviterName
       });
 
       return linkId;
@@ -558,15 +575,59 @@ export const libraryService = {
   async createLibrary({ nom, user_id = null }) {
     try {
       const now = new Date().toISOString();
-      return await db.libraries.add({ nom, user_id, created_at: now });
+      
+      // Si user_id n'est pas fourni, récupérer l'utilisateur connecté
+      let userId = user_id;
+      if (!userId) {
+        try {
+          const userInfo = localStorage.getItem('userInfo');
+          if (userInfo) {
+            const userData = JSON.parse(userInfo);
+            userId = userData.id_utilisateur || userData.id;
+          }
+        } catch (e) {
+          console.error('Impossible de récupérer l\'utilisateur connecté:', e);
+        }
+      }
+      
+      return await db.libraries.add({ nom, user_id: userId, created_at: now });
     } catch (error) {
       console.error('Erreur lors de la création de la bibliothèque :', error);
       throw error;
     }
   },
 
-  async getAllLibraries() {
-    return db.libraries.orderBy('created_at').reverse().toArray();
+  async getAllLibraries(userId = null) {
+    try {
+      // Si userId n'est pas fourni, récupérer l'utilisateur connecté
+      let currentUserId = userId;
+      if (!currentUserId) {
+        try {
+          const userInfo = localStorage.getItem('userInfo');
+          if (userInfo) {
+            const userData = JSON.parse(userInfo);
+            currentUserId = userData.id_utilisateur || userData.id;
+          }
+        } catch (e) {
+          console.error('Impossible de récupérer l\'utilisateur connecté:', e);
+        }
+      }
+      
+      if (currentUserId) {
+        // Retourner uniquement les bibliothèques de l'utilisateur
+        return await db.libraries
+          .where('user_id')
+          .equals(currentUserId)
+          .reverse()
+          .toArray();
+      }
+      
+      // Fallback: retourner toutes les bibliothèques si pas d'utilisateur
+      return db.libraries.orderBy('created_at').reverse().toArray();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des bibliothèques:', error);
+      return [];
+    }
   },
 
   async getLibraryById(id) {
@@ -853,13 +914,19 @@ export const modificationService = {
         }
       });
 
-      // 4. Envoyer les notifications
+      // 4. Récupérer les infos de l'auteur pour les inclure dans la notification
+      const author = await db.utilisateur.get(authorUserId);
+      const authorName = author ? `${author.prenom} ${author.nom}` : 'Un utilisateur';
+
+      // 5. Envoyer les notifications
       for (const recipientId of recipients) {
         await this.addModification({
           projectId: numericProjectId,
           userId: recipientId,
           changeType,
-          status
+          status,
+          authorId: authorUserId,
+          authorName: authorName
         });
       }
       
@@ -876,7 +943,9 @@ export const modificationService = {
         projectId,
         userId,
         changeType,
-        status = 'à voir'
+        status = 'à voir',
+        authorId = null,
+        authorName = null
       } = modificationData;
 
       const modificationId = await db.modifications.add({
@@ -884,6 +953,8 @@ export const modificationService = {
         userId,
         changeType,
         status,
+        authorId,
+        authorName,
         dateModification: new Date().toISOString()
       });
 

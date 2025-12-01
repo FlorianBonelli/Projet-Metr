@@ -112,15 +112,18 @@ function Notif() {
       'adresseProjet': 'A changé l\'adresse',
       'dateLivraison': 'A changé la date prévisionnelle',
       'plan': 'A ajouté un nouveau plan',
+      'fichier': 'A modifié les fichiers',
       'export': 'A exporté le projet',
       // Changement d'état d'avancement d'un projet
       'status': 'A modifié l\'état',
-      // Modification d\'une priorité de tâche
+      // Modification d'une priorité de tâche
       'tache_priorite': 'A modifié la priorité de la tâche',
-      // Modification de l\'état d\'une tâche
+      // Modification de l'état d'une tâche
       'tache_etat': 'A modifié l\'état de la tâche',
       // Création d'une nouvelle tâche liée au projet
-      'tache_creation': 'A ajouté une tâche'
+      'tache_creation': 'A ajouté une tâche',
+      // Invitation à collaborer sur un projet
+      'invitation_projet': 'Vous a invité à collaborer'
     };
     return descriptions[changeType] || 'Modification effectuée';
   };
@@ -202,7 +205,10 @@ function Notif() {
                         {[...(project.modifications || [])]
                           .sort((a, b) => new Date(b.dateModification || 0) - new Date(a.dateModification || 0))
                           .map((mod) => {
-                          const user = userCache[mod.userId];
+                          // Utiliser l'auteur de la modification (celui qui a fait le changement)
+                          const author = mod.authorId ? userCache[mod.authorId] : null;
+                          const authorName = mod.authorName || (author ? `${author.prenom} ${author.nom}` : 'Utilisateur');
+                          const authorInitials = author ? `${author.prenom?.[0] || ''}${author.nom?.[0] || ''}` : (mod.authorName ? mod.authorName.split(' ').map(n => n[0]).join('') : '?');
                           const isUnseen = mod.status === 'à voir';
                           
                           return (
@@ -210,15 +216,15 @@ function Notif() {
                               <div className="cell profile">
                                 <div className="user-profile">
                                   <div className="avatar">
-                                    {user?.prenom?.[0]}{user?.nom?.[0]}
+                                    {authorInitials}
                                   </div>
                                   <span className="user-name">
-                                    {user?.nom} {user?.prenom}
+                                    {authorName}
                                   </span>
                                 </div>
                               </div>
                               <div className="cell profession">
-                                {user?.profession || 'Non spécifié'}
+                                {author?.profession || 'Non spécifié'}
                               </div>
                               <div className="cell notification">
                                 {getNotificationDescription(mod.changeType)}

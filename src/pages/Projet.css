@@ -301,17 +301,17 @@
 }
 
 .stat-icon-total {
-  background: #e8eef9;
+  background: #e8eef9 !important;
   color: #21409A;
 }
 
 .stat-icon-active {
-  background: #d4f4e2;
+  background: #d4f4e2 !important;
   color: #10b981;
 }
 
 .stat-icon-archived {
-  background: #f3f4f6;
+  background: #f3f4f6 !important;
   color: #6b7280;
 }
 

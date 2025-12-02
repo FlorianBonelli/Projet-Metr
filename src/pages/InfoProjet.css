@@ -56,6 +56,69 @@
     cursor: pointer;
 }
 
+.bibliotheques-dropdown-wrapper {
+    position: relative;
+}
+
+.bibliotheques-dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    min-width: 220px;
+    padding: 8px;
+    margin: 0;
+    list-style: none;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    z-index: 20;
+}
+
+.bibliotheques-option {
+    width: 100%;
+    padding: 6px 10px;
+    text-align: left;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #475569;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.bibliotheques-option:hover,
+.bibliotheques-option.active {
+    background: #e2e8f0;
+}
+
+.bibliotheque-option-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.bibliotheque-option-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.library-star {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    color: #cbd5f5;
+    padding: 0;
+}
+
+.library-star.active {
+    color: #fbbf24;
+}
+
 .collaborateurs-icon {
     font-size: 16px;
 }

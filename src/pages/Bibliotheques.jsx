@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Sidebar from '../composants/Sidebar';
 import LibrariesTable from '../composants/LibrariesTable';
 import { libraryService, articleService } from '../db/database';
+import BibliothequeIcon from '../assets/images/bibliothèque.svg';
 import './Bibliotheques.css';
 
 const UNIT_OPTIONS = [
@@ -581,7 +582,10 @@ function Bibliotheques() {
 
           <div className="header-actions">
             <button className="action-button ghost" onClick={handleOpenManageLibraries}>
-              Gérer les bibliothèques <span aria-hidden="true">🔍</span>
+              Gérer les bibliothèques{' '}
+              <span aria-hidden="true">
+                <img src={BibliothequeIcon} alt="Gérer les bibliothèques" />
+              </span>
             </button>
             <button className="action-button ghost" type="button" onClick={handleOpenImportLibrary}>
               Importer une bibliothèque

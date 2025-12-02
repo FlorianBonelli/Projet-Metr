@@ -5,7 +5,8 @@ import HistoriquePlan from '../composants/HistoriquePlan';
 import AutreDoc from '../composants/AutreDoc';
 import HistoriqueExport from '../composants/HistoriqueExport';
 import CollaborateursModal from '../composants/CollaborateursModal';
-import { projectService } from '../db/database';
+import { projectService, libraryService } from '../db/database';
+import CollaborateurIcon from '../assets/images/collaborateur.svg';
 import './InfoProjet.css';
 
 const InfoProjet = () => {
@@ -18,6 +19,9 @@ const InfoProjet = () => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [userRole, setUserRole] = useState(null); // 'owner', 'edition', 'lecture'
     const [isOwner, setIsOwner] = useState(false);
+    const [libraries, setLibraries] = useState([]);
+    const [isLibrariesDropdownOpen, setIsLibrariesDropdownOpen] = useState(false);
+    const [starredLibraryIds, setStarredLibraryIds] = useState([]);
 
     useEffect(() => {
         // Récupérer l'utilisateur connecté
@@ -30,6 +34,19 @@ const InfoProjet = () => {
         } catch (e) {
             console.error('Erreur lors de la récupération de l\'utilisateur:', e);
         }
+    }, []);
+
+    useEffect(() => {
+        const loadLibraries = async () => {
+            try {
+                const data = await libraryService.getAllLibraries();
+                setLibraries(data);
+            } catch (e) {
+                console.error('Erreur lors du chargement des bibliothèques :', e);
+            }
+        };
+
+        loadLibraries();
     }, []);
 
     useEffect(() => {
@@ -77,6 +94,14 @@ const InfoProjet = () => {
         return userRole === 'owner' || userRole === 'edition';
     };
 
+    const toggleStarLibrary = (libraryId) => {
+        setStarredLibraryIds((prev) =>
+            prev.includes(libraryId)
+                ? prev.filter((id) => id !== libraryId)
+                : [...prev, libraryId]
+        );
+    };
+
     const renderState = (content) => (
         <div className="info-projet-page">
             <Sidebar />
@@ -112,9 +137,6 @@ const InfoProjet = () => {
                         <div className="header-left">
                             <h1 className="project-title">{project.nom}</h1>
                         </div>
-                        <div className="header-right">
-                            <div className="metr-logo">Metr.</div>
-                        </div>
                     </header>
 
                     <div className="collaborateurs-section">
@@ -122,15 +144,79 @@ const InfoProjet = () => {
                             className="collaborateurs-dropdown"
                             onClick={() => setShowCollaborateursModal(true)}
                         >
-                            <span className="collaborateurs-icon">👥</span>
+                            <span className="collaborateurs-icon">
+                                <img src={CollaborateurIcon} alt="Collaborateurs" />
+                            </span>
                             <span>Collaborateurs</span>
                         </button>
-                        <div className="bibliotheques-dropdown">
-                            <span>Toutes les bibliothèques (6 articles)</span>
-                            <span className="dropdown-arrow">▼</span>
+                        <div className="bibliotheques-dropdown-wrapper">
+                            <button
+                                type="button"
+                                className="bibliotheques-dropdown"
+                                onClick={() => setIsLibrariesDropdownOpen((prev) => !prev)}
+                                aria-haspopup="listbox"
+                                aria-expanded={isLibrariesDropdownOpen}
+                            >
+                                <span>
+                                    {starredLibraryIds.length === 0 && 'Toutes les bibliothèques'}
+                                    {starredLibraryIds.length === 1 &&
+                                        (libraries.find((lib) => lib.id === starredLibraryIds[0])?.nom || '1 bibliothèque sélectionnée')}
+                                    {starredLibraryIds.length > 1 && `${starredLibraryIds.length} bibliothèques sélectionnées`}
+                                </span>
+                                <span className="dropdown-arrow">▼</span>
+                            </button>
+                            {isLibrariesDropdownOpen && (
+                                <ul className="bibliotheques-dropdown-menu" role="listbox">
+                                    <li>
+                                        <button
+                                            type="button"
+                                            className="bibliotheques-option"
+                                            onClick={() => {
+                                                setStarredLibraryIds([]);
+                                            }}
+                                        >
+                                            Toutes les bibliothèques
+                                        </button>
+                                    </li>
+                                    {libraries.map((library) => {
+                                        const isStarred =
+                                            starredLibraryIds.length === 0 ||
+                                            starredLibraryIds.includes(library.id);
+
+                                        return (
+                                            <li key={library.id}>
+                                                <button
+                                                    type="button"
+                                                    className="bibliotheques-option"
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        toggleStarLibrary(library.id);
+                                                    }}
+                                                >
+                                                    <span className="bibliotheque-option-content">
+                                                        <span className="bibliotheque-option-name">{library.nom}</span>
+                                                        <button
+                                                            type="button"
+                                                            className={`library-star ${isStarred ? 'active' : ''}`}
+                                                            onClick={(event) => {
+                                                                event.preventDefault();
+                                                                event.stopPropagation();
+                                                                toggleStarLibrary(library.id);
+                                                            }}
+                                                            aria-label={isStarred ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                                                        >
+                                                            ★
+                                                        </button>
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
                         </div>
                         {canEdit() && (
-                            <button className="add-button" onClick={() => setShowCollaborateursModal(true)}>+</button>
+                            <button className="add-button" onClick={() => navigate('/bibliotheques')}>+</button>
                         )}
                         {userRole === 'lecture' && (
                             <span className="readonly-badge">Lecture seule</span>

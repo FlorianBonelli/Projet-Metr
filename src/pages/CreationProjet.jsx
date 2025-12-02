@@ -4,6 +4,7 @@ import Sidebar from '../composants/Sidebar';
 import InfoProjet from '../composants/InfoProjet';
 import DocumentProjet from '../composants/DocumentProjet';
 import { projectService } from '../db/database';
+import { useOnboardingActions } from '../hooks/useOnboardingActions';
 import './CreationProjet.css';
 
 const CreationProjet = () => {
@@ -11,6 +12,9 @@ const CreationProjet = () => {
     const [projectData, setProjectData] = useState({});
     const [projectFiles, setProjectFiles] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
+    
+    // Activer le hook d'onboarding
+    useOnboardingActions();
 
     const handleCancel = () => {
         // Optionnel: ajouter une confirmation si des données ont été saisies

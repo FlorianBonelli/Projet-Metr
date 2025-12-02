@@ -154,7 +154,7 @@ function Notif() {
     <div className="notif-page">
       <Sidebar />
       <div className="notif-content">
-        <h1 className="notif-title">NOTIFICATIONS</h1>
+        <h2 className="page-title">NOTIFICATIONS</h2>
 
         <div className="projects-list">
           {projectsWithMods.length > 0 ? (

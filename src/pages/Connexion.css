@@ -65,7 +65,7 @@
 .logo-dot {
   font-size: 48px;
   font-weight: 800;
-  color: #ff6b35;
+  color: #F97316;
   margin-left: -4px;
 }
 
@@ -141,8 +141,8 @@
   background: 
     repeating-linear-gradient(
       45deg,
-      #ff6b35,
-      #ff6b35 2px,
+      #F97316,
+      #F97316 2px,
       transparent 2px,
       transparent 10px
     ),
@@ -185,7 +185,7 @@
 .shape-1 {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #ff6b35, #ff8c42);
+  background: linear-gradient(135deg, #F97316, #F97316);
   top: 10%;
   left: 15%;
   animation-delay: 0s;

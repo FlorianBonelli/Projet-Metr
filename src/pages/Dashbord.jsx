@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Taches from '../composants/Taches';
 import Stat from '../composants/Stat';
 import { projectService } from '../db/database';
+import { useOnboardingActions } from '../hooks/useOnboardingActions';
 import LogoMetr from '../assets/images/Logo_Metr.png';
 
 function Dashbord() {
@@ -16,6 +17,9 @@ function Dashbord() {
   const [isModifModalOpen, setIsModifModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const navigate = useNavigate();
+
+  // Activer le hook d'onboarding
+  useOnboardingActions();
 
   // Charger les projets depuis la base de données
   useEffect(() => {

@@ -35,7 +35,7 @@
 }
 
 .taches-ajouter-btn {
-  background: #ff6b35;
+  background: #F97316;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -47,9 +47,9 @@
 }
 
 .taches-ajouter-btn:hover {
-  background: #ff5a1f;
+  background: #F97316;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
 }
 
 .taches-table-wrap {

@@ -1,0 +1,280 @@
+/* Overlay principal */
+.onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* Spotlight sur l'élément ciblé */
+.onboarding-spotlight {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4), 
+              0 0 30px rgba(249, 115, 22, 0.8),
+              0 0 60px rgba(249, 115, 22, 0.4),
+              inset 0 0 10px rgba(255, 255, 255, 0.2);
+  z-index: 9999;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  border: 3px solid rgba(249, 115, 22, 1);
+}
+
+/* Highlight sur l'élément ciblé */
+.onboarding-highlight {
+  position: relative;
+  z-index: 10000 !important;
+  border-radius: 8px;
+  animation: onboarding-pulse 2s infinite;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  filter: brightness(1.2) contrast(1.1) !important;
+  background-color: rgba(249, 115, 22, 0.1) !important;
+}
+
+/* Style spécial pour les boutons en highlight */
+.onboarding-highlight.cta-button,
+.onboarding-highlight.create-project-btn {
+  background-color: #ff6600 !important;
+  background: linear-gradient(135deg, #ff6600 0%, #ff8800 100%) !important;
+  color: white !important;
+  box-shadow: 0 0 20px rgba(255, 102, 0, 0.6) !important;
+  border: 2px solid #ff4400 !important;
+}
+
+.onboarding-highlight.cta-button:hover,
+.onboarding-highlight.create-project-btn:hover {
+  background-color: #ff4400 !important;
+  background: linear-gradient(135deg, #ff4400 0%, #ff6600 100%) !important;
+  box-shadow: 0 0 30px rgba(255, 102, 0, 0.8) !important;
+}
+
+@keyframes onboarding-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
+}
+
+/* Tooltip principal */
+.onboarding-tooltip {
+  position: absolute;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  width: 300px;
+  z-index: 10001;
+  font-family: 'Montserrat', Arial, sans-serif;
+  border: 1px solid #e5e7eb;
+}
+
+.onboarding-tooltip--center {
+  position: fixed;
+  width: 400px;
+}
+
+/* Header du tooltip */
+.onboarding-tooltip__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.onboarding-tooltip__header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.onboarding-tooltip__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #183278;
+  margin: 0;
+}
+
+.onboarding-tooltip__progress {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.onboarding-tooltip__close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.onboarding-tooltip__close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Description */
+.onboarding-tooltip__description {
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+/* Hint pour les actions requises */
+.onboarding-tooltip__action-hint {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  border-left: 3px solid #f59e0b;
+}
+
+/* Actions (boutons) */
+.onboarding-tooltip__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.onboarding-tooltip__button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: inherit;
+}
+
+.onboarding-tooltip__button--primary {
+  background-color: #f97316;
+  color: white;
+}
+
+.onboarding-tooltip__button--primary:hover {
+  background-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+.onboarding-tooltip__button--secondary {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.onboarding-tooltip__button--secondary:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Flèches pointant vers les éléments */
+.onboarding-tooltip__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.onboarding-tooltip__arrow--right {
+  top: 50%;
+  left: -10px;
+  transform: translateY(-50%);
+  border-width: 10px 10px 10px 0;
+  border-color: transparent white transparent transparent;
+}
+
+.onboarding-tooltip__arrow--left {
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent white;
+}
+
+.onboarding-tooltip__arrow--bottom {
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 10px 10px 10px;
+  border-color: transparent transparent white transparent;
+}
+
+.onboarding-tooltip__arrow--top {
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0 10px;
+  border-color: white transparent transparent transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .onboarding-tooltip {
+    width: 280px;
+    padding: 20px;
+  }
+  
+  .onboarding-tooltip--center {
+    width: 320px;
+    margin: 0 20px;
+  }
+  
+  .onboarding-tooltip__title {
+    font-size: 1.1rem;
+  }
+  
+  .onboarding-tooltip__description {
+    font-size: 0.9rem;
+  }
+  
+  .onboarding-tooltip__actions {
+    flex-direction: column;
+  }
+  
+  .onboarding-tooltip__button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Animation d'entrée */
+.onboarding-tooltip {
+  animation: onboarding-fade-in 0.3s ease-out;
+}
+
+@keyframes onboarding-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

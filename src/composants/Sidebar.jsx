@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { projectService, modificationService } from '../db/database';
+import { useOnboarding } from '../contexts/OnboardingContext';
 import './Sidebar.css';
 
 // Import des icônes SVG
@@ -21,6 +22,7 @@ const navLinks = [
 
 const Sidebar = () => {
     const location = useLocation();
+    const { startOnboarding } = useOnboarding();
     const [userFirstName, setUserFirstName] = useState('UTILISATEUR');
     const [recentProjects, setRecentProjects] = useState([]);
     const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(0);
@@ -166,8 +168,8 @@ const Sidebar = () => {
                 </Link>
             </div>
 
-            <div className="toggle-button">
-                <span className="arrow">{'<'}</span>
+            <div className="toggle-button" onClick={startOnboarding} title="Aide et tutoriel">
+                <span className="arrow">?</span>
             </div>
         </div>
     );

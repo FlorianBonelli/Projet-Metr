@@ -30,11 +30,15 @@
 }
 
 .creation-projet-container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 32px;
+}
+
+.creation-projet-container > * {
+    width: 100%;
 }
 
 .action-buttons {
@@ -66,7 +70,7 @@
 }
 
 .create-button {
-    background-color: #f97316;
+    background-color: #F97316;
     color: white;
     border: none;
     padding: 12px 32px;
@@ -79,7 +83,7 @@
 }
 
 .create-button:hover {
-    background-color: #ea580c;
+    background-color: #F97316;
     box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
 }
 

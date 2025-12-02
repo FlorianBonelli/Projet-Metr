@@ -73,9 +73,9 @@
 }
 
 .action-button.primary {
-  background: linear-gradient(135deg, #ff8743 0%, #ff5c35 100%);
+  background-color: #F97316;
   color: #fff;
-  box-shadow: 0 12px 24px rgba(255, 92, 53, 0.25);
+  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.25);
 }
 
 .action-button:hover,
@@ -142,14 +142,14 @@
   height: 44px;
   border-radius: 16px;
   border: none;
-  background: linear-gradient(135deg, #ff8743 0%, #ff5c35 100%);
+  background-color: #F97316;
   color: #fff;
   font-size: 24px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 24px rgba(255, 92, 53, 0.25);
+  box-shadow: 0 10px 24px rgba(249, 115, 22, 0.25);
 }
 
 .icon-button:hover,

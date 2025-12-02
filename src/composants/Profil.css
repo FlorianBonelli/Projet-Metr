@@ -226,16 +226,16 @@
 }
 
 .disconnect-btn {
-  background: #ff6b35;
+  background: #F97316;
   color: white;
-  border: 2px solid #ff6b35;
+  border: 2px solid #F97316;
 }
 
 .disconnect-btn:hover {
-  background: #ff5a1f;
-  border-color: #ff5a1f;
+  background: #F97316;
+  border-color: #F97316;
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
 }
 
 .disconnect-btn .btn-icon {

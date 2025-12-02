@@ -38,9 +38,11 @@
 
 .collaborateurs-section {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
     gap: 16px;
     margin-bottom: 32px;
+    width: 100%;
 }
 
 .collaborateurs-dropdown {
@@ -121,6 +123,14 @@
 
 .collaborateurs-icon {
     font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collaborateurs-icon img {
+    width: 18px;
+    height: 18px;
 }
 
 .bibliotheques-dropdown {

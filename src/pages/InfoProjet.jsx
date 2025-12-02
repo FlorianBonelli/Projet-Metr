@@ -137,9 +137,6 @@ const InfoProjet = () => {
                         <div className="header-left">
                             <h1 className="project-title">{project.nom}</h1>
                         </div>
-                        <div className="header-right">
-                            <div className="metr-logo">Metr.</div>
-                        </div>
                     </header>
 
                     <div className="collaborateurs-section">

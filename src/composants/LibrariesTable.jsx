@@ -5,10 +5,10 @@ function LibrariesTable({
   libraries = [],
   selectionMode = false,
   selectedIds = [],
-  onToggleSelect = () => {},
-  onToggleFavorite = () => {},
-  onEditArticle = () => {},
-  onDeleteArticle = () => {},
+  onToggleSelect = () => { },
+  onToggleFavorite = () => { },
+  onEditArticle = () => { },
+  onDeleteArticle = () => { },
 }) {
   return (
     <section className="libraries-table" aria-label="Liste des bibliothèques">

@@ -199,7 +199,7 @@ function Bibliotheques() {
     setIsArticlesLoading(true);
     try {
       let allArticles = [];
-      
+
       if (libraryId === 'all') {
         // Récupérer tous les articles de toutes les bibliothèques en une seule requête
         allArticles = await articleService.getAllArticles();
@@ -219,7 +219,7 @@ function Bibliotheques() {
         updatedAt: new Date(article.updated_at || article.created_at).toLocaleDateString('fr-FR'),
         favorite: article.is_favorite,
       }));
-      
+
       setLibraryItems(mapped);
     } catch (error) {
       console.error('Erreur lors du chargement des articles :', error);
@@ -382,7 +382,7 @@ function Bibliotheques() {
 
   const handleConfirmDelete = async () => {
     if (!articleToDelete) return;
-    
+
     try {
       await articleService.deleteArticle(articleToDelete.id);
       await loadArticles(selectedLibraryId);
@@ -402,7 +402,7 @@ function Bibliotheques() {
   const handleOpenManageLibraries = async () => {
     setIsManageLibrariesOpen(true);
     setSelectedLibrariesIds([]);
-    
+
     // Charger le nombre d'articles pour chaque bibliothèque
     try {
       const counts = {};
@@ -423,7 +423,7 @@ function Bibliotheques() {
   };
 
   const handleToggleLibrarySelect = (libraryId) => {
-    setSelectedLibrariesIds(prev => 
+    setSelectedLibrariesIds(prev =>
       prev.includes(libraryId)
         ? prev.filter(id => id !== libraryId)
         : [...prev, libraryId]
@@ -658,8 +658,8 @@ function Bibliotheques() {
           <div className="filters-row secondary">
             <div className="chip-group">
               <div className="filter-chip" ref={lotFilterRef}>
-                <button 
-                  className={`chip ${isLotFilterOpen ? 'active' : ''}`} 
+                <button
+                  className={`chip ${isLotFilterOpen ? 'active' : ''}`}
                   type="button"
                   onClick={() => setIsLotFilterOpen(!isLotFilterOpen)}
                 >
@@ -668,14 +668,14 @@ function Bibliotheques() {
                 </button>
                 {isLotFilterOpen && (
                   <div className="chip-dropdown">
-                    <button 
-                      className="chip-option" 
+                    <button
+                      className="chip-option"
                       onClick={() => handleFilterSelect('lot', '')}
                     >
                       Tous les lots
                     </button>
                     {getUniqueValues('lot').map((lot) => (
-                      <button 
+                      <button
                         key={lot}
                         className={`chip-option ${filters.lot === lot ? 'selected' : ''}`}
                         onClick={() => handleFilterSelect('lot', lot)}
@@ -686,10 +686,10 @@ function Bibliotheques() {
                   </div>
                 )}
               </div>
-              
+
               <div className="filter-chip" ref={subCategoryFilterRef}>
-                <button 
-                  className={`chip ${isSubCategoryFilterOpen ? 'active' : ''}`} 
+                <button
+                  className={`chip ${isSubCategoryFilterOpen ? 'active' : ''}`}
                   type="button"
                   onClick={() => setIsSubCategoryFilterOpen(!isSubCategoryFilterOpen)}
                 >
@@ -698,14 +698,14 @@ function Bibliotheques() {
                 </button>
                 {isSubCategoryFilterOpen && (
                   <div className="chip-dropdown">
-                    <button 
-                      className="chip-option" 
+                    <button
+                      className="chip-option"
                       onClick={() => handleFilterSelect('subCategory', '')}
                     >
                       Toutes les sous-catégories
                     </button>
                     {getUniqueValues('subCategory').map((subCategory) => (
-                      <button 
+                      <button
                         key={subCategory}
                         className={`chip-option ${filters.subCategory === subCategory ? 'selected' : ''}`}
                         onClick={() => handleFilterSelect('subCategory', subCategory)}
@@ -716,10 +716,10 @@ function Bibliotheques() {
                   </div>
                 )}
               </div>
-              
+
               <div className="filter-chip" ref={unitFilterRef}>
-                <button 
-                  className={`chip ${isUnitFilterOpen ? 'active' : ''}`} 
+                <button
+                  className={`chip ${isUnitFilterOpen ? 'active' : ''}`}
                   type="button"
                   onClick={() => setIsUnitFilterOpen(!isUnitFilterOpen)}
                 >
@@ -728,14 +728,14 @@ function Bibliotheques() {
                 </button>
                 {isUnitFilterOpen && (
                   <div className="chip-dropdown">
-                    <button 
-                      className="chip-option" 
+                    <button
+                      className="chip-option"
                       onClick={() => handleFilterSelect('unit', '')}
                     >
                       Toutes les unités
                     </button>
                     {getUniqueValues('unit').map((unit) => (
-                      <button 
+                      <button
                         key={unit}
                         className={`chip-option ${filters.unit === unit ? 'selected' : ''}`}
                         onClick={() => handleFilterSelect('unit', unit)}
@@ -989,7 +989,7 @@ function Bibliotheques() {
                   ×
                 </button>
               </header>
-              
+
               <div className="libraries-table-container">
                 <div className="libraries-table-header">
                   <span>Nom</span>
@@ -997,12 +997,12 @@ function Bibliotheques() {
                   <span>Articles</span>
                   <span></span>
                 </div>
-                
+
                 <div className="libraries-table-body">
                   {libraries.map((library) => {
                     const articleCount = librariesArticleCount[library.id] || 0;
                     const isSelected = selectedLibrariesIds.includes(library.id);
-                    
+
                     return (
                       <div key={library.id} className={`library-row ${isSelected ? 'selected' : ''}`}>
                         <span className="library-name">{library.nom}</span>
@@ -1023,7 +1023,7 @@ function Bibliotheques() {
                   })}
                 </div>
               </div>
-              
+
               <div className="manage-libraries-actions">
                 {selectedLibrariesIds.length > 0 && (
                   <button

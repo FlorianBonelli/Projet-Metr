@@ -21,7 +21,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-left: -24px; /* Place l'étoile au bord gauche de la box */
+  margin-left: -24px;
+  /* Place l'étoile au bord gauche de la box */
 }
 
 .selection-mode .table-header,
@@ -110,12 +111,14 @@
 
 .star-button:not(.active):hover .star-icon,
 .star-button:not(.active):focus .star-icon {
-  stroke: #9aa3c5; /* Garde le bord gris quand ce n'est pas favori */
+  stroke: #9aa3c5;
+  /* Garde le bord gris quand ce n'est pas favori */
 }
 
 .star-button.active:hover .star-icon,
 .star-button.active:focus .star-icon {
-  stroke: #f6b900; /* Garde le bord jaune quand c'est favori */
+  stroke: #f6b900;
+  /* Garde le bord jaune quand c'est favori */
 }
 
 .star-button:hover,
@@ -156,6 +159,7 @@
 }
 
 @media (max-width: 1280px) {
+
   .table-header,
   .table-row {
     grid-template-columns: 0fr 2.6fr 1.6fr 1.2fr 0.9fr 1.2fr 1.2fr;

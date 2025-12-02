@@ -5,12 +5,16 @@ import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
 import ModifProjet from '../composants/ModifProjet';
 import { projectService } from '../db/database';
+import { useOnboardingActions } from '../hooks/useOnboardingActions';
 import IconSearch from '../assets/images/search.svg';
 
 function Projet() {
   const navigate = useNavigate();
   const [projets, setProjets] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Activer le hook d'onboarding
+  useOnboardingActions();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');

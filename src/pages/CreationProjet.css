@@ -30,11 +30,15 @@
 }
 
 .creation-projet-container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 32px;
+}
+
+.creation-projet-container > * {
+    width: 100%;
 }
 
 .action-buttons {

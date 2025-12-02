@@ -219,7 +219,6 @@
     color: var(--text-color);
     font-weight: bold;
     font-size: 16px;
-    transform: rotate(180deg);
 }
 
 /* Indicateur de notifications */

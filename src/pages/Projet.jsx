@@ -167,7 +167,7 @@ function Projet() {
       <div className="projet-content page-padding">
       {/* Header */}
       <div className="projet-header">
-        <h1 className="projet-title">MES PROJETS</h1>
+        <h2 className="page-title">MES PROJETS</h2>
         <Link to="/creation-projet" className="create-project-btn">
           <span>+</span>
           Créer un projet

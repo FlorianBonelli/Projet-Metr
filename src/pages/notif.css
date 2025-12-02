@@ -19,14 +19,20 @@
   align-items: flex-start;
 }
 
-.notif-title {
+.notif-content .page-title {
   font-size: 2rem;
   color: #183278;
   font-weight: 800;
   font-family: 'Montserrat', Arial, sans-serif;
-  margin: 0 0 32px 0;
+  margin: 0 0 48px 0;
   width: 100%;
   padding: 0;
+  transition: color 150ms ease;
+  display: block;
+}
+
+.notif-content .page-title:hover {
+  color: #2b63c8;
 }
 
 .projects-list {
@@ -345,9 +351,9 @@
     padding: 30px 24px;
   }
 
-  .notif-title {
+  .notif-content .page-title {
     font-size: 1.8rem;
-    margin-bottom: 24px;
+    margin-bottom: 40px;
   }
 
   .modifications-header,
@@ -367,9 +373,9 @@
     padding: 20px 16px;
   }
 
-  .notif-title {
+  .notif-content .page-title {
     font-size: 1.5rem;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
   }
 
   .project-header {
@@ -433,9 +439,9 @@
     padding: 16px 12px;
   }
 
-  .notif-title {
+  .notif-content .page-title {
     font-size: 1.3rem;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 
   .projects-list {

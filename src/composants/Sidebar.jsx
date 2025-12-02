@@ -167,7 +167,7 @@ const Sidebar = () => {
             </div>
 
             <div className="toggle-button">
-                <span className="arrow">{'<'}</span>
+                <span className="arrow">?</span>
             </div>
         </div>
     );

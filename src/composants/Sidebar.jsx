@@ -7,7 +7,7 @@ import './Sidebar.css';
 // Import des icônes SVG
 import AccueilIcon from '../assets/images/accueil.svg';
 import ProjetIcon from '../assets/images/projet.svg';
-import BibliothequeIcon from '../assets/images/bibliothèque.svg';
+import BibliothequeIcon from '../assets/images/bibliotheque.svg';
 import NotificationIcon from '../assets/images/notification.svg';
 import ProfilIcon from '../assets/images/profil.svg';
 
@@ -42,7 +42,7 @@ const Sidebar = () => {
             if (userInfo) {
                 const userData = JSON.parse(userInfo);
                 const userId = userData.id_utilisateur || userData.id;
-                
+
                 if (userId) {
                     // Récupérer uniquement les projets récents de l'utilisateur connecté
                     const projects = await projectService.getRecentProjects(2, userId);
@@ -68,7 +68,7 @@ const Sidebar = () => {
             if (userInfo) {
                 const userData = JSON.parse(userInfo);
                 const userId = userData.id_utilisateur || userData.id;
-                
+
                 if (userId) {
                     const count = await modificationService.getUnseenNotificationsCount(userId);
                     setUnseenNotificationsCount(count);

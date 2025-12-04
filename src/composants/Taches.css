@@ -1,13 +1,12 @@
 .taches-section {
-  width: 100%;
+  width: calc(100% - 2 * var(--content-offset, 16px));
   box-sizing: border-box;
-  padding-left: var(--content-offset);
-  padding-right: var(--content-offset);
-  margin: 0 auto;
+  margin-left: var(--content-offset, 16px);
+  margin-right: var(--content-offset, 16px);
 }
 
 .taches-card {
-  border-radius: 20px;
+  border-radius: 16px;
   width: 100%;
   box-sizing: border-box;
 }

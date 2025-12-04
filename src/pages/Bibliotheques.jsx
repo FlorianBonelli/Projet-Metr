@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import '../styles/common.css';
+import './Bibliotheques.css';
 import Sidebar from '../composants/Sidebar';
 import LibrariesTable from '../composants/LibrariesTable';
 import { libraryService, articleService } from '../db/database';
 import BibliothequeIcon from '../assets/images/bibliothèque.svg';
-import './Bibliotheques.css';
 
 const UNIT_OPTIONS = [
   { value: 'CM', label: 'Centimètre (CM)' },
@@ -576,7 +577,7 @@ function Bibliotheques() {
       <main className="bibliotheques-content page-padding">
         <header className="bibliotheques-header">
           <div className="header-title">
-            <h1>Mes bibliothèques</h1>
+            <h2 className="page-title">MES BIBLIOTHÈQUES</h2>
             <p>{filteredItems.length} articles trouvés</p>
           </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/common.css';
 import './Dashbord.css';
 import Sidebar from '../composants/Sidebar';
 import CarteProjet from '../composants/CarteProjet';
@@ -122,8 +123,7 @@ function Dashbord() {
   return (
     <div className="dashbord">
       <Sidebar />
-      <div className="main-content page-padding">
-      <div className="dashbord-content">
+      <div className="dashbord-content page-padding">
           {/* Header avec titre, logo et bouton alignés */}
           <div className="dashboard-header">
             <h2 className="page-title">MES PROJETS RÉCENTS</h2>
@@ -186,7 +186,6 @@ function Dashbord() {
           </div>
 
           <Stat />
-        </div>
       </div>
       
       {/* Modal de modification */}

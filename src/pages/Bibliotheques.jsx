@@ -4,7 +4,7 @@ import './Bibliotheques.css';
 import Sidebar from '../composants/Sidebar';
 import LibrariesTable from '../composants/LibrariesTable';
 import { libraryService, articleService } from '../db/database';
-import BibliothequeIcon from '../assets/images/bibliothèque.svg';
+import BibliothequeIcon from '../assets/images/bibliotheque.svg';
 
 const UNIT_OPTIONS = [
   { value: 'CM', label: 'Centimètre (CM)' },

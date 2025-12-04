@@ -17,7 +17,9 @@ function Profil() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const navigate = useNavigate();
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     setIsVisible(true);
@@ -31,10 +33,65 @@ function Profil() {
         const user = await userService.getUserByEmail(userEmail);
         if (user) {
           setUserData(user);
+          // Charger la photo de profil si elle existe
+          if (user.photo_profil) {
+            setProfilePhoto(user.photo_profil);
+          }
         }
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données utilisateur:', error);
+    }
+  };
+
+  // Fonction pour gérer le clic sur l'avatar
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Fonction pour gérer le changement de photo
+  const handlePhotoChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image');
+      return;
+    }
+
+    // Vérifier la taille (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
+
+    try {
+      // Convertir l'image en base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Photo = reader.result;
+        
+        // Mettre à jour l'état local
+        setProfilePhoto(base64Photo);
+        
+        // Sauvegarder dans la base de données
+        await userService.updateUser(userData.id_utilisateur, { photo_profil: base64Photo });
+        
+        // Mettre à jour le localStorage
+        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+        userInfo.photo_profil = base64Photo;
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        
+        // Émettre un événement pour mettre à jour la Sidebar
+        window.dispatchEvent(new CustomEvent('profilePhotoUpdated', { detail: { photo: base64Photo } }));
+        
+        console.log('Photo de profil mise à jour avec succès');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la photo:', error);
+      alert('Erreur lors de la mise à jour de la photo');
     }
   };
 
@@ -102,13 +159,33 @@ function Profil() {
 
   return (
     <div className={`profil-component ${isVisible ? 'visible' : ''}`}>
+      {/* Input file caché pour la photo de profil */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handlePhotoChange}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+      
       <div className="profil-main-grid">
         {/* Carte Profil à gauche */}
         <div className="profil-info-card">
           <div className="avatar-section">
-            <div className="avatar-container">
+            <div 
+              className="avatar-container clickable" 
+              onClick={handleAvatarClick}
+              title="Cliquez pour changer la photo de profil"
+            >
               <div className="avatar-image">
-                <span className="avatar-initial">{userInitial}</span>
+                {profilePhoto ? (
+                  <img src={profilePhoto} alt="Photo de profil" className="avatar-photo" />
+                ) : (
+                  <span className="avatar-initial">{userInitial}</span>
+                )}
+              </div>
+              <div className="avatar-overlay">
+                <span className="avatar-overlay-text">📷</span>
               </div>
               <div className="status-indicator"></div>
             </div>

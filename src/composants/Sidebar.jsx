@@ -24,6 +24,8 @@ const Sidebar = () => {
     const location = useLocation();
     const { startOnboarding } = useOnboarding();
     const [userFirstName, setUserFirstName] = useState('UTILISATEUR');
+    const [userInitials, setUserInitials] = useState('');
+    const [userPhoto, setUserPhoto] = useState(null);
     const [recentProjects, setRecentProjects] = useState([]);
     const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(0);
 
@@ -93,6 +95,15 @@ const Sidebar = () => {
                 if (parsedUserInfo.prenom) {
                     setUserFirstName(parsedUserInfo.prenom.toUpperCase());
                 }
+                // Calculer les initiales
+                const firstInitial = parsedUserInfo.prenom ? parsedUserInfo.prenom.charAt(0).toUpperCase() : '';
+                const lastInitial = parsedUserInfo.nom ? parsedUserInfo.nom.charAt(0).toUpperCase() : '';
+                setUserInitials(firstInitial + lastInitial);
+                
+                // Charger la photo de profil si elle existe
+                if (parsedUserInfo.photo_profil) {
+                    setUserPhoto(parsedUserInfo.photo_profil);
+                }
             } catch (error) {
                 console.error('Erreur lors de la récupération des informations utilisateur:', error);
             }
@@ -101,6 +112,20 @@ const Sidebar = () => {
         // Charger les projets récents et les notifications au montage du composant
         loadRecentProjects();
         loadUnseenNotificationsCount();
+    }, []);
+
+    // Écouter les changements de photo de profil
+    useEffect(() => {
+        const handleProfilePhotoUpdate = (event) => {
+            if (event.detail && event.detail.photo) {
+                setUserPhoto(event.detail.photo);
+            }
+        };
+
+        window.addEventListener('profilePhotoUpdated', handleProfilePhotoUpdate);
+        return () => {
+            window.removeEventListener('profilePhotoUpdated', handleProfilePhotoUpdate);
+        };
     }, []);
 
     // Écouter les changements dans les projets pour mise à jour automatique
@@ -124,7 +149,13 @@ const Sidebar = () => {
     return (
         <div className="sidebar-container">
             <div className="profile-section">
-                <div className="avatar-placeholder"></div>
+                <div className="sidebar-avatar">
+                    {userPhoto ? (
+                        <img src={userPhoto} alt="Photo de profil" className="sidebar-avatar-img" />
+                    ) : (
+                        <span className="sidebar-avatar-initials">{userInitials || 'U'}</span>
+                    )}
+                </div>
                 <div className="username">{userFirstName}</div>
             </div>
 

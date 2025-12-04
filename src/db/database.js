@@ -4,8 +4,8 @@ import Dexie from 'dexie';
 export const db = new Dexie('ProjetMetrDatabase');
 
 // Définir le schéma de la base de données (version mise à jour)
-db.version(4).stores({
-  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
+db.version(5).stores({
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise, photo_profil',
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
   libraries: '++id, user_id, nom, created_at',
   articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',

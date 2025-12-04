@@ -38,7 +38,7 @@
 
 .export-row {
     display: grid;
-    grid-template-columns: 1fr 110px;
+    grid-template-columns: 1fr 150px 110px;
     padding: 14px 18px;
     border-bottom: 1px solid #f1f5f9;
     align-items: center;
@@ -73,6 +73,11 @@
     justify-content: flex-end;
     color: #475569;
     font-weight: 500;
+}
+
+.export-cell-user {
+    color: #64748b;
+    font-size: 13px;
 }
 
 .export-name-wrapper {

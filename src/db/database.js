@@ -4,14 +4,15 @@ import Dexie from 'dexie';
 export const db = new Dexie('ProjetMetrDatabase');
 
 // Définir le schéma de la base de données (version mise à jour)
-db.version(3).stores({
+db.version(4).stores({
   utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise',
   projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
   libraries: '++id, user_id, nom, created_at',
   articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
   taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
   modifications: '++id, projectId, userId, dateModification, changeType',
-  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]'
+  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]',
+  exports: '++id, project_id, user_id, file_name, file_type, file_size, file_data, date_export'
 }).upgrade(trans => {
   // Migration pour ajouter user_id aux projets existants
   return trans.projets.toCollection().modify(projet => {
@@ -1140,6 +1141,80 @@ export const resetDatabase = async () => {
     await initializeTestData();
   } catch (error) {
     console.error('Erreur lors de la réinitialisation:', error);
+  }
+};
+
+// Service pour gérer l'historique des exports/téléchargements
+export const exportService = {
+  // Enregistrer un export dans l'historique
+  async createExport(exportData) {
+    try {
+      const { project_id, user_id, file_name, file_type, file_size, file_data } = exportData;
+      
+      const exportId = await db.exports.add({
+        project_id,
+        user_id,
+        file_name,
+        file_type,
+        file_size,
+        file_data, // Données du fichier en base64 ou Blob
+        date_export: new Date().toISOString()
+      });
+      
+      console.log('Export enregistré avec l\'ID:', exportId);
+      return exportId;
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement de l\'export:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer l'historique des exports d'un projet
+  async getExportsByProject(projectId) {
+    try {
+      const exports = await db.exports
+        .where('project_id')
+        .equals(projectId)
+        .reverse()
+        .sortBy('date_export');
+      
+      // Récupérer les informations des utilisateurs pour chaque export
+      const exportsWithUserInfo = await Promise.all(
+        exports.map(async (exp) => {
+          const user = await db.utilisateur.get(exp.user_id);
+          return {
+            ...exp,
+            user_name: user ? `${user.prenom} ${user.nom}` : 'Utilisateur inconnu'
+          };
+        })
+      );
+      
+      return exportsWithUserInfo;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des exports:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer un export par son ID
+  async getExportById(exportId) {
+    try {
+      return await db.exports.get(exportId);
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'export:', error);
+      throw error;
+    }
+  },
+  
+  // Supprimer un export
+  async deleteExport(exportId) {
+    try {
+      await db.exports.delete(exportId);
+      console.log('Export supprimé:', exportId);
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'export:', error);
+      throw error;
+    }
   }
 };
 

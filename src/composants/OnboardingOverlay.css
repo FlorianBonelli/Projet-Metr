@@ -71,17 +71,29 @@
   position: absolute;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
   padding: 24px;
-  width: 300px;
+  width: 320px;
   z-index: 10001;
   font-family: 'Montserrat', Arial, sans-serif;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #f97316;
+  max-width: calc(100vw - 40px);
+  min-height: 150px;
 }
 
 .onboarding-tooltip--center {
   position: fixed;
   width: 400px;
+}
+
+/* Style spécial pour l'étape create-project-button */
+.onboarding-tooltip--create-project {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10002 !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 2px #f97316 !important;
 }
 
 /* Header du tooltip */
@@ -238,11 +250,14 @@
   .onboarding-tooltip {
     width: 280px;
     padding: 20px;
+    max-width: calc(100vw - 20px);
   }
   
-  .onboarding-tooltip--center {
-    width: 320px;
-    margin: 0 20px;
+  .onboarding-tooltip--center,
+  .onboarding-tooltip--create-project {
+    width: 300px;
+    max-width: calc(100vw - 20px);
+    margin: 0 10px;
   }
   
   .onboarding-tooltip__title {
@@ -260,6 +275,24 @@
   .onboarding-tooltip__button {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-tooltip,
+  .onboarding-tooltip--center,
+  .onboarding-tooltip--create-project {
+    width: 260px;
+    max-width: calc(100vw - 10px);
+    padding: 16px;
+  }
+  
+  .onboarding-tooltip__title {
+    font-size: 1rem;
+  }
+  
+  .onboarding-tooltip__description {
+    font-size: 0.85rem;
   }
 }
 

@@ -60,15 +60,60 @@ const OnboardingOverlay = () => {
           break;
         case 'left':
           top = rect.top + scrollTop + rect.height / 2;
-          left = rect.left + scrollLeft - 320; // 300px width + 20px margin
+          left = rect.left + scrollLeft - 340; // 320px width + 20px margin
+          
+          // Vérifier si le tooltip sort de l'écran à gauche
+          if (left < 20) {
+            // Si pas assez de place à gauche, positionner à droite
+            left = rect.right + scrollLeft + 20;
+            // Si pas assez de place à droite non plus, centrer horizontalement
+            if (left + 320 > window.innerWidth - 20) {
+              left = (window.innerWidth - 320) / 2;
+              // Ajuster la position verticale pour éviter de chevaucher le bouton
+              if (Math.abs(top - (rect.top + scrollTop + rect.height / 2)) < 100) {
+                top = rect.bottom + scrollTop + 20;
+              }
+            }
+          }
+          
+          // Vérifier si le tooltip sort de l'écran en haut ou en bas
+          if (top < 20) {
+            top = 20;
+          } else if (top + 200 > window.innerHeight + scrollTop) { // Estimation de la hauteur du tooltip
+            top = window.innerHeight + scrollTop - 220;
+          }
           break;
         case 'bottom':
           top = rect.bottom + scrollTop + 20;
-          left = rect.left + scrollLeft + rect.width / 2 - 150; // Center tooltip
+          left = rect.left + scrollLeft + rect.width / 2 - 160; // Center tooltip
+          
+          // Vérifier si le tooltip sort de l'écran horizontalement
+          if (left < 20) {
+            left = 20;
+          } else if (left + 320 > window.innerWidth - 20) {
+            left = window.innerWidth - 340;
+          }
+          
+          // Vérifier si le tooltip sort de l'écran en bas
+          if (top + 200 > window.innerHeight + scrollTop) {
+            top = rect.top + scrollTop - 220; // Positionner au-dessus
+          }
           break;
         case 'top':
-          top = rect.top + scrollTop - 20;
-          left = rect.left + scrollLeft + rect.width / 2 - 150;
+          top = rect.top + scrollTop - 220;
+          left = rect.left + scrollLeft + rect.width / 2 - 160;
+          
+          // Vérifier si le tooltip sort de l'écran horizontalement
+          if (left < 20) {
+            left = 20;
+          } else if (left + 320 > window.innerWidth - 20) {
+            left = window.innerWidth - 340;
+          }
+          
+          // Vérifier si le tooltip sort de l'écran en haut
+          if (top < 20) {
+            top = rect.bottom + scrollTop + 20; // Positionner en dessous
+          }
           break;
         default:
           top = window.innerHeight / 2 + scrollTop - 100;
@@ -147,8 +192,8 @@ const OnboardingOverlay = () => {
       
       {/* Tooltip avec les instructions */}
       <div 
-        className={`onboarding-tooltip onboarding-tooltip--${step.position}`}
-        style={step.position === 'center' ? {
+        className={`onboarding-tooltip onboarding-tooltip--${step.position} ${step.id === 'create-project-button' ? 'onboarding-tooltip--create-project' : ''}`}
+        style={step.position === 'center' || step.id === 'create-project-button' ? {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)'
@@ -212,7 +257,7 @@ const OnboardingOverlay = () => {
         </div>
         
         {/* Flèche pointant vers l'élément */}
-        {step.target && (
+        {step.target && step.id !== 'create-project-button' && (
           <div className={`onboarding-tooltip__arrow onboarding-tooltip__arrow--${step.position}`} />
         )}
       </div>

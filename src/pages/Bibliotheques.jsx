@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Sidebar from '../composants/Sidebar';
 import LibrariesTable from '../composants/LibrariesTable';
 import { libraryService, articleService } from '../db/database';
-import BibliothequeIcon from '../assets/images/bibliothèque.svg';
+import BibliothequeIcon from '../assets/images/bibliothèque.svg';
 import './Bibliotheques.css';
 
 const UNIT_OPTIONS = [

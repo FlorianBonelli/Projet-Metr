@@ -7,7 +7,7 @@ import './Sidebar.css';
 // Import des icônes SVG
 import AccueilIcon from '../assets/images/accueil.svg';
 import ProjetIcon from '../assets/images/projet.svg';
-import BibliothequeIcon from '../assets/images/bibliothèque.svg';
+import BibliothequeIcon from '../assets/images/bibliothèqueBlanche.svg';
 import NotificationIcon from '../assets/images/notification.svg';
 import ProfilIcon from '../assets/images/profil.svg';
 

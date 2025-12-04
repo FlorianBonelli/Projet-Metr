@@ -575,7 +575,7 @@ function Bibliotheques() {
       <Sidebar />
 
       <main className="bibliotheques-content page-padding">
-        <header className="bibliotheques-header">
+        <header className="bibliotheques-header animate-slide-in animate-delay-1">
           <div className="header-title">
             <h2 className="page-title">MES BIBLIOTHÈQUES</h2>
             <p>{filteredItems.length} articles trouvés</p>
@@ -594,7 +594,7 @@ function Bibliotheques() {
           </div>
         </header>
 
-        <section className="filters-panel">
+        <section className="filters-panel animate-slide-in animate-delay-2">
           <div className="filters-row">
             <div className="filters-selects">
               <div className="select-wrapper wide" ref={librarySelectRef}>
@@ -770,15 +770,17 @@ function Bibliotheques() {
           </div>
         </section>
 
-        <LibrariesTable
-          libraries={filteredItems}
-          selectionMode={isSelectionMode}
-          selectedIds={selectedIds}
-          onToggleSelect={handleToggleSelect}
-          onToggleFavorite={handleToggleFavorite}
-          onEditArticle={handleEditArticle}
-          onDeleteArticle={handleDeleteArticle}
-        />
+        <div className="animate-slide-in animate-delay-3">
+          <LibrariesTable
+            libraries={filteredItems}
+            selectionMode={isSelectionMode}
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onToggleFavorite={handleToggleFavorite}
+            onEditArticle={handleEditArticle}
+            onDeleteArticle={handleDeleteArticle}
+          />
+        </div>
         {isArticlesLoading && <p className="loading-state">Chargement des articles…</p>}
         {(isAddModalOpen || isEditModalOpen) && (
           <div

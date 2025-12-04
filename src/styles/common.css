@@ -72,6 +72,77 @@
   border-color: #fecaca;
 }
 
+/* Animation d'apparition commune à toutes les pages */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Classes utilitaires pour l'animation */
+.animate-slide-in {
+  animation: slideInUp 0.6s ease-out both;
+}
+
+.animate-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.animate-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-3 {
+  animation-delay: 0.3s;
+}
+
+.animate-delay-4 {
+  animation-delay: 0.4s;
+}
+
+.animate-delay-5 {
+  animation-delay: 0.5s;
+}
+
+.animate-delay-6 {
+  animation-delay: 0.6s;
+}
+
+/* Wrapper de section avec animation */
+.section-wrapper {
+  animation: slideInUp 0.6s ease-out both;
+}
+
+.section-wrapper:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.section-wrapper:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.section-wrapper:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.section-wrapper:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.section-wrapper:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.section-wrapper:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
 /* Responsive commun */
 @media (max-width: 768px) {
   .page-title {

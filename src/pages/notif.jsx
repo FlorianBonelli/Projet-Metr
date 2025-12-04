@@ -42,7 +42,7 @@ function Notif() {
       // Ne charger que les projets (et notifications) appartenant à cet utilisateur
       const projects = await modificationService.getProjectsWithModificationsByUser(userId);
       setProjectsWithMods(projects);
-      
+
       // Pré-charger les utilisateurs pour les modifications
       const users = await userService.getAllUsers();
       const cache = {};
@@ -92,7 +92,7 @@ function Notif() {
     try {
       const newStatus = currentStatus === 'à voir' ? 'vu' : 'à voir';
       await modificationService.updateModificationStatus(modificationId, newStatus);
-      
+
       // Recharger les projets pour mettre à jour l'affichage
       loadProjectsWithModifications();
     } catch (err) {
@@ -155,11 +155,11 @@ function Notif() {
     <div className="notif-page">
       <Sidebar />
       <div className="notif-content page-padding">
-        <div className="notif-header">
+        <div className="notif-header animate-slide-in animate-delay-1">
           <h2 className="page-title">NOTIFICATIONS</h2>
         </div>
 
-        <div className="projects-list">
+        <div className="projects-list animate-slide-in animate-delay-2">
           {projectsWithMods.length > 0 ? (
             projectsWithMods.map((project) => (
               <div key={project.id} className="project-notification-item">
@@ -208,44 +208,44 @@ function Notif() {
                         {[...(project.modifications || [])]
                           .sort((a, b) => new Date(b.dateModification || 0) - new Date(a.dateModification || 0))
                           .map((mod) => {
-                          // Utiliser l'auteur de la modification (celui qui a fait le changement)
-                          const author = mod.authorId ? userCache[mod.authorId] : null;
-                          const authorName = mod.authorName || (author ? `${author.prenom} ${author.nom}` : 'Utilisateur');
-                          const authorInitials = author ? `${author.prenom?.[0] || ''}${author.nom?.[0] || ''}` : (mod.authorName ? mod.authorName.split(' ').map(n => n[0]).join('') : '?');
-                          const isUnseen = mod.status === 'à voir';
-                          
-                          return (
-                            <div key={mod.id} className="modification-row">
-                              <div className="cell profile">
-                                <div className="user-profile">
-                                  <div className="avatar">
-                                    {authorInitials}
+                            // Utiliser l'auteur de la modification (celui qui a fait le changement)
+                            const author = mod.authorId ? userCache[mod.authorId] : null;
+                            const authorName = mod.authorName || (author ? `${author.prenom} ${author.nom}` : 'Utilisateur');
+                            const authorInitials = author ? `${author.prenom?.[0] || ''}${author.nom?.[0] || ''}` : (mod.authorName ? mod.authorName.split(' ').map(n => n[0]).join('') : '?');
+                            const isUnseen = mod.status === 'à voir';
+
+                            return (
+                              <div key={mod.id} className="modification-row">
+                                <div className="cell profile">
+                                  <div className="user-profile">
+                                    <div className="avatar">
+                                      {authorInitials}
+                                    </div>
+                                    <span className="user-name">
+                                      {authorName}
+                                    </span>
                                   </div>
-                                  <span className="user-name">
-                                    {authorName}
-                                  </span>
+                                </div>
+                                <div className="cell profession">
+                                  {author?.profession || 'Non spécifié'}
+                                </div>
+                                <div className="cell notification">
+                                  {getNotificationDescription(mod.changeType)}
+                                </div>
+                                <div className="cell date">
+                                  {formatDate(mod.dateModification)}
+                                </div>
+                                <div className="cell status">
+                                  <button
+                                    className={`status-button ${isUnseen ? 'unseen' : 'seen'}`}
+                                    onClick={() => toggleNotificationStatus(mod.id, mod.status)}
+                                  >
+                                    {isUnseen ? 'À voir' : 'Vu !'}
+                                  </button>
                                 </div>
                               </div>
-                              <div className="cell profession">
-                                {author?.profession || 'Non spécifié'}
-                              </div>
-                              <div className="cell notification">
-                                {getNotificationDescription(mod.changeType)}
-                              </div>
-                              <div className="cell date">
-                                {formatDate(mod.dateModification)}
-                              </div>
-                              <div className="cell status">
-                                <button
-                                  className={`status-button ${isUnseen ? 'unseen' : 'seen'}`}
-                                  onClick={() => toggleNotificationStatus(mod.id, mod.status)}
-                                >
-                                  {isUnseen ? 'À voir' : 'Vu !'}
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
                       </>
                     ) : (
                       <div className="no-modifications-message">

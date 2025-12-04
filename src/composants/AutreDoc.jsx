@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectService } from '../db/database';
+import { projectService, exportService } from '../db/database';
 import './AutreDoc.css';
 
 const ExternalLinkIcon = () => (
@@ -26,6 +26,64 @@ const AutreDoc = ({ projectId, canEdit = true }) => {
     const [loading, setLoading] = useState(true);
     const [showUpload, setShowUpload] = useState(false);
     const [showAllDocuments, setShowAllDocuments] = useState(false);
+
+    // Fonction pour télécharger un document et enregistrer dans l'historique des exports
+    const handleDownloadDocument = async (doc) => {
+        try {
+            // Récupérer l'utilisateur connecté
+            const userInfo = localStorage.getItem('userInfo');
+            let userId = null;
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                userId = userData.id_utilisateur || userData.id;
+            }
+
+            // Récupérer le projet pour obtenir les données du fichier
+            const project = await projectService.getProjectById(parseInt(projectId, 10));
+            if (!project || !project.fichier) {
+                alert('Fichier non trouvé');
+                return;
+            }
+
+            // Trouver le fichier correspondant
+            const fileData = project.fichier.find(f => f.name === doc.nom);
+            if (!fileData) {
+                alert('Fichier non trouvé dans le projet');
+                return;
+            }
+
+            // Enregistrer l'export dans l'historique
+            if (userId) {
+                await exportService.createExport({
+                    project_id: parseInt(projectId, 10),
+                    user_id: userId,
+                    file_name: doc.nom,
+                    file_type: fileData.type || 'application/octet-stream',
+                    file_size: fileData.size || 0,
+                    file_data: fileData.data || null
+                });
+            }
+
+            // Créer un lien de téléchargement
+            const blob = fileData.data 
+                ? new Blob([fileData.data], { type: fileData.type })
+                : new Blob([`Contenu du fichier: ${doc.nom}`], { type: 'text/plain' });
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = doc.nom;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            console.log('Document téléchargé et export enregistré:', doc.nom);
+        } catch (error) {
+            console.error('Erreur lors du téléchargement:', error);
+            alert('Erreur lors du téléchargement du fichier');
+        }
+    };
 
     // Fonction pour filtrer les fichiers de type document (non-plans)
     const isDocumentFile = (file) => {
@@ -254,7 +312,12 @@ const AutreDoc = ({ projectId, canEdit = true }) => {
                             <span className="doc-cell doc-name-wrapper">
                                 <span className="doc-dot" />
                                 <span className="doc-name">{doc.nom}</span>
-                                <button className="doc-open" aria-label={`Ouvrir ${doc.nom}`}>
+                                <button 
+                                    className="doc-open" 
+                                    aria-label={`Télécharger ${doc.nom}`}
+                                    onClick={() => handleDownloadDocument(doc)}
+                                    title={`Télécharger ${doc.nom}`}
+                                >
                                     <ExternalLinkIcon />
                                 </button>
                             </span>

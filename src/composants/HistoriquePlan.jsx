@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectService } from '../db/database';
+import { projectService, exportService } from '../db/database';
 import './HistoriquePlan.css';
 
 const reorderPlans = (list, defaultId) => {
@@ -54,6 +54,66 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
     const [loading, setLoading] = useState(true);
     const [showUpload, setShowUpload] = useState(false);
     const [showAllPlans, setShowAllPlans] = useState(false);
+
+    // Fonction pour télécharger un plan et enregistrer dans l'historique des exports
+    const handleDownloadPlan = async (plan) => {
+        try {
+            // Récupérer l'utilisateur connecté
+            const userInfo = localStorage.getItem('userInfo');
+            let userId = null;
+            if (userInfo) {
+                const userData = JSON.parse(userInfo);
+                userId = userData.id_utilisateur || userData.id;
+            }
+
+            // Récupérer le projet pour obtenir les données du fichier
+            const project = await projectService.getProjectById(parseInt(projectId, 10));
+            if (!project || !project.fichier) {
+                alert('Fichier non trouvé');
+                return;
+            }
+
+            // Trouver le fichier correspondant
+            const fileData = project.fichier.find(f => f.name === plan.nom);
+            if (!fileData) {
+                alert('Fichier non trouvé dans le projet');
+                return;
+            }
+
+            // Enregistrer l'export dans l'historique
+            if (userId) {
+                await exportService.createExport({
+                    project_id: parseInt(projectId, 10),
+                    user_id: userId,
+                    file_name: plan.nom,
+                    file_type: fileData.type || 'application/octet-stream',
+                    file_size: fileData.size || 0,
+                    file_data: fileData.data || null // Si les données sont stockées
+                });
+            }
+
+            // Créer un lien de téléchargement
+            // Note: Dans une vraie application, les données du fichier seraient stockées
+            // Ici on simule le téléchargement en créant un fichier placeholder
+            const blob = fileData.data 
+                ? new Blob([fileData.data], { type: fileData.type })
+                : new Blob([`Contenu du fichier: ${plan.nom}`], { type: 'text/plain' });
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = plan.nom;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            console.log('Plan téléchargé et export enregistré:', plan.nom);
+        } catch (error) {
+            console.error('Erreur lors du téléchargement:', error);
+            alert('Erreur lors du téléchargement du fichier');
+        }
+    };
 
     // Fonction pour filtrer les fichiers de type plan
     const isPlanFile = (file) => {
@@ -328,8 +388,12 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                                 </span>
                                 <span className="plan-cell plan-cell-date">{plan.dateModification}</span>
                                 <span className="plan-cell plan-cell-action">
-                                    <button className="plan-row-btn">
-                                        Voir plus
+                                    <button 
+                                        className="plan-row-btn"
+                                        onClick={() => handleDownloadPlan(plan)}
+                                        title={`Télécharger ${plan.nom}`}
+                                    >
+                                        Télécharger
                                         <NoteIcon />
                                     </button>
                                     {canEdit && !isDefault && (

@@ -1,8 +1,4 @@
-:root{
-  --sidebar-width: 200px;
-  --content-offset: 32px;
-  --gutter-small: 16px;
-}
+/* Les variables :root sont définies dans common.css */
 
 .dashbord {
   display: flex;
@@ -32,6 +28,10 @@ h1 {
   box-sizing: border-box;
 }
 
+.dashbord-content.page-padding {
+  padding-left: 280px;
+}
+
 /* Header avec titre, logo et bouton alignés horizontalement */
 .dashboard-header {
   display: flex;
@@ -43,18 +43,7 @@ h1 {
   padding-right: var(--content-offset);
 }
 
-.page-title {
-  font-size: 2rem;
-  color: #183278;
-  font-weight: 800;
-  font-family: 'Montserrat', Arial, sans-serif;
-  margin: 0;
-  transition: color 150ms ease;
-}
-
-.page-title:hover {
-  color: #2b63c8; /* légèrement éclairci */
-}
+/* .page-title est défini dans common.css */
 
 .header-right {
   display: flex;
@@ -63,36 +52,12 @@ h1 {
 }
 
 .dashboard-logo {
-  height: 40px;
+  height: 56px;
   width: auto;
   object-fit: contain;
 }
 
-.create-project-btn {
-  background-color: #f97316;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 24px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 14px;
-  font-family: 'Montserrat', Arial, sans-serif;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.create-project-btn:hover {
-  background-color: #F97316;
-  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
-  transform: translateY(-1px);
-}
-
-.create-project-btn:active {
-  transform: translateY(0);
-}
+/* .create-project-btn est défini dans common.css */
 
 .cards-grid {
   display: grid;
@@ -167,8 +132,11 @@ h1 {
 /* Media queries pour la responsivité */
 @media (max-width: 1024px) {
   .dashbord-content {
-    margin-left: 160px;
-    padding: 15px;
+    padding: 20px 15px;
+  }
+  
+  .dashbord-content.page-padding {
+    padding-left: 160px;
   }
   
   h1 {
@@ -187,6 +155,10 @@ h1 {
     padding: 15px;
     width: 100%;
   }
+  
+  .dashbord-content.page-padding {
+    padding-left: 15px;
+  }
 
   /* Header responsive */
   .dashboard-header {
@@ -204,10 +176,6 @@ h1 {
     padding-right: 16px;
     margin-top: 32px;
     margin-bottom: 16px;
-  }
-  
-  .page-title {
-    font-size: 1.5rem;
   }
   
   .header-right {

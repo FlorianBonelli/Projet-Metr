@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/common.css';
 import './notif.css';
 import Sidebar from '../composants/Sidebar';
 import { modificationService, userService } from '../db/database';
@@ -153,8 +154,10 @@ function Notif() {
   return (
     <div className="notif-page">
       <Sidebar />
-      <div className="notif-content">
-        <h2 className="page-title">NOTIFICATIONS</h2>
+      <div className="notif-content page-padding">
+        <div className="notif-header">
+          <h2 className="page-title">NOTIFICATIONS</h2>
+        </div>
 
         <div className="projects-list">
           {projectsWithMods.length > 0 ? (

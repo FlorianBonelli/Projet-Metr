@@ -1,8 +1,9 @@
 import React from 'react';
+import '../styles/common.css';
+import './Profil.css';
 import Sidebar from '../composants/Sidebar';
 import ProfilComponent from '../composants/Profil';
 import Taches from '../composants/Taches';
-import './Profil.css';
 
 function Profil() {
   return (

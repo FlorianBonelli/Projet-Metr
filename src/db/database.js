@@ -23,6 +23,18 @@ db.version(5).stores({
   });
 });
 
+// Version 6: Ajout des champs pour l'authentification Google
+db.version(6).stores({
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise, photo_profil, google_id, auth_provider',
+  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
+  libraries: '++id, user_id, nom, created_at',
+  articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
+  taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
+  modifications: '++id, projectId, userId, dateModification, changeType',
+  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]',
+  exports: '++id, project_id, user_id, file_name, file_type, file_size, file_data, date_export'
+});
+
 // Pré-remplir la bibliothèque par défaut lors de la création de la base
 db.on('populate', async () => {
   await db.libraries.add({
@@ -248,6 +260,59 @@ export const userService = {
       return true;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      throw error;
+    }
+  },
+
+  // Créer ou récupérer un utilisateur Google
+  async createOrGetGoogleUser(googleUserData) {
+    try {
+      const { email, given_name, family_name, picture, sub } = googleUserData;
+      
+      // Vérifier si l'utilisateur existe déjà (par email ou google_id)
+      let existingUser = await db.utilisateur.where('email').equals(email).first();
+      
+      if (existingUser) {
+        // Mettre à jour les infos Google si nécessaire
+        if (!existingUser.google_id) {
+          await db.utilisateur.update(existingUser.id_utilisateur, {
+            google_id: sub,
+            photo_profil: picture || existingUser.photo_profil
+          });
+          existingUser = await db.utilisateur.get(existingUser.id_utilisateur);
+        }
+        return existingUser;
+      }
+      
+      // Créer un nouvel utilisateur Google
+      const userId = await db.utilisateur.add({
+        nom: family_name || '',
+        prenom: given_name || '',
+        email: email,
+        mot_de_passe: null, // Pas de mot de passe pour les utilisateurs Google
+        google_id: sub,
+        photo_profil: picture || '',
+        role: 'utilisateur',
+        profession: '',
+        entreprise: '',
+        auth_provider: 'google'
+      });
+      
+      console.log('Utilisateur Google créé avec l\'ID:', userId);
+      return await db.utilisateur.get(userId);
+    } catch (error) {
+      console.error('Erreur lors de la création/récupération de l\'utilisateur Google:', error);
+      throw error;
+    }
+  },
+
+  // Authentifier un utilisateur via Google
+  async authenticateGoogleUser(googleUserData) {
+    try {
+      const user = await this.createOrGetGoogleUser(googleUserData);
+      return user;
+    } catch (error) {
+      console.error('Erreur lors de l\'authentification Google:', error);
       throw error;
     }
   }

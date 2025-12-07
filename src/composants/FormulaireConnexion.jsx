@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { userService } from '../db/database';
 import './FormulaireConnexion.css';
 
 function FormulaireConnexion() {
+  console.log('VITE_GOOGLE_CLIENT_ID dans le composant :', import.meta.env.VITE_GOOGLE_CLIENT_ID);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -46,9 +48,72 @@ function FormulaireConnexion() {
     }
   };
 
+  // Fonction pour récupérer les infos utilisateur Google
+  const fetchGoogleUserInfo = async (accessToken) => {
+    try {
+      const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des informations Google');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur fetch Google user info:', error);
+      throw error;
+    }
+  };
+
+  // Hook Google Login
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      setError('');
+      
+      try {
+        // Récupérer les informations de l'utilisateur Google
+        const googleUserInfo = await fetchGoogleUserInfo(tokenResponse.access_token);
+        console.log('Google User Info:', googleUserInfo);
+        
+        // Authentifier/créer l'utilisateur dans la base de données
+        const user = await userService.authenticateGoogleUser(googleUserInfo);
+        
+        if (user) {
+          console.log('Utilisateur Google connecté:', user);
+          localStorage.setItem('userEmail', user.email);
+          localStorage.setItem('userInfo', JSON.stringify({
+            id_utilisateur: user.id_utilisateur,
+            id: user.id_utilisateur,
+            nom: user.nom,
+            prenom: user.prenom,
+            email: user.email,
+            role: user.role,
+            profession: user.profession || '',
+            entreprise: user.entreprise || '',
+            photo_profil: user.photo_profil || '',
+            auth_provider: 'google'
+          }));
+          navigate('/dashboard');
+        }
+      } catch (err) {
+        console.error('Erreur lors de la connexion Google:', err);
+        setError('Une erreur est survenue lors de la connexion avec Google. Veuillez réessayer.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Erreur Google Login:', error);
+      setError('La connexion avec Google a échoué. Veuillez réessayer.');
+    },
+  });
+
   const handleGoogleLogin = () => {
-    console.log('Connexion avec Google');
-    // Logique de connexion Google ici
+    googleLogin();
   };
 
   return (

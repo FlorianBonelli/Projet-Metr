@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { userService } from '../db/database';
 import './FormulaireInscription.css';
 
 function FormulaireInscription() {
+  console.log('VITE_GOOGLE_CLIENT_ID dans le composant :', import.meta.env.VITE_GOOGLE_CLIENT_ID);
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
@@ -61,8 +63,77 @@ function FormulaireInscription() {
     }
   };
 
+  // Fonction pour récupérer les infos utilisateur Google
+  const fetchGoogleUserInfo = async (accessToken) => {
+    try {
+      const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des informations Google');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur fetch Google user info:', error);
+      throw error;
+    }
+  };
+
+  // Hook Google Login pour l'inscription
+  const googleSignup = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      setError('');
+      setSuccess('');
+      
+      try {
+        // Récupérer les informations de l'utilisateur Google
+        const googleUserInfo = await fetchGoogleUserInfo(tokenResponse.access_token);
+        console.log('Google User Info:', googleUserInfo);
+        
+        // Créer ou récupérer l'utilisateur dans la base de données
+        const user = await userService.authenticateGoogleUser(googleUserInfo);
+        
+        if (user) {
+          console.log('Utilisateur Google inscrit/connecté:', user);
+          setSuccess('Inscription réussie ! Redirection...');
+          
+          setTimeout(() => {
+            localStorage.setItem('userEmail', user.email);
+            localStorage.setItem('userInfo', JSON.stringify({
+              id_utilisateur: user.id_utilisateur,
+              id: user.id_utilisateur,
+              nom: user.nom,
+              prenom: user.prenom,
+              email: user.email,
+              role: user.role,
+              profession: user.profession || '',
+              entreprise: user.entreprise || '',
+              photo_profil: user.photo_profil || '',
+              auth_provider: 'google'
+            }));
+            navigate('/dashboard');
+          }, 1000);
+        }
+      } catch (err) {
+        console.error('Erreur lors de l\'inscription Google:', err);
+        setError('Une erreur est survenue lors de l\'inscription avec Google. Veuillez réessayer.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Erreur Google Signup:', error);
+      setError('L\'inscription avec Google a échoué. Veuillez réessayer.');
+    },
+  });
+
   const handleGoogleSignup = () => {
-    console.log('Inscription avec Google');
+    googleSignup();
   };
 
   const handleLoginRedirect = () => {

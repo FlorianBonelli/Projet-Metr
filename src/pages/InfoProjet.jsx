@@ -7,6 +7,7 @@ import HistoriqueExport from '../composants/HistoriqueExport';
 import CollaborateursModal from '../composants/CollaborateursModal';
 import { projectService, libraryService } from '../db/database';
 import CollaborateurIcon from '../assets/images/collaborateur.svg';
+import IconOuvrir from '../assets/images/Ouvrir.svg';
 import './InfoProjet.css';
 
 const InfoProjet = () => {
@@ -140,87 +141,93 @@ const InfoProjet = () => {
                     </header>
 
                     <div className="collaborateurs-section">
-                        <button 
-                            className="collaborateurs-dropdown"
-                            onClick={() => setShowCollaborateursModal(true)}
-                        >
-                            <span className="collaborateurs-icon">
-                                <img src={CollaborateurIcon} alt="Collaborateurs" />
-                            </span>
-                            <span>Collaborateurs</span>
-                        </button>
-                        <div className="bibliotheques-dropdown-wrapper">
-                            <button
-                                type="button"
-                                className="bibliotheques-dropdown"
-                                onClick={() => setIsLibrariesDropdownOpen((prev) => !prev)}
-                                aria-haspopup="listbox"
-                                aria-expanded={isLibrariesDropdownOpen}
+                        <div className="collaborateurs-left">
+                            <button 
+                                className="collaborateurs-dropdown"
+                                onClick={() => setShowCollaborateursModal(true)}
                             >
-                                <span>
-                                    {starredLibraryIds.length === 0 && 'Toutes les bibliothèques'}
-                                    {starredLibraryIds.length === 1 &&
-                                        (libraries.find((lib) => lib.id === starredLibraryIds[0])?.nom || '1 bibliothèque sélectionnée')}
-                                    {starredLibraryIds.length > 1 && `${starredLibraryIds.length} bibliothèques sélectionnées`}
+                                <span className="collaborateurs-icon">
+                                    <img src={CollaborateurIcon} alt="Collaborateurs" />
                                 </span>
-                                <span className="dropdown-arrow">▼</span>
+                                <span>Collaborateurs</span>
                             </button>
-                            {isLibrariesDropdownOpen && (
-                                <ul className="bibliotheques-dropdown-menu" role="listbox">
-                                    <li>
-                                        <button
-                                            type="button"
-                                            className="bibliotheques-option"
-                                            onClick={() => {
-                                                setStarredLibraryIds([]);
-                                            }}
-                                        >
-                                            Toutes les bibliothèques
-                                        </button>
-                                    </li>
-                                    {libraries.map((library) => {
-                                        const isStarred =
-                                            starredLibraryIds.length === 0 ||
-                                            starredLibraryIds.includes(library.id);
+                            <div className="bibliotheques-dropdown-wrapper">
+                                <button
+                                    type="button"
+                                    className="bibliotheques-dropdown"
+                                    onClick={() => setIsLibrariesDropdownOpen((prev) => !prev)}
+                                    aria-haspopup="listbox"
+                                    aria-expanded={isLibrariesDropdownOpen}
+                                >
+                                    <span>
+                                        {starredLibraryIds.length === 0 && 'Toutes les bibliothèques'}
+                                        {starredLibraryIds.length === 1 &&
+                                            (libraries.find((lib) => lib.id === starredLibraryIds[0])?.nom || '1 bibliothèque sélectionnée')}
+                                        {starredLibraryIds.length > 1 && `${starredLibraryIds.length} bibliothèques sélectionnées`}
+                                    </span>
+                                    <span className="dropdown-arrow">▼</span>
+                                </button>
+                                {isLibrariesDropdownOpen && (
+                                    <ul className="bibliotheques-dropdown-menu" role="listbox">
+                                        <li>
+                                            <button
+                                                type="button"
+                                                className="bibliotheques-option"
+                                                onClick={() => {
+                                                    setStarredLibraryIds([]);
+                                                }}
+                                            >
+                                                Toutes les bibliothèques
+                                            </button>
+                                        </li>
+                                        {libraries.map((library) => {
+                                            const isStarred =
+                                                starredLibraryIds.length === 0 ||
+                                                starredLibraryIds.includes(library.id);
 
-                                        return (
-                                            <li key={library.id}>
-                                                <button
-                                                    type="button"
-                                                    className="bibliotheques-option"
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        toggleStarLibrary(library.id);
-                                                    }}
-                                                >
-                                                    <span className="bibliotheque-option-content">
-                                                        <span className="bibliotheque-option-name">{library.nom}</span>
-                                                        <button
-                                                            type="button"
-                                                            className={`library-star ${isStarred ? 'active' : ''}`}
-                                                            onClick={(event) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
-                                                                toggleStarLibrary(library.id);
-                                                            }}
-                                                            aria-label={isStarred ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-                                                        >
-                                                            ★
-                                                        </button>
-                                                    </span>
-                                                </button>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
+                                            return (
+                                                <li key={library.id}>
+                                                    <button
+                                                        type="button"
+                                                        className="bibliotheques-option"
+                                                        onClick={(event) => {
+                                                            event.preventDefault();
+                                                            toggleStarLibrary(library.id);
+                                                        }}
+                                                    >
+                                                        <span className="bibliotheque-option-content">
+                                                            <span className="bibliotheque-option-name">{library.nom}</span>
+                                                            <button
+                                                                type="button"
+                                                                className={`library-star ${isStarred ? 'active' : ''}`}
+                                                                onClick={(event) => {
+                                                                    event.preventDefault();
+                                                                    event.stopPropagation();
+                                                                    toggleStarLibrary(library.id);
+                                                                }}
+                                                                aria-label={isStarred ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                                                            >
+                                                                ★
+                                                            </button>
+                                                        </span>
+                                                    </button>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                )}
+                            </div>
+                            {canEdit() && (
+                                <button className="add-button" onClick={() => navigate('/bibliotheques')}>+</button>
+                            )}
+                            {userRole === 'lecture' && (
+                                <span className="readonly-badge">Lecture seule</span>
                             )}
                         </div>
-                        {canEdit() && (
-                            <button className="add-button" onClick={() => navigate('/bibliotheques')}>+</button>
-                        )}
-                        {userRole === 'lecture' && (
-                            <span className="readonly-badge">Lecture seule</span>
-                        )}
+                        <button className="btn-primary collaborateurs-open-button">
+                            <img src={IconOuvrir} alt="Ouvrir" className="icon-action" />
+                            Ouvrir
+                        </button>
                     </div>
 
                     <main className="content-sections">

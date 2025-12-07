@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectService } from '../db/database';
+import { projectService, db } from '../db/database';
 import './CollaborateursModal.css';
 
 const CollaborateursModal = ({ isOpen, onClose, projectId, currentUserId, isOwner }) => {
@@ -9,10 +9,12 @@ const CollaborateursModal = ({ isOpen, onClose, projectId, currentUserId, isOwne
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [owner, setOwner] = useState(null);
 
   useEffect(() => {
     if (isOpen && projectId) {
       loadCollaborators();
+      loadOwner();
     }
   }, [isOpen, projectId]);
 
@@ -22,6 +24,20 @@ const CollaborateursModal = ({ isOpen, onClose, projectId, currentUserId, isOwne
       setCollaborators(collabs);
     } catch (err) {
       console.error('Erreur lors du chargement des collaborateurs:', err);
+    }
+  };
+
+  const loadOwner = async () => {
+    try {
+      const project = await projectService.getProjectById(projectId);
+      if (project && project.user_id) {
+        const ownerUser = await db.utilisateur.get(project.user_id);
+        if (ownerUser) {
+          setOwner(ownerUser);
+        }
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement du propriétaire du projet:', err);
     }
   };
 
@@ -82,6 +98,15 @@ const CollaborateursModal = ({ isOpen, onClose, projectId, currentUserId, isOwne
         </div>
 
         <div className="collaborateurs-modal-content">
+          <div className="owner-section">
+            <h3>Propriétaire du projet</h3>
+            {owner ? (
+              <p className="owner-name">{owner.prenom} {owner.nom}</p>
+            ) : (
+              <p className="owner-name owner-name-empty">Non défini</p>
+            )}
+          </div>
+
           {/* Formulaire d'ajout */}
           {isOwner && (
             <form onSubmit={handleAddCollaborator} className="add-collaborator-form">

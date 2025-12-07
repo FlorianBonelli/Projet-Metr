@@ -137,6 +137,15 @@ const InfoProjet = () => {
                     <header className="info-projet-header">
                         <div className="header-left">
                             <h1 className="project-title">{project.nom}</h1>
+                            <p className="project-subtitle">
+                                {project.client && <span className="project-client">{project.client}</span>}
+                                {project.client && project.dateLivraison && <span className="project-dot">•</span>}
+                                {project.dateLivraison && (
+                                    <span className="project-end-date">
+                                        Fin prévue le {new Date(project.dateLivraison).toLocaleDateString('fr-FR')}
+                                    </span>
+                                )}
+                            </p>
                         </div>
                     </header>
 

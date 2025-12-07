@@ -31,6 +31,27 @@
     margin: 0;
 }
 
+.project-subtitle {
+    margin: 6px 0 0 0;
+    font-size: 0.95rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.project-client {
+    font-weight: 500;
+}
+
+.project-dot {
+    color: #cbd5e1;
+}
+
+.project-end-date {
+    font-weight: 400;
+}
+
 .metr-logo {
     font-size: 28px;
     font-weight: 700;

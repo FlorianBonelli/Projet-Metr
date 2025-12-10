@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { projectService, exportService } from '../db/database';
+import { planVersionService, exportService } from '../db/database';
 import './HistoriquePlan.css';
-
-const reorderPlans = (list, defaultId) => {
-    const selected = list.find((plan) => plan.id === defaultId) ?? list[0];
-    if (!selected) return [];
-    const rest = list
-        .filter((plan) => plan.id !== selected.id)
-        .map((plan) => ({ ...plan, isDefault: false }));
-    return [{ ...selected, isDefault: true }, ...rest];
-};
 
 const StarIcon = ({ filled }) => (
     <svg
@@ -48,17 +39,14 @@ const TrashIcon = () => (
 );
 
 const HistoriquePlan = ({ projectId, canEdit = true }) => {
-    const [defaultPlanId, setDefaultPlanId] = useState(null);
     const [plans, setPlans] = useState([]);
-    const [allPlans, setAllPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showUpload, setShowUpload] = useState(false);
-    const [showAllPlans, setShowAllPlans] = useState(false);
+    const [selectedPlanForUpload, setSelectedPlanForUpload] = useState(null);
+    const [expandedPlans, setExpandedPlans] = useState({});
 
-    // Fonction pour télécharger un plan et enregistrer dans l'historique des exports
-    const handleDownloadPlan = async (plan) => {
+    const handleDownloadVersion = async (version) => {
         try {
-            // Récupérer l'utilisateur connecté
             const userInfo = localStorage.getItem('userInfo');
             let userId = null;
             if (userInfo) {
@@ -66,103 +54,50 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                 userId = userData.id_utilisateur || userData.id;
             }
 
-            // Récupérer le projet pour obtenir les données du fichier
-            const project = await projectService.getProjectById(parseInt(projectId, 10));
-            if (!project || !project.fichier) {
-                alert('Fichier non trouvé');
-                return;
-            }
-
-            // Trouver le fichier correspondant
-            const fileData = project.fichier.find(f => f.name === plan.nom);
-            if (!fileData) {
-                alert('Fichier non trouvé dans le projet');
-                return;
-            }
-
-            // Enregistrer l'export dans l'historique
             if (userId) {
                 await exportService.createExport({
                     project_id: parseInt(projectId, 10),
                     user_id: userId,
-                    file_name: plan.nom,
-                    file_type: fileData.type || 'application/octet-stream',
-                    file_size: fileData.size || 0,
-                    file_data: fileData.data || null // Si les données sont stockées
+                    file_name: version.file_name,
+                    file_type: version.file_type || 'application/octet-stream',
+                    file_size: version.file_size || 0,
+                    file_data: version.file_data || null
                 });
             }
 
-            // Créer un lien de téléchargement
-            // Note: Dans une vraie application, les données du fichier seraient stockées
-            // Ici on simule le téléchargement en créant un fichier placeholder
-            const blob = fileData.data 
-                ? new Blob([fileData.data], { type: fileData.type })
-                : new Blob([`Contenu du fichier: ${plan.nom}`], { type: 'text/plain' });
+            const blob = version.file_data 
+                ? new Blob([version.file_data], { type: version.file_type })
+                : new Blob([`Contenu du fichier: ${version.file_name}`], { type: 'text/plain' });
             
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = plan.nom;
+            link.download = version.file_name;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-
-            console.log('Plan téléchargé et export enregistré:', plan.nom);
         } catch (error) {
             console.error('Erreur lors du téléchargement:', error);
             alert('Erreur lors du téléchargement du fichier');
         }
     };
 
-    // Fonction pour filtrer les fichiers de type plan
-    const isPlanFile = (file) => {
-        const fileName = file.name.toLowerCase();
-        
-        // Extensions typiques des plans (incluant PDF)
-        const planExtensions = ['.dwg', '.dxf', '.pdf'];
-        
-        // Mots-clés indiquant un plan (optionnel pour PDF)
-        const planKeywords = ['plan', 'schema', 'blueprint', 'drawing', 'architecture'];
-        
-        // Vérifier l'extension (DWG/DXF/PDF sont acceptés comme plans)
-        const hasPlanExtension = planExtensions.some(ext => fileName.endsWith(ext));
-        
-        // Vérifier les mots-clés dans le nom pour autres extensions
-        const hasPlanKeyword = planKeywords.some(keyword => fileName.includes(keyword));
-        
-        return hasPlanExtension || hasPlanKeyword;
+    const toggleExpandPlan = (planName) => {
+        setExpandedPlans(prev => ({
+            ...prev,
+            [planName]: !prev[planName]
+        }));
     };
 
-    // Charger les plans du projet
     useEffect(() => {
         const loadPlans = async () => {
             if (!projectId) return;
             
             try {
                 setLoading(true);
-                const project = await projectService.getProjectById(parseInt(projectId, 10));
-                
-                if (project && project.fichier) {
-                    // Filtrer les fichiers pour ne garder que les plans
-                    const projectPlans = project.fichier
-                        .filter(isPlanFile)
-                        .map((file, index) => ({
-                            id: index + 1,
-                            nom: file.name,
-                            dateModification: new Date().toLocaleDateString('fr-FR'),
-                            isDefault: index === 0, // Le premier plan est par défaut
-                            size: file.size,
-                            type: file.type
-                        }));
-                    
-                    setAllPlans(projectPlans);
-                    // Afficher seulement les 5 premiers plans par défaut
-                    setPlans(showAllPlans ? projectPlans : projectPlans.slice(0, 5));
-                    if (projectPlans.length > 0) {
-                        setDefaultPlanId(projectPlans[0].id);
-                    }
-                }
+                const plansWithVersions = await planVersionService.getAllPlansWithVersions(parseInt(projectId, 10));
+                setPlans(plansWithVersions);
             } catch (error) {
                 console.error('Erreur lors du chargement des plans:', error);
             } finally {
@@ -173,78 +108,29 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
         loadPlans();
     }, [projectId]);
 
-    const handleSelectDefault = (planId) => {
-        setDefaultPlanId(planId);
-        setPlans((prev) => reorderPlans(prev, planId));
+    const handleSetCurrentVersion = async (planName, versionIndex) => {
+        try {
+            await planVersionService.setCurrentVersion(parseInt(projectId, 10), planName, versionIndex);
+            const plansWithVersions = await planVersionService.getAllPlansWithVersions(parseInt(projectId, 10));
+            setPlans(plansWithVersions);
+        } catch (error) {
+            console.error('Erreur lors de la définition de la version courante:', error);
+            alert('Erreur lors de la définition de la version courante');
+        }
     };
 
-    const handleDeletePlan = async (planToDelete) => {
-        // Empêcher la suppression du plan par défaut
-        if (planToDelete.id === defaultPlanId) {
-            alert('Impossible de supprimer le plan par défaut. Veuillez d\'abord définir un autre plan comme défaut.');
-            return;
-        }
-
-        if (!confirm(`Êtes-vous sûr de vouloir supprimer le plan "${planToDelete.nom}" ?`)) {
+    const handleDeleteVersion = async (versionId) => {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette version ?')) {
             return;
         }
 
         try {
-            console.log('Début suppression plan:', planToDelete.nom);
-            
-            // Convertir projectId en nombre
-            const numericProjectId = parseInt(projectId, 10);
-            if (isNaN(numericProjectId)) {
-                throw new Error('ID de projet invalide');
-            }
-
-            // Récupérer le projet actuel
-            const project = await projectService.getProjectById(numericProjectId);
-            if (!project) {
-                throw new Error('Projet non trouvé');
-            }
-
-            // Filtrer les fichiers pour supprimer le plan sélectionné
-            const updatedFiles = (project.fichier || []).filter(file => file.name !== planToDelete.nom);
-
-            // Récupérer l'ID utilisateur pour les notifications
-            const userInfo = localStorage.getItem('userInfo');
-            let userId = null;
-            if (userInfo) {
-                const userData = JSON.parse(userInfo);
-                userId = userData.id_utilisateur || userData.id;
-            }
-
-            // Mettre à jour le projet sans le fichier supprimé
-            await projectService.updateProject(numericProjectId, { fichier: updatedFiles }, userId);
-
-            console.log('Plan supprimé avec succès');
-
-            // Recharger les plans
-            const projectPlans = updatedFiles
-                .filter(isPlanFile)
-                .map((file, index) => ({
-                    id: index + 1,
-                    nom: file.name,
-                    dateModification: new Date().toLocaleDateString('fr-FR'),
-                    isDefault: index === 0,
-                    size: file.size,
-                    type: file.type
-                }));
-            
-            setAllPlans(projectPlans);
-            setPlans(showAllPlans ? projectPlans : projectPlans.slice(0, 5));
-            
-            // Si on a supprimé tous les plans, réinitialiser le plan par défaut
-            if (projectPlans.length === 0) {
-                setDefaultPlanId(null);
-            } else if (projectPlans.length > 0) {
-                setDefaultPlanId(projectPlans[0].id);
-            }
-            
+            await planVersionService.deletePlanVersion(versionId);
+            const plansWithVersions = await planVersionService.getAllPlansWithVersions(parseInt(projectId, 10));
+            setPlans(plansWithVersions);
         } catch (error) {
-            console.error('Erreur lors de la suppression du plan:', error);
-            alert(`Erreur lors de la suppression du plan: ${error.message}`);
+            console.error('Erreur lors de la suppression de la version:', error);
+            alert(`Erreur: ${error.message}`);
         }
     };
 
@@ -253,34 +139,6 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
         if (files.length === 0) return;
 
         try {
-            console.log('Début upload plans, projectId:', projectId);
-            
-            // Convertir projectId en nombre
-            const numericProjectId = parseInt(projectId, 10);
-            if (isNaN(numericProjectId)) {
-                throw new Error('ID de projet invalide');
-            }
-
-            // Récupérer le projet actuel
-            const project = await projectService.getProjectById(numericProjectId);
-            if (!project) {
-                throw new Error('Projet non trouvé');
-            }
-
-            console.log('Projet trouvé:', project.nom);
-
-            // Ajouter les nouveaux fichiers aux fichiers existants
-            const newFiles = files.map(file => ({
-                name: file.name,
-                size: file.size,
-                type: file.type
-            }));
-
-            console.log('Nouveaux fichiers:', newFiles);
-
-            const updatedFiles = [...(project.fichier || []), ...newFiles];
-
-            // Récupérer l'ID utilisateur pour les notifications
             const userInfo = localStorage.getItem('userInfo');
             let userId = null;
             if (userInfo) {
@@ -288,38 +146,29 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                 userId = userData.id_utilisateur || userData.id;
             }
 
-            console.log('Mise à jour du projet avec', updatedFiles.length, 'fichiers');
+            const numericProjectId = parseInt(projectId, 10);
 
-            // Mettre à jour le projet avec les nouveaux fichiers
-            await projectService.updateProject(numericProjectId, { fichier: updatedFiles }, userId);
+            for (const file of files) {
+                const planName = selectedPlanForUpload || file.name.replace(/\.[^/.]+$/, '');
 
-            console.log('Projet mis à jour avec succès');
-
-            // Recharger les plans directement depuis les fichiers mis à jour
-            const projectPlans = updatedFiles
-                .filter(isPlanFile)
-                .map((file, index) => ({
-                    id: index + 1,
-                    nom: file.name,
-                    dateModification: new Date().toLocaleDateString('fr-FR'),
-                    isDefault: index === 0,
-                    size: file.size,
-                    type: file.type
-                }));
-            
-            setAllPlans(projectPlans);
-            setPlans(showAllPlans ? projectPlans : projectPlans.slice(0, 5));
-            if (projectPlans.length > 0 && !defaultPlanId) {
-                setDefaultPlanId(projectPlans[0].id);
+                await planVersionService.createPlanVersion({
+                    project_id: numericProjectId,
+                    plan_name: planName,
+                    file_name: file.name,
+                    file_type: file.type,
+                    file_size: file.size,
+                    file_data: null,
+                    uploaded_by: userId
+                });
             }
 
-            // Fermer l'interface d'upload
+            const plansWithVersions = await planVersionService.getAllPlansWithVersions(numericProjectId);
+            setPlans(plansWithVersions);
             setShowUpload(false);
-            
-            console.log('Upload terminé avec succès');
+            setSelectedPlanForUpload(null);
         } catch (error) {
-            console.error('Erreur détaillée lors de l\'ajout des plans:', error);
-            alert(`Erreur lors de l'ajout des plans: ${error.message}`);
+            console.error('Erreur lors de l\'upload:', error);
+            alert(`Erreur lors de l'upload: ${error.message}`);
         }
     };
 
@@ -333,18 +182,21 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                 {canEdit && (
                     <button 
                         className="plan-header-btn"
-                        onClick={() => setShowUpload(!showUpload)}
+                        onClick={() => {
+                            setShowUpload(!showUpload);
+                            setSelectedPlanForUpload(null);
+                        }}
                     >
-                        + Ajouter
+                        + Ajouter un nouveau plan
                     </button>
                 )}
             </div>
 
             <div className="plan-table">
                 <div className="plan-row plan-row-head">
-                    <span className="plan-cell plan-cell-selection">Sélection</span>
+                    <span className="plan-cell plan-cell-selection"></span>
                     <span className="plan-cell">Nom</span>
-                    <span className="plan-cell plan-cell-date">Date de modification</span>
+                    <span className="plan-cell plan-cell-date">Date de création</span>
                     <span className="plan-cell plan-cell-action" />
                 </div>
 
@@ -362,51 +214,108 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                     </div>
                 ) : (
                     plans.map((plan) => {
-                        const isDefault = plan.id === defaultPlanId;
+                        const isExpanded = expandedPlans[plan.plan_name];
+                        const currentVersion = plan.current_version;
+                        const versionsToShow = isExpanded ? plan.versions : [currentVersion];
+                        
                         return (
-                            <div
-                                key={plan.id}
-                                className={`plan-row ${isDefault ? 'plan-row-default' : ''}`}
-                            >
-                                <span className="plan-cell plan-cell-selection">
-                                    <button
-                                        type="button"
-                                        className="plan-star-button"
-                                        aria-label={
-                                            isDefault
-                                                ? `${plan.nom} est déjà le plan par défaut`
-                                                : `Définir ${plan.nom} comme plan par défaut`
-                                        }
-                                        onClick={() => handleSelectDefault(plan.id)}
-                                    >
-                                        <StarIcon filled={isDefault} />
-                                    </button>
-                                </span>
-                                <span className="plan-cell plan-name-cell">
-                                    <span className="plan-name">{plan.nom}</span>
-                                    {isDefault && <span className="plan-badge">Par défaut</span>}
-                                </span>
-                                <span className="plan-cell plan-cell-date">{plan.dateModification}</span>
-                                <span className="plan-cell plan-cell-action">
-                                    <button 
-                                        className="plan-row-btn"
-                                        onClick={() => handleDownloadPlan(plan)}
-                                        title={`Télécharger ${plan.nom}`}
-                                    >
-                                        Télécharger
-                                        <NoteIcon />
-                                    </button>
-                                    {canEdit && !isDefault && (
-                                        <button 
-                                            className="plan-delete-btn"
-                                            onClick={() => handleDeletePlan(plan)}
-                                            aria-label={`Supprimer ${plan.nom}`}
+                            <React.Fragment key={plan.plan_name}>
+                                <div className="plan-row plan-row-header" style={{ backgroundColor: '#f9fafb', fontWeight: '600' }}>
+                                    <span className="plan-cell" style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px' }}>
+                                        <span style={{ fontSize: '14px' }}>{plan.plan_name}</span>
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            {plan.versions.length > 1 && (
+                                                <button 
+                                                    onClick={() => toggleExpandPlan(plan.plan_name)}
+                                                    style={{ 
+                                                        padding: '5px 10px', 
+                                                        backgroundColor: '#e5e7eb', 
+                                                        border: 'none', 
+                                                        borderRadius: '4px', 
+                                                        cursor: 'pointer',
+                                                        fontSize: '12px'
+                                                    }}
+                                                >
+                                                    {isExpanded ? '▼ Masquer les versions' : `▶ Voir toutes les versions (${plan.versions.length})`}
+                                                </button>
+                                            )}
+                                            {canEdit && (
+                                                <button 
+                                                    onClick={() => {
+                                                        setSelectedPlanForUpload(plan.plan_name);
+                                                        setShowUpload(true);
+                                                    }}
+                                                    style={{ 
+                                                        padding: '5px 10px', 
+                                                        backgroundColor: '#3B82F6', 
+                                                        color: 'white',
+                                                        border: 'none', 
+                                                        borderRadius: '4px', 
+                                                        cursor: 'pointer',
+                                                        fontSize: '12px'
+                                                    }}
+                                                >
+                                                    + Nouvelle version
+                                                </button>
+                                            )}
+                                        </div>
+                                    </span>
+                                </div>
+                                
+                                {versionsToShow.map((version) => {
+                                    const isCurrent = version.is_current;
+                                    return (
+                                        <div
+                                            key={version.id}
+                                            className={`plan-row ${isCurrent ? 'plan-row-default' : ''}`}
+                                            style={{ paddingLeft: '20px' }}
                                         >
-                                            <TrashIcon />
-                                        </button>
-                                    )}
-                                </span>
-                            </div>
+                                            <span className="plan-cell plan-cell-selection">
+                                                <button
+                                                    type="button"
+                                                    className="plan-star-button"
+                                                    aria-label={
+                                                        isCurrent
+                                                            ? `Version ${version.version_index} est déjà la version courante`
+                                                            : `Définir version ${version.version_index} comme version courante`
+                                                    }
+                                                    onClick={() => handleSetCurrentVersion(plan.plan_name, version.version_index)}
+                                                >
+                                                    <StarIcon filled={isCurrent} />
+                                                </button>
+                                            </span>
+                                            <span className="plan-cell plan-name-cell">
+                                                <span className="plan-name">
+                                                    Indice {version.version_index} - {version.file_name}
+                                                </span>
+                                                {isCurrent && <span className="plan-badge">Version courante</span>}
+                                            </span>
+                                            <span className="plan-cell plan-cell-date">
+                                                {new Date(version.created_at).toLocaleDateString('fr-FR')}
+                                            </span>
+                                            <span className="plan-cell plan-cell-action">
+                                                <button 
+                                                    className="plan-row-btn"
+                                                    onClick={() => handleDownloadVersion(version)}
+                                                    title={`Télécharger ${version.file_name}`}
+                                                >
+                                                    Télécharger
+                                                    <NoteIcon />
+                                                </button>
+                                                {canEdit && (
+                                                    <button 
+                                                        className="plan-delete-btn"
+                                                        onClick={() => handleDeleteVersion(version.id)}
+                                                        aria-label={`Supprimer version ${version.version_index}`}
+                                                    >
+                                                        <TrashIcon />
+                                                    </button>
+                                                )}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </React.Fragment>
                         );
                     })
                 )}
@@ -423,7 +332,15 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                         style={{ display: 'none' }}
                     />
                     <div style={{ textAlign: 'center' }}>
-                        <p style={{ margin: '10px 0', color: '#666' }}>Sélectionnez les plans à ajouter (PDF, DWG, DXF)</p>
+                        {selectedPlanForUpload ? (
+                            <p style={{ margin: '10px 0', color: '#666', fontWeight: '600' }}>
+                                Ajouter une nouvelle version pour: {selectedPlanForUpload}
+                            </p>
+                        ) : (
+                            <p style={{ margin: '10px 0', color: '#666' }}>
+                                Sélectionnez les plans à ajouter (PDF, DWG, DXF)
+                            </p>
+                        )}
                         <button 
                             onClick={() => document.getElementById('plan-upload').click()}
                             style={{ 
@@ -439,7 +356,10 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                             📁 Parcourir les fichiers
                         </button>
                         <button 
-                            onClick={() => setShowUpload(false)}
+                            onClick={() => {
+                                setShowUpload(false);
+                                setSelectedPlanForUpload(null);
+                            }}
                             style={{ 
                                 padding: '10px 20px', 
                                 backgroundColor: '#6B7280', 
@@ -453,18 +373,6 @@ const HistoriquePlan = ({ projectId, canEdit = true }) => {
                         </button>
                     </div>
                 </div>
-            )}
-
-            {allPlans.length > 5 && (
-                <button 
-                    className="plan-more-btn"
-                    onClick={() => {
-                        setShowAllPlans(!showAllPlans);
-                        setPlans(showAllPlans ? allPlans.slice(0, 5) : allPlans);
-                    }}
-                >
-                    {showAllPlans ? 'Voir moins' : '+ Voir plus'}
-                </button>
             )}
         </section>
     );

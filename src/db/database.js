@@ -35,6 +35,19 @@ db.version(6).stores({
   exports: '++id, project_id, user_id, file_name, file_type, file_size, file_data, date_export'
 });
 
+// Version 7: Ajout de la table plan_versions pour gérer les versions de plans
+db.version(7).stores({
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise, photo_profil, google_id, auth_provider',
+  projets: '++id, nom, client, status, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
+  libraries: '++id, user_id, nom, created_at',
+  articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
+  taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
+  modifications: '++id, projectId, userId, dateModification, changeType',
+  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]',
+  exports: '++id, project_id, user_id, file_name, file_type, file_size, file_data, date_export',
+  plan_versions: '++id, project_id, plan_name, version_index, file_name, file_type, file_size, file_data, is_current, uploaded_by, created_at, [project_id+plan_name]'
+});
+
 // Pré-remplir la bibliothèque par défaut lors de la création de la base
 db.on('populate', async () => {
   await db.libraries.add({
@@ -1278,6 +1291,176 @@ export const exportService = {
       console.log('Export supprimé:', exportId);
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'export:', error);
+      throw error;
+    }
+  }
+};
+
+// Service pour gérer les versions de plans
+export const planVersionService = {
+  // Créer une nouvelle version de plan
+  async createPlanVersion(versionData) {
+    try {
+      const { project_id, plan_name, file_name, file_type, file_size, file_data, uploaded_by } = versionData;
+      
+      // Récupérer toutes les versions existantes de ce plan
+      const existingVersions = await db.plan_versions
+        .where({ project_id, plan_name })
+        .toArray();
+      
+      // Calculer le prochain indice de version
+      const version_index = existingVersions.length;
+      
+      // Marquer toutes les versions existantes comme non courantes
+      for (const version of existingVersions) {
+        await db.plan_versions.update(version.id, { is_current: false });
+      }
+      
+      // Créer la nouvelle version
+      const versionId = await db.plan_versions.add({
+        project_id,
+        plan_name,
+        version_index,
+        file_name,
+        file_type,
+        file_size,
+        file_data,
+        is_current: true,
+        uploaded_by,
+        created_at: new Date().toISOString()
+      });
+      
+      console.log(`Version ${version_index} du plan "${plan_name}" créée avec l'ID:`, versionId);
+      return versionId;
+    } catch (error) {
+      console.error('Erreur lors de la création de la version du plan:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer toutes les versions d'un plan spécifique
+  async getPlanVersions(project_id, plan_name) {
+    try {
+      const versions = await db.plan_versions
+        .where({ project_id, plan_name })
+        .toArray();
+      
+      // Trier par indice de version
+      return versions.sort((a, b) => a.version_index - b.version_index);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des versions du plan:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer tous les plans d'un projet avec leurs versions
+  async getAllPlansWithVersions(project_id) {
+    try {
+      const allVersions = await db.plan_versions
+        .where('project_id')
+        .equals(project_id)
+        .toArray();
+      
+      // Grouper par nom de plan
+      const planGroups = {};
+      allVersions.forEach(version => {
+        if (!planGroups[version.plan_name]) {
+          planGroups[version.plan_name] = [];
+        }
+        planGroups[version.plan_name].push(version);
+      });
+      
+      // Convertir en tableau et trier les versions
+      const plans = Object.entries(planGroups).map(([plan_name, versions]) => ({
+        plan_name,
+        versions: versions.sort((a, b) => a.version_index - b.version_index),
+        current_version: versions.find(v => v.is_current) || versions[versions.length - 1]
+      }));
+      
+      return plans;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des plans avec versions:', error);
+      throw error;
+    }
+  },
+  
+  // Définir une version spécifique comme version courante
+  async setCurrentVersion(project_id, plan_name, version_index) {
+    try {
+      // Récupérer toutes les versions de ce plan
+      const versions = await db.plan_versions
+        .where({ project_id, plan_name })
+        .toArray();
+      
+      // Marquer toutes les versions comme non courantes
+      for (const version of versions) {
+        await db.plan_versions.update(version.id, { is_current: false });
+      }
+      
+      // Marquer la version spécifiée comme courante
+      const targetVersion = versions.find(v => v.version_index === version_index);
+      if (targetVersion) {
+        await db.plan_versions.update(targetVersion.id, { is_current: true });
+        console.log(`Version ${version_index} du plan "${plan_name}" définie comme courante`);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Erreur lors de la définition de la version courante:', error);
+      throw error;
+    }
+  },
+  
+  // Supprimer une version spécifique d'un plan
+  async deletePlanVersion(versionId) {
+    try {
+      const version = await db.plan_versions.get(versionId);
+      if (!version) {
+        throw new Error('Version non trouvée');
+      }
+      
+      // Vérifier si c'est la version courante
+      if (version.is_current) {
+        // Récupérer toutes les versions de ce plan
+        const versions = await db.plan_versions
+          .where({ project_id: version.project_id, plan_name: version.plan_name })
+          .toArray();
+        
+        if (versions.length === 1) {
+          throw new Error('Impossible de supprimer la dernière version d\'un plan');
+        }
+        
+        // Supprimer la version
+        await db.plan_versions.delete(versionId);
+        
+        // Définir la version la plus récente comme courante
+        const remainingVersions = versions.filter(v => v.id !== versionId);
+        const latestVersion = remainingVersions.sort((a, b) => b.version_index - a.version_index)[0];
+        await db.plan_versions.update(latestVersion.id, { is_current: true });
+      } else {
+        await db.plan_versions.delete(versionId);
+      }
+      
+      console.log('Version du plan supprimée:', versionId);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la version du plan:', error);
+      throw error;
+    }
+  },
+  
+  // Récupérer la version courante d'un plan
+  async getCurrentVersion(project_id, plan_name) {
+    try {
+      const currentVersion = await db.plan_versions
+        .where({ project_id, plan_name })
+        .and(v => v.is_current === true)
+        .first();
+      
+      return currentVersion || null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la version courante:', error);
       throw error;
     }
   }

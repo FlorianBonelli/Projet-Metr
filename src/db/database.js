@@ -48,6 +48,26 @@ db.version(7).stores({
   plan_versions: '++id, project_id, plan_name, version_index, file_name, file_type, file_size, file_data, is_current, uploaded_by, created_at, [project_id+plan_name]'
 });
 
+// Version 8: Ajout du champ phase aux projets (ESQ, APS, APD, DCE)
+db.version(8).stores({
+  utilisateur: '++id_utilisateur, nom, prenom, email, mot_de_passe, role, profession, entreprise, photo_profil, google_id, auth_provider',
+  projets: '++id, nom, client, status, phase, date, membre, fichier, referenceInterne, typologieProjet, adresseProjet, dateLivraison, dateCreation, user_id',
+  libraries: '++id, user_id, nom, created_at',
+  articles: '++id, library_id, designation, lot, sous_categorie, unite, prix_unitaire, is_favorite, statut, created_at, updated_at',
+  taches: '++id, titre, description, projet_id, priorite, etat, date_creation, date_echeance, user_id, created_at, updated_at',
+  modifications: '++id, projectId, userId, dateModification, changeType',
+  collaborateurs: '++id, project_id, user_id, role, [project_id+user_id]',
+  exports: '++id, project_id, user_id, file_name, file_type, file_size, file_data, date_export',
+  plan_versions: '++id, project_id, plan_name, version_index, file_name, file_type, file_size, file_data, is_current, uploaded_by, created_at, [project_id+plan_name]'
+}).upgrade(trans => {
+  // Migration pour ajouter phase par défaut aux projets existants
+  return trans.projets.toCollection().modify(projet => {
+    if (!projet.phase) {
+      projet.phase = 'ESQ'; // Phase par défaut
+    }
+  });
+});
+
 // Pré-remplir la bibliothèque par défaut lors de la création de la base
 db.on('populate', async () => {
   await db.libraries.add({
@@ -714,6 +734,9 @@ export const libraryService = {
   },
 
   async deleteLibrary(id) {
+    // Supprimer d'abord tous les articles liés à cette bibliothèque
+    await db.articles.where('library_id').equals(id).delete();
+    // Puis supprimer la bibliothèque elle-même
     return db.libraries.delete(id);
   },
 

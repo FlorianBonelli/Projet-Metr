@@ -13,10 +13,12 @@ export default function CarteProjet({
   date = "Créé le 02/03/2025",
   statusText = "En cours",
   statusType = "active",
+  phase = "ESQ",
   onDelete,
   onEdit,
   onArchive,
   onStatusChange,
+  onPhaseChange,
   isShared = false,
   userRole = null
 }) {
@@ -25,6 +27,7 @@ export default function CarteProjet({
   const canDelete = !isShared; // Seul le propriétaire peut supprimer
   const [showMenu, setShowMenu] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [showPhaseMenu, setShowPhaseMenu] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const isArchived = statusText?.toLowerCase().includes('archiv');
@@ -100,6 +103,13 @@ export default function CarteProjet({
   const toggleStatusMenu = (e) => {
     e.stopPropagation();
     setShowStatusMenu((prev) => !prev);
+    setShowPhaseMenu(false);
+  };
+
+  const togglePhaseMenu = (e) => {
+    e.stopPropagation();
+    setShowPhaseMenu((prev) => !prev);
+    setShowStatusMenu(false);
   };
 
   // Changement d'état via menu personnalisé
@@ -129,6 +139,29 @@ export default function CarteProjet({
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'état du projet:", error);
       alert("Erreur lors de la mise à jour de l'état du projet");
+    }
+  };
+
+  // Changement de phase
+  const handlePhaseChange = async (newPhase) => {
+    try {
+      const userInfo = localStorage.getItem('userInfo');
+      let userId = null;
+      if (userInfo) {
+        const userData = JSON.parse(userInfo);
+        userId = userData.id_utilisateur || userData.id;
+      }
+
+      await projectService.updateProject(id, { phase: newPhase }, userId);
+
+      if (onPhaseChange) {
+        onPhaseChange(id, newPhase);
+      }
+
+      setShowPhaseMenu(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la phase du projet:", error);
+      alert("Erreur lors de la mise à jour de la phase du projet");
     }
   };
   return (
@@ -173,45 +206,95 @@ export default function CarteProjet({
       </div>
       <div className="carte-subtitle">{subtitle}</div>
       <div className="carte-date">{date}</div>
-      <div className="carte-status">
-        {canEdit ? (
-          <button
-            type="button"
-            className={`status status-${statusType} status-toggle`}
-            onClick={toggleStatusMenu}
-          >
-            {statusText || 'En cours'}
-          </button>
-        ) : (
-          <span className={`status status-${statusType}`}>
-            {statusText || 'En cours'}
-          </span>
-        )}
-        {showStatusMenu && canEdit && (
-          <div className="status-menu">
+      <div className="carte-status-row">
+        <div className="carte-status">
+          {canEdit ? (
             <button
               type="button"
-              className="status-option status-option-en-cours"
-              onClick={() => handleStatusChange('En cours')}
+              className={`status status-${statusType} status-toggle`}
+              onClick={toggleStatusMenu}
             >
-              En cours
+              {statusText || 'En cours'}
             </button>
+          ) : (
+            <span className={`status status-${statusType}`}>
+              {statusText || 'En cours'}
+            </span>
+          )}
+          {showStatusMenu && canEdit && (
+            <div className="status-menu">
+              <button
+                type="button"
+                className="status-option status-option-en-cours"
+                onClick={() => handleStatusChange('En cours')}
+              >
+                En cours
+              </button>
+              <button
+                type="button"
+                className="status-option status-option-termine"
+                onClick={() => handleStatusChange('Terminé')}
+              >
+                Terminé
+              </button>
+              <button
+                type="button"
+                className="status-option status-option-archive"
+                onClick={() => handleStatusChange('Archivé')}
+              >
+                Archivé
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div className="carte-phase">
+          {canEdit ? (
             <button
               type="button"
-              className="status-option status-option-termine"
-              onClick={() => handleStatusChange('Terminé')}
+              className="phase phase-toggle"
+              onClick={togglePhaseMenu}
             >
-              Terminé
+              {phase || 'ESQ'}
             </button>
-            <button
-              type="button"
-              className="status-option status-option-archive"
-              onClick={() => handleStatusChange('Archivé')}
-            >
-              Archivé
-            </button>
-          </div>
-        )}
+          ) : (
+            <span className="phase">
+              {phase || 'ESQ'}
+            </span>
+          )}
+          {showPhaseMenu && canEdit && (
+            <div className="phase-menu">
+              <button
+                type="button"
+                className="phase-option"
+                onClick={() => handlePhaseChange('ESQ')}
+              >
+                ESQ
+              </button>
+              <button
+                type="button"
+                className="phase-option"
+                onClick={() => handlePhaseChange('APS')}
+              >
+                APS
+              </button>
+              <button
+                type="button"
+                className="phase-option"
+                onClick={() => handlePhaseChange('APD')}
+              >
+                APD
+              </button>
+              <button
+                type="button"
+                className="phase-option"
+                onClick={() => handlePhaseChange('DCE')}
+              >
+                DCE
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="carte-actions">
         <button className="btn-primary">

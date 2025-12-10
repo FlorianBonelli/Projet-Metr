@@ -166,6 +166,10 @@ function Projet() {
     handleProjectUpdated(projectId, { status: newStatus });
   };
 
+  const handlePhaseChange = (projectId, newPhase) => {
+    handleProjectUpdated(projectId, { phase: newPhase });
+  };
+
   return (
     <div className="projet-page">
       <Sidebar />
@@ -273,10 +277,12 @@ function Projet() {
                 date={formatDate(projet.dateCreation)}
                 statusText={projet.status || 'En cours'}
                 statusType={getStatusType(projet.status)}
+                phase={projet.phase || 'ESQ'}
                 onDelete={projet.isShared ? null : handleDelete}
                 onEdit={projet.userRole === 'lecture' ? null : handleEdit}
                 onArchive={projet.userRole === 'lecture' ? null : handleArchive}
                 onStatusChange={projet.userRole === 'lecture' ? null : handleStatusChange}
+                onPhaseChange={projet.userRole === 'lecture' ? null : handlePhaseChange}
                 isShared={projet.isShared}
                 userRole={projet.userRole}
               />

@@ -120,6 +120,11 @@ function Dashbord() {
     handleProjectUpdated(projectId, { status: newStatus });
   };
 
+  // Mise à jour spécifique de la phase depuis la carte projet
+  const handlePhaseChange = (projectId, newPhase) => {
+    handleProjectUpdated(projectId, { phase: newPhase });
+  };
+
   return (
     <div className="dashbord">
       <Sidebar />
@@ -152,10 +157,12 @@ function Dashbord() {
                     date={formatDate(project.dateCreation)}
                     statusText={project.status}
                     statusType={getStatusType(project.status)}
+                    phase={project.phase || 'ESQ'}
                     onDelete={project.isShared ? null : handleDeleteProject}
                     onEdit={project.userRole === 'lecture' ? null : handleEditProject}
                     onArchive={project.userRole === 'lecture' ? null : handleArchiveProject}
                     onStatusChange={project.userRole === 'lecture' ? null : handleStatusChange}
+                    onPhaseChange={project.userRole === 'lecture' ? null : handlePhaseChange}
                     isShared={project.isShared}
                     userRole={project.userRole}
                   />

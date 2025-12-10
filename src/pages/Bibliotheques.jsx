@@ -576,29 +576,31 @@ function Bibliotheques() {
 
       <main className="bibliotheques-content page-padding">
         <header className="bibliotheques-header animate-slide-in animate-delay-1">
-          <div className="header-title">
-            <h2 className="page-title">MES BIBLIOTHÈQUES</h2>
-            <p>{filteredItems.length} articles trouvés</p>
-          </div>
+          <h1 className="page-title">MES BIBLIOTHÈQUES</h1>
 
           <div className="header-actions">
-            <button className="action-button ghost" onClick={handleOpenManageLibraries}>
-              Gérer les bibliothèques{' '}
-              <span aria-hidden="true">
-                <img src={BibliothequeIcon} alt="Gérer les bibliothèques" />
-              </span>
+            <button className="action-button-outline" onClick={handleOpenManageLibraries}>
+              Gérer les bibliothèques
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
             </button>
-            <button className="action-button ghost" type="button" onClick={handleOpenImportLibrary}>
+            <button className="action-button-outline" type="button" onClick={handleOpenImportLibrary}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
               Importer une bibliothèque
             </button>
           </div>
         </header>
 
         <section className="filters-panel animate-slide-in animate-delay-2">
-          <div className="filters-row">
-            <div className="filters-selects">
-              <div className="select-wrapper wide" ref={librarySelectRef}>
-                <label htmlFor="library-select">Bibliothèques</label>
+          <div className="filters-top-row">
+            <div className="library-selector-group">
+              <div className="select-wrapper" ref={librarySelectRef}>
                 <div className={`dropdown ${isLibrarySelectOpen ? 'open' : ''}`}>
                   <button
                     id="library-select"
@@ -646,7 +648,7 @@ function Bibliotheques() {
                 </div>
               </div>
               <button
-                className="icon-button"
+                className="icon-button-add"
                 type="button"
                 aria-label="Ajouter une bibliothèque"
                 onClick={handleOpenImportLibrary}
@@ -656,11 +658,17 @@ function Bibliotheques() {
             </div>
 
             <div className="search-wrapper">
-              <input type="search" placeholder="Rechercher un article…" aria-label="Rechercher un article" />
+              <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input type="search" placeholder="Rechercher un article..." aria-label="Rechercher un article" />
             </div>
           </div>
 
-          <div className="filters-row secondary">
+          <p className="articles-count">{filteredItems.length} articles trouvés</p>
+
+          <div className="filters-bottom-row">
             <div className="chip-group">
               <div className="filter-chip" ref={lotFilterRef}>
                 <button
@@ -668,6 +676,12 @@ function Bibliotheques() {
                   type="button"
                   onClick={() => setIsLotFilterOpen(!isLotFilterOpen)}
                 >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                  </svg>
                   Lot {filters.lot && `(${filters.lot.split(' - ')[0]})`}
                   <span className="chip-caret">⌄</span>
                 </button>
@@ -698,6 +712,9 @@ function Bibliotheques() {
                   type="button"
                   onClick={() => setIsSubCategoryFilterOpen(!isSubCategoryFilterOpen)}
                 >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
                   Sous-catégorie {filters.subCategory && `(${filters.subCategory})`}
                   <span className="chip-caret">⌄</span>
                 </button>
@@ -728,6 +745,9 @@ function Bibliotheques() {
                   type="button"
                   onClick={() => setIsUnitFilterOpen(!isUnitFilterOpen)}
                 >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
                   Unité {filters.unit && `(${filters.unit})`}
                   <span className="chip-caret">⌄</span>
                 </button>
@@ -754,16 +774,19 @@ function Bibliotheques() {
             </div>
 
             <div className="secondary-actions">
-              <label className="checkbox" htmlFor="toggle-selection">
-                <input
-                  id="toggle-selection"
-                  type="checkbox"
-                  checked={isSelectionMode}
-                  onChange={(e) => handleSelectionModeChange(e.target.checked)}
-                />
-                <span> Sélectionner</span>
-              </label>
-              <button className="action-button primary" type="button" onClick={handleOpenAddArticle}>
+              <button className="checkbox-button" onClick={() => handleSelectionModeChange(!isSelectionMode)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  {isSelectionMode && <polyline points="9 11 12 14 22 4" />}
+                </svg>
+                Sélectionner
+              </button>
+              <button className="action-button-primary" type="button" onClick={handleOpenAddArticle}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
                 Ajouter un article
               </button>
             </div>

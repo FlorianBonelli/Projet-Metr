@@ -277,16 +277,16 @@
 
 .chip-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  bottom: calc(100% + 4px);
   left: 0;
   min-width: 200px;
   background: #fff;
   border: 1px solid rgba(34, 52, 99, 0.16);
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(34, 52, 99, 0.15);
-  z-index: 9999;
+  z-index: 10000;
   padding: 8px;
-  max-height: 240px;
+  max-height: 150px;
   overflow-y: auto;
 }
 
@@ -868,7 +868,7 @@
 @keyframes dropdownSlideDown {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(8px);
   }
 
   to {
@@ -1397,10 +1397,14 @@
   flex: 1;
   min-width: 280px;
   overflow: visible;
+  position: relative;
+  z-index: 100;
 }
 
 .library-selector-group .select-wrapper {
   flex: 1;
+  position: relative;
+  overflow: visible;
 }
 
 .icon-button-add {
@@ -1588,9 +1592,9 @@
   border: 1px solid #E5E7EB;
   border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  z-index: 9999;
+  z-index: 10000;
   padding: 4px;
-  max-height: 280px;
+  max-height: 100px;
   overflow-y: auto;
   list-style: none;
   margin: 0;

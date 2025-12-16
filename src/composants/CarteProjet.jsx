@@ -100,6 +100,10 @@ export default function CarteProjet({
     navigate(`/info-projet/${id}`);
   };
 
+  const handleOuvrirClick = () => {
+    window.open('https://app.metr-plan.com/project/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YXV0b2Rlc2tfdmlld2VyX2ZpbGVzXzEvMTc2MTA2MzE0NDI2NS1SZXN0YXVyYW50LmR3Zw', '_blank');
+  };
+
   const toggleStatusMenu = (e) => {
     e.stopPropagation();
     setShowStatusMenu((prev) => !prev);
@@ -297,7 +301,7 @@ export default function CarteProjet({
         </div>
       </div>
       <div className="carte-actions">
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={handleOuvrirClick}>
           <img src={IconOuvrir} alt="Ouvrir" className="icon-action" />
           Ouvrir
         </button>

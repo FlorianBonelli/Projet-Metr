@@ -95,6 +95,10 @@ const InfoProjet = () => {
         return userRole === 'owner' || userRole === 'edition';
     };
 
+    const handleOuvrirClick = () => {
+        window.open('https://app.metr-plan.com/project/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YXV0b2Rlc2tfdmlld2VyX2ZpbGVzXzEvMTc2MTA2MzE0NDI2NS1SZXN0YXVyYW50LmR3Zw', '_blank');
+    };
+
     const toggleStarLibrary = (libraryId) => {
         setStarredLibraryIds((prev) =>
             prev.includes(libraryId)
@@ -229,14 +233,14 @@ const InfoProjet = () => {
                             {canEdit() && (
                                 <button className="add-button" onClick={() => navigate('/bibliotheques')}>+</button>
                             )}
+                            <button className="btn-primary collaborateurs-open-button" onClick={handleOuvrirClick}>
+                                <img src={IconOuvrir} alt="Ouvrir" className="icon-action" />
+                                Ouvrir
+                            </button>
                             {userRole === 'lecture' && (
                                 <span className="readonly-badge">Lecture seule</span>
                             )}
                         </div>
-                        <button className="btn-primary collaborateurs-open-button">
-                            <img src={IconOuvrir} alt="Ouvrir" className="icon-action" />
-                            Ouvrir
-                        </button>
                     </div>
 
                     <main className="content-sections">
@@ -248,7 +252,6 @@ const InfoProjet = () => {
                     </main>
                 </div>
             </div>
-
             <CollaborateursModal
                 isOpen={showCollaborateursModal}
                 onClose={() => setShowCollaborateursModal(false)}
